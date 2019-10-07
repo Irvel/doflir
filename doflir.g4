@@ -1,0 +1,5 @@
+grammar Doflir;
+
+program
+	: module
+	;
