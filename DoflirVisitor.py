@@ -69,5 +69,15 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by DoflirParser#condition.
+    def visitCondition(self, ctx:DoflirParser.ConditionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#iterable.
+    def visitIterable(self, ctx:DoflirParser.IterableContext):
+        return self.visitChildren(ctx)
+
+
 
 del DoflirParser

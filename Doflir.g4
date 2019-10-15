@@ -2,7 +2,7 @@ grammar Doflir;
 
 program: (fun_def | statement | NL)* EOF;
 
-statement: (assignment | vec_filtering | fun_call)';';
+statement: (assignment | condition | iterable | vec_filtering | fun_call)';';
 
 assignment: (ID|vec_indexing) '=' expr;
 vec_indexing: ID '[' expr (',' expr)* ']';
@@ -42,13 +42,22 @@ expr
 
 function_call: (ID'('expr(','expr)*')') ;  // Function call.
 
-
 flow_call: 'return' (expr)? ';';
 
+condition
+	: 'if' '(' expr ')' '{' statement '}'
+    | 'if' '(' expr ')' '{' statement '}' 'else' '{' statement '}'
+    ;
+
+iterable
+	: 'for' '(' expr 'in' expr ')' '{' statement '}'
+    | 'while' '(' expr ')' '{' statement '}'
+    ;
 
 TYPE_NAME
 	: 'int'
 	| 'float'
+	| 'bool'
 	| 'string'
 	| 'vector'
 	| 'void'
