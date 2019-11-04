@@ -4,6 +4,7 @@ from VariablesTable import VariablesTable
 from VariablesTable import Variable
 from SemanticCube import VarTypes
 from SemanticCube import Ops
+from collections import deque
 
 import logging
 import SemanticCube
@@ -12,8 +13,14 @@ import SemanticCube
 class DoflirCustomVisitor(DoflirVisitor):
 
     def __init__(self):
-        self.var_table = VariablesTable()
         self.cube = SemanticCube.make_cube()
+        self.global_table = VariablesTable()
+        self.context_stack = deque()
+        self.context_stack.append(self.global_table)
+
+    @property
+    def curr_context(self):
+        return self.context_stack[-1]
 
     def visitProgram(self, ctx: DoflirParser.ProgramContext):
         exprText = ctx.getText()
@@ -25,12 +32,6 @@ class DoflirCustomVisitor(DoflirVisitor):
 
     # Visit a parse tree produced by DoflirParser#statement.
     def visitStatement(self, ctx: DoflirParser.StatementContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by DoflirParser#assignment.
-    def visitAssignment(self, ctx: DoflirParser.AssignmentContext):
-        # Get id from ctx.ID() and check it into the vartable
-        # Value is in the expr
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by DoflirParser#vec_indexing.
@@ -77,6 +78,16 @@ class DoflirCustomVisitor(DoflirVisitor):
     #     # print(dir(tok))
     #     print(tok.text)
     #     return self.visitChildren(ctx)
+
+    def visitDeclaration(self, ctx: DoflirParser.DeclarationContext):
+        logging.debug("Declaring variable with ID")
+        var_id = ctx.ID()
+        if self.curr_context.exists(var_id):
+            raise Exception(f"Variable with ID {var_id} already used")
+        self.curr_context.declare_var(
+            name=var_id, var_type=VarTypes[ctx.TYPE_NAME()]
+        )
+        return self.visitChildren(ctx)
 
     def visitAssignment(self, ctx: DoflirParser.AssignmentContext):
         print("I am being assigned", ctx.ID())

@@ -1,1 +1,2 @@
+result -> int;
 result = 1 + 2;

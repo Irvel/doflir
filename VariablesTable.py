@@ -19,6 +19,11 @@ class VariablesTable(object):
     def add_var(self, variable):
         self._vars[variable.name] = variable
 
+    def declare_var(self, name, var_type):
+        address = self.new_address
+        var = Variable(name=name, data_type=var_type, address=address)
+        self.add_var(variable=var)
+
     def new_address(self):
         self._curr_address += 1
         return self._curr_address
