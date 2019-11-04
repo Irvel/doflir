@@ -8,6 +8,7 @@ assignment: (ID|vec_indexing) '=' expr;
 vec_indexing: ID '[' expr (',' expr)* ']';
 vec_filtering: (ID|vec_indexing) '{' expr (',' expr)* '}';
 fun_call: ID'('expr(','expr)*')';  // Function call.
+
 fun_def
 	: 'define' ID '->' TYPE_NAME '(' parameters? ')' '{' statement* flow_call '}'  // Function definition.
 	;
@@ -16,31 +17,33 @@ parameters: (ID | ID '=' expr) (',' parameters)*;
 vec_list: '['(expr? | (expr (',' expr)*))']';
 
 expr
-	: '('expr')'
-	| vec_indexing
-	| vec_filtering
-	| fun_call
-	| vec_list
-	| <assoc=right> expr '^' expr  // Exponentiation.
-	| ('-'|'+') expr  // Conversion to negative/positive.
-	| expr ('@') expr  // Matrix multiplication.
-	| expr ('..') expr  // Dot product.
-	| expr ('*'|'/'|'//') expr  // Multiplication, division and integer division.
-    | expr ('+'|'-') expr  // Addition, subtraction.
-    | expr ('>'|'>='|'<'|'<='|'=='|'!=') expr  // Relational operators.
-    | 'not' expr  // Negation.
-    | expr ('and') expr  // Logical and.
-    | expr ('or') expr  // Logical or.
-	| ID
-    | STRING_LITERAL
-    | BOOL
-    | INTEGER
-    | FLOAT
-    | 'NaN'
+	: '('expr')' #parenExpr
+	| vec_indexing #unExpr
+	| vec_filtering #unExpr
+	| fun_call #unExpr
+	| vec_list #unExpr
+	| <assoc=right> left=expr '^' right=expr  #powExpr  // Exponentiation.
+	| ('-'|'+') expr                    #unExpr     // Conversion to negative/positive.
+    | 'not' expr                        #unExpr     // Negation.
+	| left=expr '@'  right=expr         #matExpr    // Matrix multiplication.
+	| left=expr '..' right=expr         #dotExpr    // Dot product.
+	| left=expr '*'  right=expr         #multExpr   // Multiplication.
+	| left=expr '/'  right=expr         #divExpr    // Float division.
+	| left=expr '//' right=expr         #intDivExpr // Integer division.
+    | left=expr '+'  right=expr         #addExpr    // Addition.
+    | left=expr '-'  right=expr         #subExpr    // Subtraction.
+    | left=expr ('>'|'>='|'<'|'<='|'=='|'!=') right=expr  #relExpr // Relational operators.
+    | left=expr ('and') right=expr  #andExpr // Logical and.
+    | left=expr ('or') right=expr  #orExpr // Logical or.
+	| tok_id=ID              #tokIdExpr
+    | tok_str=STRING_LITERAL #tokStrExpr
+    | tok_bool=BOOL          #tokBoolExpr
+    | tok_int=INTEGER        #tokIntExpr
+    | tok_float=FLOAT        #tokFloatExpr
+    | tok_nan='NaN'          #tokNanExpr
 	;
 
 
-function_call: (ID'('expr(','expr)*')') ;  // Function call.
 
 flow_call: 'return' (expr)? ';';
 
@@ -69,7 +72,8 @@ STRING_LITERAL:  '"' (~["\\\r\n])* '"';
 //VECTOR_LITERAL:  '[' (ID | INTEGER | FLOAT)? (',' (ID | INTEGER | FLOAT | VECTOR_LITERAL))* ']';
 fragment DIGIT : [0-9] ;
 INTEGER        : ('-'?)DIGIT+ ;
-FLOAT          : ('-'?)(DIGIT+ '.' DIGIT* | '.' DIGIT+);
+FLOAT          : ('-'?)(DIGIT+ '.' DIGIT* | '.' DIGIT+) ;
+NUMBER         : (INTEGER | FLOAT) ;
 BOOL: 'true' | 'false';
 
 
