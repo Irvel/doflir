@@ -2,7 +2,7 @@ grammar Doflir;
 
 program: (fun_def | statement | NL)* EOF;
 
-statement: (assignment | condition | iterable | vec_filtering | fun_call)';';
+statement: (assignment | condition | iterable | vec_filtering | fun_call | declaration)';';
 
 declaration: ID '->' TYPE_NAME ;
 assignment: (ID|vec_indexing) '=' expr;
