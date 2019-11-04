@@ -4,14 +4,20 @@ class VariablesTable(object):
         self._vars = {}
         self._curr_address = 0
 
-    def search(self, address):
-        if address in self._vars:
-            return self._vars[address]
+    def search(self, var_name):
+        if var_name in self._vars:
+            return self._vars[var_name]
         else:
             return None
 
+    def exists(self, var_name):
+        if self.search(var_name):
+            return True
+        else:
+            return False
+
     def add_var(self, variable):
-        self._vars[variable.address] = variable
+        self._vars[variable.name] = variable
 
     def new_address(self):
         self._curr_address += 1
