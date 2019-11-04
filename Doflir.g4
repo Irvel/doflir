@@ -4,6 +4,7 @@ program: (fun_def | statement | NL)* EOF;
 
 statement: (assignment | condition | iterable | vec_filtering | fun_call)';';
 
+declaration: ID '->' TYPE_NAME ;
 assignment: (ID|vec_indexing) '=' expr;
 vec_indexing: ID '[' expr (',' expr)* ']';
 vec_filtering: (ID|vec_indexing) '{' expr (',' expr)* '}';

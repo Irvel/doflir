@@ -19,6 +19,11 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by DoflirParser#declaration.
+    def visitDeclaration(self, ctx:DoflirParser.DeclarationContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by DoflirParser#assignment.
     def visitAssignment(self, ctx:DoflirParser.AssignmentContext):
         return self.visitChildren(ctx)
