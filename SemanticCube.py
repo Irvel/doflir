@@ -27,70 +27,101 @@ class Ops(Enum):
     LT_EQ = "<="
     EQ = "=="
     NOT_EQ = "!="
+    ASSIGN = "="
 
 
-NUM_OPS = [
-    Ops.PLUS, Ops.MINUS, Ops.MULT, Ops.DIV, Ops.INT_DIV, Ops.POW,
-]
+class SemanticCube(object):
 
-VEC_OPS = [
-    Ops.MAT_MULT, Ops.DOT, Ops.PLUS, Ops.MINUS,
-]
+    def __init__(self):
+        self._setup_op_categories()
+        self._setup_cube()
+        self._setup_enums_map()
 
-REL_OPS = [
-    Ops.AND, Ops.OR, Ops.GT, Ops.GT_EQ, Ops.LT, Ops.LT_EQ, Ops.EQ, Ops.NOT_EQ,
-]
+    def _setup_op_categories(self):
+        self._NUM_OPS = [
+            Ops.PLUS, Ops.MINUS, Ops.MULT, Ops.DIV, Ops.INT_DIV, Ops.POW,
+        ]
 
+        self._VEC_OPS = [
+            Ops.MAT_MULT, Ops.DOT, Ops.PLUS, Ops.MINUS,
+        ]
 
-def make_cube():
-    semantic_cube = {}
-    # Setup numeric operations results.
-    for op in NUM_OPS:
-        int_op = (VarTypes.INT, VarTypes.INT, op)
-        semantic_cube[int_op] = VarTypes.INT
+        self._REL_OPS = [
+            Ops.AND, Ops.OR, Ops.GT, Ops.GT_EQ, Ops.LT, Ops.LT_EQ, Ops.EQ, Ops.NOT_EQ,
+        ]
 
-        float_op = (VarTypes.FLOAT, VarTypes.FLOAT, op)
-        semantic_cube[float_op] = VarTypes.FLOAT
+    def _setup_enums_map(self):
+        self._ops_map = {}
+        for op in Ops:
+            self._ops_map[op.value] = op
 
-        float_int_op = (VarTypes.FLOAT, VarTypes.INT, op)
-        semantic_cube[float_int_op] = VarTypes.FLOAT
+        self._var_types_map = {}
+        for var_type in VarTypes:
+            self._var_types_map[var_type.value] = var_type
 
-        int_float_op = (VarTypes.INT, VarTypes.FLOAT, op)
-        semantic_cube[int_float_op] = VarTypes.FLOAT
+    def _setup_cube(self):
+        semantic_cube = {}
+        # Setup numeric operations results.
+        for op in self._NUM_OPS:
+            int_op = (VarTypes.INT, VarTypes.INT, op)
+            semantic_cube[int_op] = VarTypes.INT
 
-    # Division always produces float.
-    div_op = (VarTypes.INT, VarTypes.INT, Ops.DIV)
-    semantic_cube[div_op] = VarTypes.FLOAT
+            float_op = (VarTypes.FLOAT, VarTypes.FLOAT, op)
+            semantic_cube[float_op] = VarTypes.FLOAT
 
-    # Int division always produces int.
-    div_op = (VarTypes.FLOAT, VarTypes.INT, Ops.INT_DIV)
-    semantic_cube[div_op] = VarTypes.INT
-    div_op = (VarTypes.INT, VarTypes.FLOAT, Ops.INT_DIV)
-    semantic_cube[div_op] = VarTypes.INT
-    div_op = (VarTypes.FLOAT, VarTypes.FLOAT, Ops.INT_DIV)
-    semantic_cube[div_op] = VarTypes.INT
+            float_int_op = (VarTypes.FLOAT, VarTypes.INT, op)
+            semantic_cube[float_int_op] = VarTypes.FLOAT
 
-    # Setup boolean results for relational operations.
-    for op in REL_OPS:
-        bool_op = (VarTypes.BOOL, VarTypes.BOOL, op)
-        semantic_cube[bool_op] = VarTypes.BOOL
+            int_float_op = (VarTypes.INT, VarTypes.FLOAT, op)
+            semantic_cube[int_float_op] = VarTypes.FLOAT
 
-    # String concatenation.
-    str_op = (VarTypes.STRING, VarTypes.STRING, Ops.PLUS)
-    semantic_cube[str_op] = VarTypes.STRING
+        # Division always produces float.
+        div_op = (VarTypes.INT, VarTypes.INT, Ops.DIV)
+        semantic_cube[div_op] = VarTypes.FLOAT
 
-    # Setup results for vector operations.
-    for op in VEC_OPS:
-        vec_op = (VarTypes.VECTOR, VarTypes.VECTOR, op)
-        semantic_cube[vec_op] = VarTypes.VECTOR
+        # Int division always produces int.
+        div_op = (VarTypes.FLOAT, VarTypes.INT, Ops.INT_DIV)
+        semantic_cube[div_op] = VarTypes.INT
+        div_op = (VarTypes.INT, VarTypes.FLOAT, Ops.INT_DIV)
+        semantic_cube[div_op] = VarTypes.INT
+        div_op = (VarTypes.FLOAT, VarTypes.FLOAT, Ops.INT_DIV)
+        semantic_cube[div_op] = VarTypes.INT
 
-    return semantic_cube
+        # Setup boolean results for relational operations.
+        for op in self._REL_OPS:
+            bool_op = (VarTypes.BOOL, VarTypes.BOOL, op)
+            semantic_cube[bool_op] = VarTypes.BOOL
 
+        # String concatenation.
+        str_op = (VarTypes.STRING, VarTypes.STRING, Ops.PLUS)
+        semantic_cube[str_op] = VarTypes.STRING
 
-def result_type(operand_1, operand_2, operator):
-    semantic_cube = make_cube()
-    target = (operand_1.data_type, operand_2.data_type, operator)
-    if target in semantic_cube:
-        return semantic_cube[target]
-    else:
-        return None
+        # Setup results for vector operations.
+        for op in self._VEC_OPS:
+            vec_op = (VarTypes.VECTOR, VarTypes.VECTOR, op)
+            semantic_cube[vec_op] = VarTypes.VECTOR
+
+        self._cube = semantic_cube
+
+    def result_type(self, op_1_type, op_2_type, operator):
+        target = (op_1_type, op_2_type, operator)
+        if target in self._cube:
+            return self._cube[target]
+        else:
+            return None
+
+    def result_type_str(self, op_1_type, op_2_type, operator):
+        op_1_enum = self.type_to_enum(type_str=op_1_type)
+        op_2_enum = self.type_to_enum(type_str=op_2_type)
+        operator_enum = self.op_to_enum(op_str=operator)
+        return self.result_type(
+            op_1_type=op_1_enum,
+            op_2_type=op_2_enum,
+            operator=operator_enum
+        )
+
+    def type_to_enum(self, type_str):
+        return self._var_types_map[type_str]
+
+    def op_to_enum(self, op_str):
+        return self._ops_map[op_str]

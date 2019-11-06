@@ -24,6 +24,10 @@ class VariablesTable(object):
         var = Variable(name=name, data_type=var_type, address=address)
         self.add_var(variable=var)
 
+    def declare_constant(self, name, var_type):
+        # self.add_var
+        pass
+
     def new_address(self):
         self._curr_address += 1
         return self._curr_address
@@ -44,3 +48,10 @@ class Variable(object):
         self.name = name
         self.data_type = data_type
         self.address = address
+
+
+class Constant(Variable):
+    """docstring for Constant"""
+    def __init__(self, name, data_type, address, value):
+        super().__init__(name, data_type, address)
+        self.value = value

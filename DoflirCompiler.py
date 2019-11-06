@@ -4,6 +4,7 @@ from DoflirCustomVisitor import DoflirCustomVisitor
 
 import antlr4
 import argparse
+import logging
 import SemanticCube
 import VariablesTable
 
@@ -36,5 +37,7 @@ def doflir_compile(input_code):
     # parser.addErrorListener(error_listener)
     visitor.visit(tree=parser.program())
 
+
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     main()
