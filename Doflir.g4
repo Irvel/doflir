@@ -18,30 +18,35 @@ parameters: (ID | ID '=' expr) (',' parameters)*;
 vec_list: '['(expr? | (expr (',' expr)*))']';
 
 expr
-	: '('expr')' #parenExpr
-	| vec_indexing #unExpr
-	| vec_filtering #unExpr
-	| fun_call #unExpr
-	| vec_list #unExpr
-	| <assoc=right> left=expr '^' right=expr  #powExpr  // Exponentiation.
-	| ('-'|'+') expr                    #unExpr     // Conversion to negative/positive.
-    | 'not' expr                        #unExpr     // Negation.
-	| left=expr '@'  right=expr         #matExpr    // Matrix multiplication.
-	| left=expr '..' right=expr         #dotExpr    // Dot product.
-	| left=expr '*'  right=expr         #multExpr   // Multiplication.
-	| left=expr '/'  right=expr         #divExpr    // Float division.
-	| left=expr '//' right=expr         #intDivExpr // Integer division.
-    | left=expr '+'  right=expr         #addExpr    // Addition.
-    | left=expr '-'  right=expr         #subExpr    // Subtraction.
-    | left=expr ('>'|'>='|'<'|'<='|'=='|'!=') right=expr  #relExpr // Relational operators.
-    | left=expr ('and') right=expr  #andExpr // Logical and.
-    | left=expr ('or') right=expr  #orExpr // Logical or.
-	| tok_id=ID              #tokIdExpr
-    | tok_str=STRING_LITERAL #tokStrExpr
-    | tok_bool=BOOL          #tokBoolExpr
-    | tok_int=INTEGER        #tokIntExpr
-    | tok_float=FLOAT        #tokFloatExpr
-    | tok_nan='NaN'          #tokNanExpr
+	: '('expr')'                   #parenExpr
+	| vec_indexing                 #unExpr
+	| vec_filtering                #unExpr
+	| fun_call                     #unExpr
+	| vec_list                     #unExpr
+	| <assoc=right> expr '^' expr  #powExpr    // Exponentiation.
+	| ('-'|'+') expr               #unExpr     // Conversion to negative/positive.
+    | 'not' expr                   #unExpr     // Negation.
+	| expr  '@'  expr              #matExpr    // Matrix multiplication.
+	| expr '..'  expr              #dotExpr    // Dot product.
+	| expr  '*'  expr              #multExpr   // Multiplication.
+	| expr  '/'  expr              #divExpr    // Float division.
+	| expr '//'  expr              #intDivExpr // Integer division.
+    | expr  '+'  expr              #addExpr    // Addition.
+    | expr  '-'  expr              #subExpr    // Subtraction.
+    | expr  '>'  expr              #gtExpr     // Logical greater than.
+    | expr '>='  expr              #gtEqExpr   // Logical or equal greater than.
+    | expr  '<'  expr              #ltExpr     // Logical less than.
+    | expr '<='  expr              #ltEqExpr   // Logical less or equal than.
+    | expr '=='  expr              #eqExpr     // Logical equal.
+    | expr '!='  expr              #notEqExpr  // Logical not equal.
+    | expr 'and' expr              #andExpr    // Logical and.
+    | expr  'or' expr              #orExpr     // Logical or.
+	| tok_id=ID                    #tokIdExpr
+    | tok_str=STRING_LITERAL       #tokStrExpr
+    | tok_bool=BOOL                #tokBoolExpr
+    | tok_int=INTEGER              #tokIntExpr
+    | tok_float=FLOAT              #tokFloatExpr
+    | tok_nan='NaN'                #tokNanExpr
 	;
 
 
