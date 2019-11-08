@@ -14,18 +14,18 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by DoflirParser#main_def.
+    def visitMain_def(self, ctx:DoflirParser.Main_defContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#proc_body.
+    def visitProc_body(self, ctx:DoflirParser.Proc_bodyContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by DoflirParser#statement.
     def visitStatement(self, ctx:DoflirParser.StatementContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by DoflirParser#declaration.
-    def visitDeclaration(self, ctx:DoflirParser.DeclarationContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by DoflirParser#declaration_stmt.
-    def visitDeclaration_stmt(self, ctx:DoflirParser.Declaration_stmtContext):
         return self.visitChildren(ctx)
 
 
@@ -34,13 +34,23 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by DoflirParser#vec_indexing.
-    def visitVec_indexing(self, ctx:DoflirParser.Vec_indexingContext):
+    # Visit a parse tree produced by DoflirParser#declaration_stmt.
+    def visitDeclaration_stmt(self, ctx:DoflirParser.Declaration_stmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#declaration.
+    def visitDeclaration(self, ctx:DoflirParser.DeclarationContext):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by DoflirParser#vec_filtering.
     def visitVec_filtering(self, ctx:DoflirParser.Vec_filteringContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#vec_indexing.
+    def visitVec_indexing(self, ctx:DoflirParser.Vec_indexingContext):
         return self.visitChildren(ctx)
 
 
@@ -186,11 +196,6 @@ class DoflirVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by DoflirParser#flow_call.
     def visitFlow_call(self, ctx:DoflirParser.Flow_callContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by DoflirParser#proc_body.
-    def visitProc_body(self, ctx:DoflirParser.Proc_bodyContext):
         return self.visitChildren(ctx)
 
 

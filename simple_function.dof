@@ -10,3 +10,8 @@ define three -> float (esp -> float, cop -> float) {
 	cop = 1.344 + 2;
 	return 2.0 * esp + cop;
 }
+
+define main {
+	test -> int;
+	test = 2;
+}

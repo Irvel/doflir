@@ -1,14 +1,18 @@
 grammar Doflir;
 
-program: (fun_def | statement | NL)* EOF;
+program: (fun_def| NL)* main_def EOF;
+
+main_def: 'define main''{' proc_body '}' ;
+
+proc_body: (NL*|statement) (NL|statement)*;
 
 statement: (assignment | condition | iterable | vec_filtering | fun_call | declaration_stmt);
 
-declaration: ID '->' TYPE_NAME ;
-declaration_stmt: declaration ';' ;
 assignment: (ID|vec_indexing) '=' expr ';' ;
-vec_indexing: ID '[' expr (',' expr)* ']' ';' ;
+declaration_stmt: declaration ';' ;
+declaration: ID '->' TYPE_NAME ;
 vec_filtering: (ID|vec_indexing) '{' expr (',' expr)* '}' ';';
+vec_indexing: ID '[' expr (',' expr)* ']' ';' ;
 fun_call: ID'('expr(','expr)*')' ';' ;  // Function call.
 
 fun_def
@@ -53,8 +57,6 @@ expr
 
 
 flow_call: 'return' (expr)? ';' NL*;
-
-proc_body: (NL*|statement) (NL|statement)*;
 
 condition
 	: 'if' '(' expr ')' '{' proc_body '}'   #ifStmt

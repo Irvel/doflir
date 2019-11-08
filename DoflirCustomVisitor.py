@@ -41,10 +41,18 @@ class DoflirCustomVisitor(DoflirVisitor):
         return f"t{data_type.value[0]}_{self._temp_num}"
 
     def visitProgram(self, ctx: DoflirParser.ProgramContext):
-        exprText = ctx.getText()
-        print(f"Expression after tokenization = {exprText}")
+        # exprText = ctx.getText()
+        # print(f"Expression after tokenization = {exprText}")
         # print(ctx.fun_def())
         # print(ctx.statement())
+        goto_quad = Quad(
+            op=Ops.GOTO,
+            left="",
+            right="",
+            res=""
+        )
+        self.quads.append(goto_quad)
+        self.pending_jumps_stack.append(self.current_quad_idx)
 
         self.visitChildren(ctx)
         for idx, q in enumerate(self.quads):
@@ -337,10 +345,12 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
         self.quads.append(ret_quad)
 
+    def visitMain_def(self, ctx: DoflirParser.Main_defContext):
+        pending_goto = self.pending_jumps_stack.pop()
+        self.quads[pending_goto].res = self.current_quad_idx + 1
+        self.visitChildren(ctx)
+
     # Visit a parse tree produced by DoflirParser#condition.
     def visitCondition(self, ctx: DoflirParser.ConditionContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by DoflirParser#iterable.
-    def visitIterable(self, ctx: DoflirParser.IterableContext):
-        return self.visitChildren(ctx)

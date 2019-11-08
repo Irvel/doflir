@@ -1,8 +1,10 @@
-three -> int;
-three = 3;
-if (1 > 2) {
-	result -> int;
-	result = 1 + 4 * 9;
-	three = result * three;
+define main {
+    three -> int;
+    three = 3;
+    if (1 > 2) {
+        result -> int;
+        result = 1 + 4 * 9;
+        three = result * three;
+    }
+    three = three + 8;
 }
-three = three + 8;

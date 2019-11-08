@@ -1,3 +1,5 @@
-result -> bool;
-result = 1 > 2;
-result = 8 - 2 > (3 + (4 - 2));
+define main {
+    result -> bool;
+    result = 1 > 2;
+    result = 8 - 2 > (3 + (4 - 2));
+}
