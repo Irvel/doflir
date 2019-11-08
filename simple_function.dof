@@ -1,0 +1,12 @@
+define two -> float () {
+	return 8.0;
+}
+
+define one -> float (pi -> float, tau -> float) {
+	return 2.0 * pi + tau;
+}
+
+define three -> float (esp -> float, cop -> float) {
+	cop = 1.344 + 2;
+	return 2.0 * esp + cop;
+}

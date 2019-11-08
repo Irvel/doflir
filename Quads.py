@@ -12,8 +12,11 @@ class Quad:
 
     def __str__(self):
         return (
-            f"({self.op.value:2} {self.left:>4} "
-            f"{self.right:>4} {self.res:>6})")
+            f"({self.op.value:6} {self.left:>7} "
+            f"{self.right:>7} {self.res:>7})")
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class Quads:

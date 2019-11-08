@@ -2,18 +2,19 @@ grammar Doflir;
 
 program: (fun_def | statement | NL)* EOF;
 
-statement: (assignment | condition | iterable | vec_filtering | fun_call | declaration)';';
+statement: (assignment | condition | iterable | vec_filtering | fun_call | declaration_stmt);
 
 declaration: ID '->' TYPE_NAME ;
-assignment: (ID|vec_indexing) '=' expr;
-vec_indexing: ID '[' expr (',' expr)* ']';
-vec_filtering: (ID|vec_indexing) '{' expr (',' expr)* '}';
-fun_call: ID'('expr(','expr)*')';  // Function call.
+declaration_stmt: declaration ';' ;
+assignment: (ID|vec_indexing) '=' expr ';' ;
+vec_indexing: ID '[' expr (',' expr)* ']' ';' ;
+vec_filtering: (ID|vec_indexing) '{' expr (',' expr)* '}' ';';
+fun_call: ID'('expr(','expr)*')' ';' ;  // Function call.
 
 fun_def
-	: 'define' ID '->' TYPE_NAME '(' parameters? ')' '{' statement* flow_call '}'  // Function definition.
+	: 'define' ID '->' TYPE_NAME '(' parameters? ')' '{' proc_body flow_call '}'  // Function definition.
 	;
-parameters: (ID | ID '=' expr) (',' parameters)*;
+parameters: declaration (',' declaration)*;
 
 vec_list: '['(expr? | (expr (',' expr)*))']';
 
@@ -51,16 +52,18 @@ expr
 
 
 
-flow_call: 'return' (expr)? ';';
+flow_call: 'return' (expr)? ';' NL*;
+
+proc_body: (NL*|statement) (NL|statement)*;
 
 condition
-	: 'if' '(' expr ')' '{' statement '}'
-    | 'if' '(' expr ')' '{' statement '}' 'else' '{' statement '}'
+	: 'if' '(' expr ')' '{' proc_body '}'   #ifStmt
+    | 'if' '(' expr ')' '{' proc_body '}' (NL)* 'else' '{' proc_body '}' #ifElseStmt
     ;
 
 iterable
-	: 'for' '(' expr 'in' expr ')' '{' statement '}'
-    | 'while' '(' expr ')' '{' statement '}'
+	: 'for' '(' expr 'in' expr ')' '{' proc_body '}'   #forStmt
+    | 'while' '(' expr ')' '{' proc_body '}'  			#whileStmt
     ;
 
 TYPE_NAME
@@ -84,6 +87,6 @@ BOOL: 'true' | 'false';
 
 
 BLOCK_COMMENT: '/*'.*?'*/' -> skip;
-LINE_COMMENT: '//' ~[\r\n]* -> skip;
+LINE_COMMENT: '#' ~[\r\n]* -> skip;
 NL: ('\r'? '\n' | '\r') ;  // Windows and UNIX newlines.
 WHITESPACE: [ \t\r\n\u000C]+ -> skip ;  // Ignore whitespace.

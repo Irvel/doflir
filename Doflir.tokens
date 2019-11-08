@@ -44,8 +44,8 @@ BLOCK_COMMENT=43
 LINE_COMMENT=44
 NL=45
 WHITESPACE=46
-';'=1
-'->'=2
+'->'=1
+';'=2
 '='=3
 '['=4
 ','=5

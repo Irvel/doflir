@@ -28,6 +28,12 @@ class Ops(Enum):
     EQ = "=="
     NOT_EQ = "!="
     ASSIGN = "="
+    GOTO = "GOTO"
+    GOTOF = "GOTOF"
+    RETURN = "RETURN"
+    GOSUB = "GOSUB"
+    PARAM = "PARAM"
+    ERA = "ERA"
 
 
 class SemanticCube(object):
@@ -47,7 +53,8 @@ class SemanticCube(object):
         ]
 
         self._REL_OPS = [
-            Ops.AND, Ops.OR, Ops.GT, Ops.GT_EQ, Ops.LT, Ops.LT_EQ, Ops.EQ, Ops.NOT_EQ,
+            Ops.AND, Ops.OR, Ops.GT, Ops.GT_EQ, Ops.LT, Ops.LT_EQ, Ops.EQ,
+            Ops.NOT_EQ,
         ]
 
     def _setup_enums_map(self):
@@ -91,6 +98,18 @@ class SemanticCube(object):
         for op in self._REL_OPS:
             bool_op = (VarTypes.BOOL, VarTypes.BOOL, op)
             semantic_cube[bool_op] = VarTypes.BOOL
+
+            int_op = (VarTypes.INT, VarTypes.INT, op)
+            semantic_cube[int_op] = VarTypes.BOOL
+
+            float_op = (VarTypes.FLOAT, VarTypes.FLOAT, op)
+            semantic_cube[float_op] = VarTypes.BOOL
+
+            float_int_op = (VarTypes.FLOAT, VarTypes.INT, op)
+            semantic_cube[float_int_op] = VarTypes.BOOL
+
+            int_float_op = (VarTypes.INT, VarTypes.FLOAT, op)
+            semantic_cube[int_float_op] = VarTypes.BOOL
 
         # String concatenation.
         str_op = (VarTypes.STRING, VarTypes.STRING, Ops.PLUS)

@@ -1,0 +1,16 @@
+two -> int;
+three -> int;
+three = 3;
+if (1 > 2) {
+	result -> int;
+	result = 1 + 4 * 9;
+	three = result * three;
+}
+else {
+	three = (4 * three + 2 // 3 * (8 * three + (2 + 10))) + (292 - 29);
+	if (three > 29 and three // 99 < 21) {
+		two = 2 + 2 * 3;
+	}
+}
+three = three + 8;
+two = three + two;

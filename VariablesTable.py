@@ -16,13 +16,12 @@ class VariablesTable(object):
         else:
             return False
 
-    def add_var(self, variable):
+    def _add_var(self, variable):
         self._vars[variable.name] = variable
 
     def declare_var(self, name, var_type):
-        address = self.new_address
-        var = Variable(name=name, data_type=var_type, address=address)
-        self.add_var(variable=var)
+        var = Variable(name=name, data_type=var_type, address=self.new_address)
+        self._add_var(variable=var)
 
     def declare_constant(self, name, var_type):
         # self.add_var
@@ -33,13 +32,45 @@ class VariablesTable(object):
         return self._curr_address
 
 
+class FunDir(object):
+    """docstring for FunDir"""
+    def __init__(self):
+        super(FunDir, self).__init__()
+        self._fun_dir = {}
+
+    def search(self, fun_name):
+        if fun_name in self._fun_dir:
+            return self._fun_dir[fun_name]
+        else:
+            return None
+
+    def exists(self, fun_name):
+        if self.search(fun_name):
+            return True
+        else:
+            return False
+
+    def _add_fun(self, function):
+        self._fun_dir[function.name] = function
+
+    def define_fun(self, name, ret_type, params, address):
+        fun = Function(
+            name=name,
+            ret_type=ret_type,
+            params=params,
+            address=address
+        )
+        self._add_fun(function=fun)
+
+
 class Function(object):
     """docstring for Function"""
-    def __init__(self, name, ret_type, address):
+    def __init__(self, name, ret_type, params, address):
         self.name = name
         self.ret_type = ret_type
-        # self.ret_value = ret_value
+        self.params = params
         self.address = address
+        self.params = []
 
 
 class Variable(object):

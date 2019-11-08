@@ -1,7 +1,10 @@
 from DoflirParser import DoflirParser
 from DoflirVisitor import DoflirVisitor
 from VariablesTable import VariablesTable
+from VariablesTable import FunDir
 from VariablesTable import Variable
+from VariablesTable import Function
+from VariablesTable import Constant
 from SemanticCube import Ops
 from SemanticCube import SemanticCube
 from SemanticCube import VarTypes
@@ -10,21 +13,28 @@ from collections import deque
 
 import logging
 
+
 class DoflirCustomVisitor(DoflirVisitor):
 
     def __init__(self):
         self.cube = SemanticCube()
         self.global_table = VariablesTable()
+        self.fun_dir = FunDir()
         self.scope_stack = deque()
         self.scope_stack.append(self.global_table)
         self.operands_stack = deque()
         self.operators_stack = deque()
+        self.pending_jumps_stack = deque()
         self.quads = []
         self._temp_num = 0
 
     @property
     def curr_scope(self):
         return self.scope_stack[-1]
+
+    @property
+    def current_quad_idx(self):
+        return len(self.quads) - 1
 
     def new_temp(self, data_type):
         self._temp_num += 1
@@ -36,7 +46,9 @@ class DoflirCustomVisitor(DoflirVisitor):
         # print(ctx.fun_def())
         # print(ctx.statement())
 
-        return self.visitChildren(ctx)
+        self.visitChildren(ctx)
+        for idx, q in enumerate(self.quads):
+            print(f"{idx:>2}", q)
 
     # Visit a parse tree produced by DoflirParser#statement.
     def visitStatement(self, ctx: DoflirParser.StatementContext):
@@ -54,10 +66,6 @@ class DoflirCustomVisitor(DoflirVisitor):
     def visitFun_call(self, ctx: DoflirParser.Fun_callContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by DoflirParser#fun_def.
-    def visitFun_def(self, ctx: DoflirParser.Fun_defContext):
-        return self.visitChildren(ctx)
-
     # Visit a parse tree produced by DoflirParser#parameters.
     def visitParameters(self, ctx: DoflirParser.ParametersContext):
         return self.visitChildren(ctx)
@@ -67,29 +75,48 @@ class DoflirCustomVisitor(DoflirVisitor):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by DoflirParser#expr.
-    def visitExpr(self, ctx: DoflirParser.ExprContext):
-        exprText = ctx.getText()
-        print(dir(ctx))
-        print(f"Expression after tokenization = {exprText}")
-        if ctx.NUMBER():
-            num = ctx.NUMBER().getText()
-            print(num)
-            return num
-        return self.visitChildren(ctx)
+    # def visitExpr(self, ctx: DoflirParser.ExprContext):
+        # exprText = ctx.getText()
+        # print(dir(ctx))
+        # print(f"Expression after tokenization = {exprText}")
+        # if ctx.NUMBER():
+        #     num = ctx.NUMBER().getText()
+        #     print(num)
+        #     return num
+        # return self.visitChildren(ctx)
 
-    # def visitBinExpr(self, ctx: DoflirParser.BinExprContext):
-    #     return self.visitChildren(ctx)
+    def visitTokIdExpr(self, ctx: DoflirParser.TokIdExprContext):
+        identifier = ctx.ID().getText()
+        variable = self.curr_scope.search(identifier)
+        if not variable:
+            raise Exception(
+                f"Attempted to use undeclared variable {identifier}"
+            )
+        self.operands_stack.append((identifier, variable.data_type))
 
-    # Visit a parse tree produced by DoflirParser#tokExpr.
-    # def visitTokExpr(self, ctx:DoflirParser.TokExprContext):
-    #     tok = ctx.tok
-    #     # print(dir(tok))
-    #     print(tok.text)
-    #     return self.visitChildren(ctx)
+    def visitTokIntExpr(self, ctx: DoflirParser.TokIntExprContext):
+        self.operands_stack.append(
+            (int(ctx.getText()), VarTypes.INT)
+        )
 
-    def visitDeclaration(self, ctx: DoflirParser.DeclarationContext):
-        var_id = ctx.ID().getText()
-        var_type = ctx.TYPE_NAME().getText().upper()
+    def visitTokFloatExpr(self, ctx: DoflirParser.TokFloatExprContext):
+        self.operands_stack.append(
+            (float(ctx.getText()), VarTypes.FLOAT)
+        )
+
+    def visitTokStrExpr(self, ctx: DoflirParser.TokStrExprContext):
+        self.operands_stack.append(
+            (str(ctx.getText()), VarTypes.STRING)
+        )
+
+    def visitTokBoolExpr(self, ctx: DoflirParser.TokBoolExprContext):
+        self.operands_stack.append(
+            (bool(ctx.getText().capitalize()), VarTypes.BOOL)
+        )
+
+    def visitDeclaration_stmt(self, ctx: DoflirParser.DeclarationContext):
+        var_id = ctx.declaration().ID().getText()
+        var_type = ctx.declaration().TYPE_NAME().getText().upper()
         logging.debug(f"Declaring variable ({var_id}, {var_type})")
         if self.curr_scope.exists(var_id):
             raise Exception(f"Variable with ID {var_id} already used")
@@ -106,22 +133,20 @@ class DoflirCustomVisitor(DoflirVisitor):
             if not variable:
                 raise Exception(f"Attempted to use undeclared variable {identifier}")
             self.operands_stack.append((identifier, variable.data_type))
-            # self.operands_stack.append(ctx.ID().getText())
             self.operators_stack.append(Ops.ASSIGN)
-            # print("I am being assigned", ctx.ID())
             self.visitChildren(ctx)
             if self.operators_stack and self.operators_stack[-1] == Ops.ASSIGN:
                 op_1, op_1_type = self.operands_stack.pop()
                 op_2, op_2_type = self.operands_stack.pop()
                 assert op_1_type == op_2_type
-                new_quad = Quad(
+                assign_quad = Quad(
                     op=Ops.ASSIGN,
                     left=op_1,
-                    right="",
+                    right=" ",
                     res=op_2
                 )
-                print(new_quad)
-                self.quads.append(new_quad)
+                # print(new_quad)
+                self.quads.append(assign_quad)
             return
             var_name = ctx.ID().getText()
             value = ctx.expr()
@@ -159,7 +184,7 @@ class DoflirCustomVisitor(DoflirVisitor):
             right=op_2,
             res=temp_name
         )
-        print(new_quad)
+        # print(new_quad)
         self.quads.append(new_quad)
         self.operands_stack.append((temp_name, result_type))
 
@@ -167,53 +192,150 @@ class DoflirCustomVisitor(DoflirVisitor):
         if self.operators_stack and self.operators_stack[-1] == op:
             self.generate_bin_quad()
 
-    def visitAddExpr(self, ctx: DoflirParser.AddExprContext):
+    def visitBinOpExpr(self, ctx, operand):
         self.visit(ctx.expr(0))
-        self.try_op(op=Ops.PLUS)
-        self.operators_stack.append(Ops.PLUS)
+        self.try_op(op=operand)
+        self.operators_stack.append(operand)
         self.visit(ctx.expr(1))
-        self.try_op(op=Ops.PLUS)
+        self.try_op(op=operand)
 
     def visitMultExpr(self, ctx: DoflirParser.AddExprContext):
-        self.visit(ctx.expr(0))
-        self.try_op(op=Ops.MULT)
-        self.operators_stack.append(Ops.MULT)
-        self.visit(ctx.expr(1))
-        self.try_op(op=Ops.MULT)
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.MULT)
 
     def visitDivExpr(self, ctx: DoflirParser.AddExprContext):
-        self.visit(ctx.expr(0))
-        self.try_op(op=Ops.DIV)
-        self.operators_stack.append(Ops.DIV)
-        self.visit(ctx.expr(1))
-        self.try_op(op=Ops.DIV)
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.DIV)
 
-    def visitTokIdExpr(self, ctx: DoflirParser.TokIdExprContext):
-        identifier = ctx.ID().getText()
-        variable = self.curr_scope.search(identifier)
-        if not variable:
-            raise Exception(f"Attempted to use undeclared variable {identifier}")
-        self.operands_stack.append((identifier, variable.data_type))
+    def visitIntDivExpr(self, ctx: DoflirParser.IntDivExprContext):
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.INT_DIV)
 
-    # Visit a parse tree produced by DoflirParser#tokIntExpr.
-    def visitTokIntExpr(self, ctx: DoflirParser.TokIntExprContext):
-        num = int(ctx.tok_int.text)
-        self.operands_stack.append((num, VarTypes.INT))
-        # return
+    def visitAddExpr(self, ctx: DoflirParser.AddExprContext):
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.PLUS)
 
-    def visitTokFloatExpr(self, ctx: DoflirParser.TokFloatExprContext):
-        return float(ctx.tok_float.text), VarTypes.FLOAT
+    def visitSubExpr(self, ctx: DoflirParser.SubExprContext):
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.MINUS)
 
-    # Visit a parse tree produced by DoflirParser#tokStrExpr.
-    def visitTokStrExpr(self, ctx: DoflirParser.TokStrExprContext):
-        return ctx.tok_str.text, VarTypes.STRING
+    def visitGtExpr(self, ctx: DoflirParser.GtExprContext):
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.GT)
 
-    def visitTokBoolExpr(self, ctx: DoflirParser.TokBoolExprContext):
-        return bool(ctx.tok_bool.text.capitalize()), VarTypes.BOOL
+    def visitGtEqExpr(self, ctx: DoflirParser.GtEqExprContext):
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.GT_EQ)
 
-    # Visit a parse tree produced by DoflirParser#flow_call.
-    def visitFlow_call(self, ctx: DoflirParser.Flow_callContext):
-        return self.visitChildren(ctx)
+    def visitLtExpr(self, ctx: DoflirParser.LtExprContext):
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.LT)
+
+    def visitLtEqExpr(self, ctx: DoflirParser.LtEqExprContext):
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.LT_EQ)
+
+    def visitEqExpr(self, ctx: DoflirParser.EqExprContext):
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.EQ)
+
+    def visitNotEqExpr(self, ctx: DoflirParser.NotEqExprContext):
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.NOT_EQ)
+
+    def visitAndExpr(self, ctx: DoflirParser.AndExprContext):
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.AND)
+
+    def visitOrExpr(self, ctx: DoflirParser.OrExprContext):
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.OR)
+
+    def visitIfCondition(self, ctx):
+        self.visit(ctx.expr())
+        expr_res, expr_res_type = self.operands_stack.pop()
+        if expr_res_type is not VarTypes.BOOL:
+            raise Exception("Type mismatch with {expr_res} of type {expr_res_type}")
+        gotof_quad = Quad(
+            op=Ops.GOTOF,
+            left=expr_res,
+            right="",
+            res=""
+        )
+        self.quads.append(gotof_quad)
+        self.pending_jumps_stack.append(self.current_quad_idx)
+
+    def visitIfStmt(self, ctx: DoflirParser.IfStmtContext):
+        self.visitIfCondition(ctx)
+        self.visit(ctx.proc_body())
+        pending_gotof = self.pending_jumps_stack.pop()
+        self.quads[pending_gotof].res = self.current_quad_idx + 1
+        # TODO: Maybe don't do anything if the current_quad is the last?
+
+    def visitIfElseStmt(self, ctx: DoflirParser.IfElseStmtContext):
+        self.visitIfCondition(ctx)
+        self.visit(ctx.proc_body(0))
+        pending_goto = self.pending_jumps_stack.pop()
+        self.quads[pending_goto].res = self.current_quad_idx + 2
+        # Jump the Else statement
+        goto_quad = Quad(
+            op=Ops.GOTO,
+            left="",
+            right="",
+            res=""
+        )
+        self.quads.append(goto_quad)
+        self.pending_jumps_stack.append(self.current_quad_idx)
+        self.visit(ctx.proc_body(1))
+        pending_goto = self.pending_jumps_stack.pop()
+        self.quads[pending_goto].res = self.current_quad_idx + 1
+
+    def visitWhileStmt(self, ctx: DoflirParser.WhileStmtContext):
+        cond_quad_idx = self.current_quad_idx + 1
+        self.visitIfCondition(ctx)
+        self.visit(ctx.proc_body())
+        pending_gotof = self.pending_jumps_stack.pop()
+        self.quads[pending_gotof].res = self.current_quad_idx + 2
+        goto_quad = Quad(
+            op=Ops.GOTO,
+            left="",
+            right="",
+            res=cond_quad_idx
+        )
+        self.quads.append(goto_quad)
+
+    def visitFun_def(self, ctx: DoflirParser.Fun_defContext):
+        fun_id = ctx.ID().getText()
+        return_type = self.cube.type_to_enum(
+            type_str=ctx.TYPE_NAME().getText()
+        )
+
+        if self.global_table.exists(var_name=fun_id):
+            raise Exception("Cannot define function with variable of the same name")
+        if self.fun_dir.exists(fun_name=fun_id):
+            raise Exception("Cannot define two functions the same name")
+        # self.fun_dir.add(fun_id)
+        self.scope_stack.append(VariablesTable())
+        params = None
+        if ctx.parameters():
+            params = []
+            for param in ctx.parameters().declaration():
+                param_id = param.ID().getText()
+                param_type_str = param.TYPE_NAME().getText()
+                if self.global_table.exists(param_id):
+                    raise Exception(f"Parameter with ID {param_id} already globally used")
+                if self.fun_dir.exists(param_id) or fun_id == param_id:
+                    raise Exception(f"Parameter with ID {param_id} is same name of function")
+                param_type = self.cube.type_to_enum(type_str=param_type_str)
+                self.curr_scope.declare_var(name=param_id, var_type=param_type)
+                params.append((param_id, param_type))
+        self.fun_dir.define_fun(
+            name=fun_id,
+            ret_type=return_type,
+            params=params,
+            address=self.global_table.new_address
+        )
+        self.visit(ctx.proc_body())
+        ret_val = VarTypes.VOID
+        if ctx.flow_call().expr():
+            self.visit(ctx.flow_call().expr())
+            ret_val, actual_type = self.operands_stack.pop()
+            if return_type != actual_type:
+                raise Exception(f"Returning a different type than what was defined.")
+        ret_quad = Quad(
+            op=Ops.RETURN,
+            left=ret_val,
+            right="",
+            res=""
+        )
+        self.quads.append(ret_quad)
 
     # Visit a parse tree produced by DoflirParser#condition.
     def visitCondition(self, ctx: DoflirParser.ConditionContext):

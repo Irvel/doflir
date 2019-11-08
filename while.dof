@@ -1,0 +1,15 @@
+A -> int;
+B -> int;
+C -> int;
+D -> int;
+A = 1 + 2;
+while (A + B > D) {
+	if (A < B) {
+		A = 0;
+		B = B + D;
+	}
+	else {
+		C = A + B;
+	}
+}
+D = B + A * C;

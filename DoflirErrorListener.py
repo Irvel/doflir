@@ -9,6 +9,7 @@ class DoflirErrorListener(ErrorListener):
 
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
         self.output.write(f"Syntax error: {msg}")
+        raise Exception("Error")
         self._symbol = offendingSymbol.text
 
     @property
