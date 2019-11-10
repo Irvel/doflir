@@ -1,6 +1,6 @@
 grammar Doflir;
 
-program: (fun_def| NL)* main_def EOF;
+program: (fun_def| statement | NL)* main_def EOF;
 
 main_def: 'define main''{' proc_body '}' ;
 

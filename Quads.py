@@ -11,9 +11,23 @@ class Quad:
         self.res = res
 
     def __str__(self):
+        op = self.op.value
+        left = ""
+        if self.left:
+            left = f"{self.left.name}({self.left.address})"
+        right = ""
+        if self.right:
+            right = f"{self.right.name}({self.right.address})"
+        res = ""
+        if self.res:
+            if isinstance(self.res, int) or isinstance(self.res, str):
+                res = self.res
+            else:
+                res = f"{self.res.name}({self.res.address})"
         return (
-            f"({self.op.value:6} {self.left:>11} "
-            f"{self.right:>7} {self.res:>7})")
+            f"({op:7} {left:>13} "
+            f"{right:>14} {res:>14})"
+        )
 
     def __repr__(self):
         return self.__str__()

@@ -6,6 +6,7 @@ from VariablesTable import Variable
 from VariablesTable import Params
 from VariablesTable import Function
 from VariablesTable import Constant
+from VariablesTable import Temporal
 from SemanticCube import Ops
 from SemanticCube import SemanticCube
 from SemanticCube import VarTypes
@@ -48,15 +49,32 @@ class DoflirCustomVisitor(DoflirVisitor):
         # print(ctx.statement())
         goto_quad = Quad(
             op=Ops.GOTO,
-            left="",
-            right="",
-            res=""
+            left=None,
+            right=None,
+            res=None
         )
         self.quads.append(goto_quad)
         self.pending_jumps_stack.append(self.current_quad_idx)
 
         self.visitChildren(ctx)
+        self.print_stats()
 
+    def print_stats(self):
+        print(f"\n{'='*10} Global variables {'='*10}\n")
+        for var in self.global_table.variables:
+            print(f"+ {var.name:>7}, {var.data_type.value:>6}, {var.address:>9}")
+        print()
+        print(f"\n{'='*10} Function directory {'='*10}\n")
+        for fun in self.fun_dir.functions:
+            if fun.params:
+                print(f"- {fun.name:>7}, {fun.ret_type.value:>6}, "
+                      f"{str([p.param_id for p in fun.params]):>16}, "
+                      f"{fun.address:>9}")
+            else:
+                print(f"- {fun.name:>7}, {fun.ret_type.value:>6}, "
+                      f"{'[]':>16}, {fun.address:>9}")
+        print("\n")
+        print(f"\n{'='*10} Quadruples {'='*10}\n")
         for idx, q in enumerate(self.quads):
             print(f"{idx:>2}", q)
 
@@ -92,32 +110,54 @@ class DoflirCustomVisitor(DoflirVisitor):
         # return self.visitChildren(ctx)
 
     def visitTokIdExpr(self, ctx: DoflirParser.TokIdExprContext):
-        identifier = ctx.ID().getText()
-        variable = self.curr_scope.search(identifier)
-        if not variable:
+        var_id = ctx.ID().getText()
+        var = self.curr_scope.search(var_id) or self.global_table.search(var_id)
+        if not var:
             raise Exception(
-                f"Attempted to use undeclared variable {identifier}"
+                f"Attempted to use undeclared variable {var_id}"
             )
-        self.operands_stack.append((identifier, variable.data_type))
+        self.operands_stack.append(var)
 
     def visitTokIntExpr(self, ctx: DoflirParser.TokIntExprContext):
         self.operands_stack.append(
-            (int(ctx.getText()), VarTypes.INT)
+            self.global_table.declare_or_search(
+                value=int(ctx.getText()),
+                const_type=VarTypes.INT,
+                is_const=True,
+            )
         )
 
     def visitTokFloatExpr(self, ctx: DoflirParser.TokFloatExprContext):
         self.operands_stack.append(
-            (float(ctx.getText()), VarTypes.FLOAT)
+            self.global_table.declare_or_search(
+                value=float(ctx.getText()),
+                const_type=VarTypes.FLOAT,
+                is_const=True,
+            )
         )
 
     def visitTokStrExpr(self, ctx: DoflirParser.TokStrExprContext):
+        # self.operands_stack.append(
+        #     (str(ctx.getText())[1:-1], VarTypes.STRING)
+        # )
         self.operands_stack.append(
-            (str(ctx.getText())[1:-1], VarTypes.STRING)
+            self.global_table.declare_or_search(
+                value=str(ctx.getText())[1:-1],
+                const_type=VarTypes.STRING,
+                is_const=True,
+            )
         )
 
     def visitTokBoolExpr(self, ctx: DoflirParser.TokBoolExprContext):
+        # self.operands_stack.append(
+        #     (bool(ctx.getText().capitalize()), VarTypes.BOOL)
+        # )
         self.operands_stack.append(
-            (bool(ctx.getText().capitalize()), VarTypes.BOOL)
+            self.global_table.declare_or_search(
+                value=bool(ctx.getText().capitalize()),
+                const_type=VarTypes.BOOL,
+                is_const=True,
+            )
         )
 
     def visitDeclaration_stmt(self, ctx: DoflirParser.DeclarationContext):
@@ -126,8 +166,11 @@ class DoflirCustomVisitor(DoflirVisitor):
         logging.debug(f"Declaring variable ({var_id}, {var_type})")
         if self.curr_scope.exists(var_id):
             raise Exception(f"Variable with ID {var_id} already used")
+        is_glob = False
+        if len(self.scope_stack) == 1:
+            is_glob = True
         self.curr_scope.declare_var(
-            name=var_id, var_type=VarTypes[var_type]
+            name=var_id, var_type=VarTypes[var_type], is_glob=is_glob
         )
         return self.visitChildren(ctx)
 
@@ -135,20 +178,20 @@ class DoflirCustomVisitor(DoflirVisitor):
         if ctx.ID():
             # We need to do this again cause ID here is not an expr
             identifier = ctx.ID().getText()
-            variable = self.curr_scope.search(identifier)
+            variable = self.curr_scope.search(identifier) or self.global_table.search(identifier)
             if not variable:
                 raise Exception(f"Attempted to use undeclared variable {identifier}")
-            self.operands_stack.append((identifier, variable.data_type))
+            self.operands_stack.append(variable)
             self.operators_stack.append(Ops.ASSIGN)
             self.visitChildren(ctx)
             if self.operators_stack and self.operators_stack[-1] == Ops.ASSIGN:
-                op_1, op_1_type = self.operands_stack.pop()
-                op_2, op_2_type = self.operands_stack.pop()
-                assert op_1_type == op_2_type
+                op_1 = self.operands_stack.pop()
+                op_2 = self.operands_stack.pop()
+                assert op_1.data_type == op_2.data_type
                 assign_quad = Quad(
                     op=Ops.ASSIGN,
                     left=op_1,
-                    right=" ",
+                    right=None,
                     res=op_2
                 )
                 # print(new_quad)
@@ -171,28 +214,29 @@ class DoflirCustomVisitor(DoflirVisitor):
 
     def generate_bin_quad(self):
         operator = self.operators_stack.pop()
-        op_1, op_1_type = self.operands_stack.pop()
-        op_2, op_2_type = self.operands_stack.pop()
+        op_1 = self.operands_stack.pop()
+        op_2 = self.operands_stack.pop()
         result_type = self.cube.result_type(
-            op_1_type=op_1_type,
-            op_2_type=op_2_type,
+            op_1_type=op_1.data_type,
+            op_2_type=op_2.data_type,
             operator=operator
         )
         if not result_type:
             raise Exception(
-                f"Invalid operation: {op_1_type} {operator} {op_2_type} "
+                f"Invalid operation: {op_1.data_type} {operator} {op_2.data_type} "
                 "is not a valid operation."
             )
-        temp_name = self.new_temp(data_type=result_type)
+        # temp_name = self.new_temp(data_type=result_type)
+        result_tmp = self.curr_scope.make_temp(temp_type=result_type)
         new_quad = Quad(
             op=operator,
             left=op_1,
             right=op_2,
-            res=temp_name
+            res=result_tmp
         )
         # print(new_quad)
         self.quads.append(new_quad)
-        self.operands_stack.append((temp_name, result_type))
+        self.operands_stack.append(result_tmp)
 
     def try_op(self, op):
         if self.operators_stack and self.operators_stack[-1] == op:
@@ -246,14 +290,14 @@ class DoflirCustomVisitor(DoflirVisitor):
 
     def visitIfCondition(self, ctx):
         self.visit(ctx.expr())
-        expr_res, expr_res_type = self.operands_stack.pop()
-        if expr_res_type is not VarTypes.BOOL:
+        expr_res = self.operands_stack.pop()
+        if expr_res.data_type is not VarTypes.BOOL:
             raise Exception("Type mismatch with {expr_res} of type {expr_res_type}")
         gotof_quad = Quad(
             op=Ops.GOTOF,
             left=expr_res,
-            right="",
-            res=""
+            right=None,
+            res=None
         )
         self.quads.append(gotof_quad)
         self.pending_jumps_stack.append(self.current_quad_idx)
@@ -273,9 +317,9 @@ class DoflirCustomVisitor(DoflirVisitor):
         # Jump the Else statement
         goto_quad = Quad(
             op=Ops.GOTO,
-            left="",
-            right="",
-            res=""
+            left=None,
+            right=None,
+            res=None
         )
         self.quads.append(goto_quad)
         self.pending_jumps_stack.append(self.current_quad_idx)
@@ -291,8 +335,8 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.quads[pending_gotof].res = self.current_quad_idx + 2
         goto_quad = Quad(
             op=Ops.GOTO,
-            left="",
-            right="",
+            left=None,
+            right=None,
             res=cond_quad_idx
         )
         self.quads.append(goto_quad)
@@ -327,31 +371,34 @@ class DoflirCustomVisitor(DoflirVisitor):
             name=fun_id,
             ret_type=return_type,
             params=params,
-            address=self.global_table.new_address
+            address=self.global_table.new_address(
+                v_type=return_type,
+                is_glob=True,
+            )
         )
         self.visit(ctx.proc_body())
         ret_val = VarTypes.VOID
         if ctx.flow_call().expr():
             self.visit(ctx.flow_call().expr())
-            ret_val, actual_type = self.operands_stack.pop()
-            if return_type != actual_type:
+            ret_val = self.operands_stack.pop()
+            if return_type != ret_val.data_type:
                 raise Exception(f"Returning a different type than what was defined.")
-        ret_quad = Quad(Ops.RETURN, "", "", ret_val)
+        ret_quad = Quad(Ops.RETURN, None, None, ret_val)
         self.quads.append(ret_quad)
-        ret_quad = Quad(Ops.ENDP, "", "", "")
+        ret_quad = Quad(Ops.ENDPROC, None, None, None)
         self.quads.append(ret_quad)
+        self.scope_stack.pop()
 
     def visitFun_call(self, ctx: DoflirParser.Fun_callContext):
         fun_id = ctx.ID().getText()
         target_fun = self.fun_dir.search(fun_name=fun_id)
-        print(target_fun.name, target_fun.ret_type, target_fun.params)
         if not target_fun:
             raise Exception(f"\"{fun_id}\" Has not been defined.")
         era_quad = Quad(
             op=Ops.ERA,
-            left=fun_id,
-            right="",
-            res=""
+            left=target_fun,
+            right=None,
+            res=None
         )
         self.quads.append(era_quad)
 
@@ -363,13 +410,13 @@ class DoflirCustomVisitor(DoflirVisitor):
                 par_num = 1
                 for expr, param in zip(ctx.expr_list().expr(), target_fun.params):
                     self.visit(expr)
-                    expr_res, expr_res_type = self.operands_stack.pop()
+                    expr_res = self.operands_stack.pop()
 
-                    assert expr_res_type == param.param_type
+                    assert expr_res.data_type == param.param_type
                     param_quad = Quad(
                         op=Ops.PARAM,
                         left=expr_res,
-                        right="",
+                        right=None,
                         res=f"par_{par_num}"
                     )
                     self.quads.append(param_quad)
@@ -377,16 +424,17 @@ class DoflirCustomVisitor(DoflirVisitor):
 
         gosub_quad = Quad(
             op=Ops.GOSUB,
-            left=fun_id,
-            right="",
-            res=""
+            left=target_fun,
+            right=None,
+            res=None
         )
         self.quads.append(gosub_quad)
 
         if target_fun.ret_type != VarTypes.VOID:
-            ret_tmp = self.new_temp(data_type=target_fun.ret_type)
-            ret_tmp = f"{fun_id}_{ret_tmp}"
-            self.operands_stack.append((ret_tmp, target_fun.ret_type))
+            ret_tmp = self.curr_scope.make_temp(temp_type=target_fun.ret_type)
+            # ret_tmp = self.new_temp(data_type=target_fun.ret_type)
+            # ret_tmp = f"{fun_id}_{ret_tmp}"
+            self.operands_stack.append(ret_tmp)
 
     def visitMain_def(self, ctx: DoflirParser.Main_defContext):
         pending_goto = self.pending_jumps_stack.pop()
@@ -395,11 +443,11 @@ class DoflirCustomVisitor(DoflirVisitor):
 
     def visitPrint_stmt(self, ctx: DoflirParser.Print_stmtContext):
         self.visitChildren(ctx)
-        print_expr, print_type = self.operands_stack.pop()
+        print_expr = self.operands_stack.pop()
         print_quad = Quad(
             op=Ops.PRINT,
-            left="",
-            right="",
+            left=None,
+            right=None,
             res=print_expr
         )
         self.quads.append(print_quad)

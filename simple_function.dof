@@ -1,3 +1,5 @@
+test -> float;
+
 define two -> float () {
 	return 8.0;
 }
@@ -7,12 +9,13 @@ define one -> float (pi -> float, tau -> float) {
 }
 
 define three -> float (esp -> float, cop -> float) {
-	cop = 1.344 + 2;
-	return 2.0 * esp + cop;
+	cop = 1.344 + 2 * esp + cop;
+	other -> float;
+	other = ((test + cop) * 1.2 + 2.34) / (1.2 + one(1.2, 2.8) + two()) * 2.1;
+	return 2.0 * esp + cop * other;
 }
 
 define main {
-	test -> float;
 	test2 -> float;
 	print("test");
 	test = one(two(), two());
