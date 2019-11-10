@@ -34,6 +34,8 @@ class Ops(Enum):
     GOSUB = "GOSUB"
     PARAM = "PARAM"
     ERA = "ERA"
+    ENDP = "ENDP"
+    PRINT = "PRINT"
 
 
 class SemanticCube(object):

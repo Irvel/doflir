@@ -12,6 +12,9 @@ define three -> float (esp -> float, cop -> float) {
 }
 
 define main {
-	test -> int;
-	test = 2;
+	test -> float;
+	test2 -> float;
+	print("test");
+	test = one(two(), two());
+	test2 = three(two(), 9.21);
 }

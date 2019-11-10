@@ -6,21 +6,24 @@ main_def: 'define main''{' proc_body '}' ;
 
 proc_body: (NL*|statement) (NL|statement)*;
 
-statement: (assignment | condition | iterable | vec_filtering | fun_call | declaration_stmt);
+statement: (assignment | condition | iterable | vec_filtering | fun_call_stmt | declaration_stmt | print_stmt);
 
 assignment: (ID|vec_indexing) '=' expr ';' ;
 declaration_stmt: declaration ';' ;
 declaration: ID '->' TYPE_NAME ;
-vec_filtering: (ID|vec_indexing) '{' expr (',' expr)* '}' ';';
-vec_indexing: ID '[' expr (',' expr)* ']' ';' ;
-fun_call: ID'('expr(','expr)*')' ';' ;  // Function call.
 
 fun_def
 	: 'define' ID '->' TYPE_NAME '(' parameters? ')' '{' proc_body flow_call '}'  // Function definition.
 	;
 parameters: declaration (',' declaration)*;
+fun_call_stmt: fun_call ';' ;
+fun_call: ID '(' expr_list ')' ;  // Function call.
 
-vec_list: '['(expr? | (expr (',' expr)*))']';
+expr_list: (expr? | (expr (',' expr)*)) ;
+
+vec_list: '[' expr_list ']';
+vec_indexing: ID '[' expr_list ']' ';' ;
+vec_filtering: (ID|vec_indexing) '{' expr_list '}' ';';
 
 expr
 	: '('expr')'                   #parenExpr
@@ -67,6 +70,8 @@ iterable
 	: 'for' '(' expr 'in' expr ')' '{' proc_body '}'   #forStmt
     | 'while' '(' expr ')' '{' proc_body '}'  			#whileStmt
     ;
+
+print_stmt: 'print' '(' expr ')' ';' ;
 
 TYPE_NAME
 	: 'int'

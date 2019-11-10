@@ -3,6 +3,7 @@ from DoflirVisitor import DoflirVisitor
 from VariablesTable import VariablesTable
 from VariablesTable import FunDir
 from VariablesTable import Variable
+from VariablesTable import Params
 from VariablesTable import Function
 from VariablesTable import Constant
 from SemanticCube import Ops
@@ -55,6 +56,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.pending_jumps_stack.append(self.current_quad_idx)
 
         self.visitChildren(ctx)
+
         for idx, q in enumerate(self.quads):
             print(f"{idx:>2}", q)
 
@@ -68,10 +70,6 @@ class DoflirCustomVisitor(DoflirVisitor):
 
     # Visit a parse tree produced by DoflirParser#vec_filtering.
     def visitVec_filtering(self, ctx: DoflirParser.Vec_filteringContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by DoflirParser#fun_call.
-    def visitFun_call(self, ctx: DoflirParser.Fun_callContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by DoflirParser#parameters.
@@ -114,7 +112,7 @@ class DoflirCustomVisitor(DoflirVisitor):
 
     def visitTokStrExpr(self, ctx: DoflirParser.TokStrExprContext):
         self.operands_stack.append(
-            (str(ctx.getText()), VarTypes.STRING)
+            (str(ctx.getText())[1:-1], VarTypes.STRING)
         )
 
     def visitTokBoolExpr(self, ctx: DoflirParser.TokBoolExprContext):
@@ -323,7 +321,8 @@ class DoflirCustomVisitor(DoflirVisitor):
                     raise Exception(f"Parameter with ID {param_id} is same name of function")
                 param_type = self.cube.type_to_enum(type_str=param_type_str)
                 self.curr_scope.declare_var(name=param_id, var_type=param_type)
-                params.append((param_id, param_type))
+                params.append(Params(param_id, param_type))
+        logging.debug(f"Defining function ({fun_id}, {return_type})")
         self.fun_dir.define_fun(
             name=fun_id,
             ret_type=return_type,
@@ -337,18 +336,73 @@ class DoflirCustomVisitor(DoflirVisitor):
             ret_val, actual_type = self.operands_stack.pop()
             if return_type != actual_type:
                 raise Exception(f"Returning a different type than what was defined.")
-        ret_quad = Quad(
-            op=Ops.RETURN,
-            left=ret_val,
+        ret_quad = Quad(Ops.RETURN, "", "", ret_val)
+        self.quads.append(ret_quad)
+        ret_quad = Quad(Ops.ENDP, "", "", "")
+        self.quads.append(ret_quad)
+
+    def visitFun_call(self, ctx: DoflirParser.Fun_callContext):
+        fun_id = ctx.ID().getText()
+        target_fun = self.fun_dir.search(fun_name=fun_id)
+        print(target_fun.name, target_fun.ret_type, target_fun.params)
+        if not target_fun:
+            raise Exception(f"\"{fun_id}\" Has not been defined.")
+        era_quad = Quad(
+            op=Ops.ERA,
+            left=fun_id,
             right="",
             res=""
         )
-        self.quads.append(ret_quad)
+        self.quads.append(era_quad)
+
+        if ctx.expr_list():
+            num_args = len(ctx.expr_list().expr())
+            if not target_fun.num_params == num_args:
+                raise Exception(f"\"{fun_id}\" different num of parameters provided {target_fun.num_params} vs {num_args}")
+            if not num_args == 0:
+                par_num = 1
+                for expr, param in zip(ctx.expr_list().expr(), target_fun.params):
+                    self.visit(expr)
+                    expr_res, expr_res_type = self.operands_stack.pop()
+
+                    assert expr_res_type == param.param_type
+                    param_quad = Quad(
+                        op=Ops.PARAM,
+                        left=expr_res,
+                        right="",
+                        res=f"par_{par_num}"
+                    )
+                    self.quads.append(param_quad)
+                    par_num += 1
+
+        gosub_quad = Quad(
+            op=Ops.GOSUB,
+            left=fun_id,
+            right="",
+            res=""
+        )
+        self.quads.append(gosub_quad)
+
+        if target_fun.ret_type != VarTypes.VOID:
+            ret_tmp = self.new_temp(data_type=target_fun.ret_type)
+            ret_tmp = f"{fun_id}_{ret_tmp}"
+            self.operands_stack.append((ret_tmp, target_fun.ret_type))
 
     def visitMain_def(self, ctx: DoflirParser.Main_defContext):
         pending_goto = self.pending_jumps_stack.pop()
         self.quads[pending_goto].res = self.current_quad_idx + 1
         self.visitChildren(ctx)
+
+    def visitPrint_stmt(self, ctx: DoflirParser.Print_stmtContext):
+        self.visitChildren(ctx)
+        print_expr, print_type = self.operands_stack.pop()
+        print_quad = Quad(
+            op=Ops.PRINT,
+            left="",
+            right="",
+            res=print_expr
+        )
+        self.quads.append(print_quad)
 
     # Visit a parse tree produced by DoflirParser#condition.
     def visitCondition(self, ctx: DoflirParser.ConditionContext):

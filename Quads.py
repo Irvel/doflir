@@ -12,7 +12,7 @@ class Quad:
 
     def __str__(self):
         return (
-            f"({self.op.value:6} {self.left:>7} "
+            f"({self.op.value:6} {self.left:>11} "
             f"{self.right:>7} {self.res:>7})")
 
     def __repr__(self):

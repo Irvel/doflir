@@ -44,21 +44,6 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by DoflirParser#vec_filtering.
-    def visitVec_filtering(self, ctx:DoflirParser.Vec_filteringContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by DoflirParser#vec_indexing.
-    def visitVec_indexing(self, ctx:DoflirParser.Vec_indexingContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by DoflirParser#fun_call.
-    def visitFun_call(self, ctx:DoflirParser.Fun_callContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by DoflirParser#fun_def.
     def visitFun_def(self, ctx:DoflirParser.Fun_defContext):
         return self.visitChildren(ctx)
@@ -69,8 +54,33 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by DoflirParser#fun_call_stmt.
+    def visitFun_call_stmt(self, ctx:DoflirParser.Fun_call_stmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#fun_call.
+    def visitFun_call(self, ctx:DoflirParser.Fun_callContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#expr_list.
+    def visitExpr_list(self, ctx:DoflirParser.Expr_listContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by DoflirParser#vec_list.
     def visitVec_list(self, ctx:DoflirParser.Vec_listContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#vec_indexing.
+    def visitVec_indexing(self, ctx:DoflirParser.Vec_indexingContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#vec_filtering.
+    def visitVec_filtering(self, ctx:DoflirParser.Vec_filteringContext):
         return self.visitChildren(ctx)
 
 
@@ -216,6 +226,11 @@ class DoflirVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by DoflirParser#whileStmt.
     def visitWhileStmt(self, ctx:DoflirParser.WhileStmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#print_stmt.
+    def visitPrint_stmt(self, ctx:DoflirParser.Print_stmtContext):
         return self.visitChildren(ctx)
 
 

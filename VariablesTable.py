@@ -1,3 +1,8 @@
+import collections
+
+Params = collections.namedtuple("Params", "param_id param_type")
+
+
 class VariablesTable(object):
     """docstring for VariablesTable"""
     def __init__(self):
@@ -70,7 +75,13 @@ class Function(object):
         self.ret_type = ret_type
         self.params = params
         self.address = address
-        self.params = []
+
+    @property
+    def num_params(self):
+        if self.params:
+            return len(self.params)
+        else:
+            return 0
 
 
 class Variable(object):
