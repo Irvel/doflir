@@ -1,0 +1,6 @@
+test -> float;
+
+define main {
+	test2 -> float [1, 2, 4];
+	print("test");
+}

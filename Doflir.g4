@@ -6,7 +6,7 @@ main_def: 'define main''{' proc_body '}' ;
 
 proc_body: (NL*|statement) (NL|statement)*;
 
-statement: (assignment | condition | iterable | vec_filtering | fun_call_stmt | declaration_stmt | print_stmt);
+statement: (assignment | condition | iterable | vec_filtering | fun_call_stmt | declaration_stmt | print_stmt | vec_declaration_stmt);
 
 assignment: (ID|vec_indexing) '=' expr ';' ;
 declaration_stmt: declaration ';' ;
@@ -17,10 +17,11 @@ fun_def
 	;
 parameters: declaration (',' declaration)*;
 fun_call_stmt: fun_call ';' ;
-fun_call: ID '(' expr_list ')' ;  // Function call.
+fun_call: ID '(' expr_list* ')' ;  // Function call.
 
-expr_list: (expr? | (expr (',' expr)*)) ;
+expr_list: (expr | (expr (',' expr)*)) ;
 
+vec_declaration_stmt: declaration vec_list ';' ;
 vec_list: '[' expr_list ']';
 vec_indexing: ID '[' expr_list ']' ';' ;
 vec_filtering: (ID|vec_indexing) '{' expr_list '}' ';';
@@ -30,7 +31,6 @@ expr
 	| vec_indexing                 #unExpr
 	| vec_filtering                #unExpr
 	| fun_call                     #unExpr
-	| vec_list                     #unExpr
 	| <assoc=right> expr '^' expr  #powExpr    // Exponentiation.
 	| ('-'|'+') expr               #unExpr     // Conversion to negative/positive.
     | 'not' expr                   #unExpr     // Negation.

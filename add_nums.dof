@@ -3,7 +3,7 @@ define main {
 	result = 1 + 2 * 8;
 	result = result * 8 - 2 * (3 + (4 - 2));
 
-	// res_2 -> float;
-	// res_2 = 2 * 2.0;
+	# res_2 -> float;
+	# res_2 = 2 * 2.0;
 
 }

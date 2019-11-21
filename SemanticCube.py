@@ -36,6 +36,7 @@ class Ops(Enum):
     ERA = "ERA"
     ENDPROC = "ENDPROC"
     PRINT = "PRINT"
+    VER = "VER"
 
 
 class SemanticCube(object):

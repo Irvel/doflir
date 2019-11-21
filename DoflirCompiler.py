@@ -7,6 +7,7 @@ import antlr4
 import argparse
 import logging
 import io
+import pickle
 
 
 def read_input():
@@ -16,13 +17,26 @@ def read_input():
     args = parser.parse_args()
     print(f"Compiling {args.in_file}...\n")
     input_file = open(args.in_file, "r")
-    return input_file.read()
+    return args.in_file, input_file.read()
+
+
+def make_obj_filename(in_filename):
+    chunks = in_filename.split(".")[:-1]
+    chunks.append(".obj")
+    return "".join(chunks)
+
+
+def write_bytecode(bytecode, filename):
+    with open(filename, "wb") as f:
+        pickle.dump(bytecode, f, pickle.HIGHEST_PROTOCOL)
 
 
 def main():
-    input_code = read_input()
-    doflir_compile(input_code)
+    in_filename, input_code = read_input()
+    bytecode = doflir_compile(input_code)
+    write_bytecode(bytecode, make_obj_filename(in_filename))
     print("\n" + input_code)
+    print(bytecode)
 
 
 def doflir_compile(input_code):
@@ -35,7 +49,7 @@ def doflir_compile(input_code):
     # self.error = io.StringIO()
     error_listener = DoflirErrorListener(io.StringIO())
     parser.addErrorListener(error_listener)
-    visitor.visit(tree=parser.program())
+    return visitor.visit(tree=parser.program())
 
 
 if __name__ == "__main__":

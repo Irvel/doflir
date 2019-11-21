@@ -1,3 +1,4 @@
+from ByteCodeFormat import ByteCodeFormat
 from DoflirParser import DoflirParser
 from DoflirVisitor import DoflirVisitor
 from VariablesTable import VariablesTable
@@ -58,11 +59,23 @@ class DoflirCustomVisitor(DoflirVisitor):
 
         self.visitChildren(ctx)
         self.print_stats()
+        return self.generate_obj_code()
+
+    def generate_obj_code(self):
+        const_table = {}
+        for var in self.global_table.variables:
+            if isinstance(var, Constant):
+                const_table[var.address] = var
+        return ByteCodeFormat(
+            quads=self.quads,
+            const_table=const_table,
+            fun_dir=self.fun_dir,
+        )
 
     def print_stats(self):
         print(f"\n{'='*10} Global variables {'='*10}\n")
         for var in self.global_table.variables:
-            print(f"+ {var.name:>7}, {var.data_type.value:>6}, {var.address:>9}")
+            print("→", var)
         print()
         print(f"\n{'='*10} Function directory {'='*10}\n")
         for fun in self.fun_dir.functions:
@@ -84,6 +97,28 @@ class DoflirCustomVisitor(DoflirVisitor):
 
     # Visit a parse tree produced by DoflirParser#vec_indexing.
     def visitVec_indexing(self, ctx: DoflirParser.Vec_indexingContext):
+        vec_id = ctx.ID().getText()
+        vec = self.curr_scope.search(vec_id) or self.global_table.search(vec_id)
+        if not vec:
+            raise Exception(
+                f"Attempted to use undeclared vector {vec_id}"
+            )
+
+        vec_dims = []
+        for dim_idx, dim in enumerate(ctx.vec_list().expr_list().expr()):
+            self.visit(dim)
+            dim_expr = self.operands_stack.pop()
+            if dim_expr.data_type != VarTypes.INT:
+                raise Exception(f"Vector index must be int {dim_expr.data_type} given instead.")
+            vec_dims.append(dim_expr)
+            ver_quad = Quad(
+                op=Ops.VER,
+                left=dim_expr,
+                right=None,
+                res=vec.vec_dims[dim_idx]
+            )
+            self.quads.append(ver_quad)
+        print(vec_dims)
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by DoflirParser#vec_filtering.
@@ -92,10 +127,6 @@ class DoflirCustomVisitor(DoflirVisitor):
 
     # Visit a parse tree produced by DoflirParser#parameters.
     def visitParameters(self, ctx: DoflirParser.ParametersContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by DoflirParser#vec_list.
-    def visitVec_list(self, ctx: DoflirParser.Vec_listContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by DoflirParser#expr.
@@ -172,6 +203,34 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.curr_scope.declare_var(
             name=var_id, var_type=VarTypes[var_type], is_glob=is_glob
         )
+        return self.visitChildren(ctx)
+
+    def visitVec_declaration_stmt(self, ctx: DoflirParser.Vec_declaration_stmtContext):
+        vec_id = ctx.declaration().ID().getText()
+        vec_type = ctx.declaration().TYPE_NAME().getText().upper()
+        logging.debug(f"Declaring vector ({vec_id}, {vec_type})")
+        if self.curr_scope.exists(vec_id):
+            raise Exception(f"Vector with ID {vec_id} already used")
+        is_glob = False
+        if len(self.scope_stack) == 1:
+            is_glob = True
+
+        vec_dims = []
+        for dim in ctx.vec_list().expr_list().expr():
+            self.visit(dim)
+            dim_expr = self.operands_stack.pop()
+            if dim_expr.data_type != VarTypes.INT:
+                raise Exception(f"Vector dimensions must be int {dim_expr.data_type} given instead.")
+            vec_dims.append(dim_expr)
+        print(vec_dims)
+        self.curr_scope.declare_vector(
+            name=vec_id, vec_type=VarTypes[vec_type], vec_dims=vec_dims,
+            is_glob=is_glob
+        )
+
+        return self.visitChildren(ctx)
+
+    def visitVec_list(self, ctx: DoflirParser.Vec_listContext):
         return self.visitChildren(ctx)
 
     def visitAssignment(self, ctx: DoflirParser.AssignmentContext):

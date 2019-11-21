@@ -56,6 +56,20 @@ class VariablesTable(object):
             )
         self._add_var(variable=var)
 
+    def declare_vector(self, name, vec_type, vec_dims, is_glob=False,
+                       is_tmp=False, is_const=False):
+        vec = Variable(
+            name=name,
+            data_type=vec_type,
+            address=self.new_address(
+                    v_type=vec_type,
+                    is_glob=is_glob,
+                    is_tmp=is_tmp,
+                    is_const=is_const),
+            vec_dims=vec_dims,
+        )
+        self._add_var(variable=vec)
+
     def declare_constant(self, value, const_type, is_glob=False, is_tmp=False,
                          is_const=False):
         const = Constant(
@@ -202,10 +216,20 @@ class Function(object):
 
 class Variable(object):
     """docstring for Variable"""
-    def __init__(self, name, data_type, address):
+    def __init__(self, name, data_type, address, vec_dims=None):
         self.name = name
         self.data_type = data_type
         self.address = address
+        self.vec_dims = vec_dims
+
+    def __repr__(self):
+        var_repr = (
+            f"{self.name:>7}, {self.data_type.value:>6}, "
+            f"{self.address:>9}, "
+        )
+        if self.vec_dims:
+            var_repr += f"{str(self.vec_dims):>9}"
+        return var_repr
 
 
 class Constant(Variable):
@@ -213,6 +237,9 @@ class Constant(Variable):
     def __init__(self, value, data_type, address):
         super().__init__(str(value), data_type, address)
         self.value = value
+
+    # def __repr__(self):
+        # return f"(val:{self.value} addr:{self.address})"
 
 
 class Temporal(Variable):
