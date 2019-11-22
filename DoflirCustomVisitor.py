@@ -5,13 +5,14 @@ from VariablesTable import VariablesTable
 from VariablesTable import FunDir
 from VariablesTable import Variable
 from VariablesTable import Params
-from VariablesTable import Function
+from VariablesTable import QuadJump
 from VariablesTable import Constant
-from VariablesTable import Temporal
+from VariablesTable import Param
 from SemanticCube import Ops
 from SemanticCube import SemanticCube
 from SemanticCube import VarTypes
 from Quads import Quad
+from Quads import print_quads
 from collections import deque
 
 import logging
@@ -59,6 +60,9 @@ class DoflirCustomVisitor(DoflirVisitor):
 
         self.visitChildren(ctx)
         self.print_stats()
+        print_quads(quads=self.quads, viz_variant="name")
+        print_quads(quads=self.quads, viz_variant="address")
+        print_quads(quads=self.quads, viz_variant="type")
         return self.generate_obj_code()
 
     def generate_obj_code(self):
@@ -87,9 +91,6 @@ class DoflirCustomVisitor(DoflirVisitor):
                 print(f"- {fun.name:>7}, {fun.ret_type.value:>6}, "
                       f"{'[]':>16}, {fun.address:>9}")
         print("\n")
-        print(f"\n{'='*10} Quadruples {'='*10}\n")
-        for idx, q in enumerate(self.quads):
-            print(f"{idx:>2}", q)
 
     # Visit a parse tree produced by DoflirParser#statement.
     def visitStatement(self, ctx: DoflirParser.StatementContext):
@@ -365,14 +366,14 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.visitIfCondition(ctx)
         self.visit(ctx.proc_body())
         pending_gotof = self.pending_jumps_stack.pop()
-        self.quads[pending_gotof].res = self.current_quad_idx + 1
+        self.quads[pending_gotof].res = QuadJump(self.current_quad_idx + 1)
         # TODO: Maybe don't do anything if the current_quad is the last?
 
     def visitIfElseStmt(self, ctx: DoflirParser.IfElseStmtContext):
         self.visitIfCondition(ctx)
         self.visit(ctx.proc_body(0))
         pending_goto = self.pending_jumps_stack.pop()
-        self.quads[pending_goto].res = self.current_quad_idx + 2
+        self.quads[pending_goto].res = QuadJump(self.current_quad_idx + 2)
         # Jump the Else statement
         goto_quad = Quad(
             op=Ops.GOTO,
@@ -384,19 +385,19 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.pending_jumps_stack.append(self.current_quad_idx)
         self.visit(ctx.proc_body(1))
         pending_goto = self.pending_jumps_stack.pop()
-        self.quads[pending_goto].res = self.current_quad_idx + 1
+        self.quads[pending_goto].res = QuadJump(self.current_quad_idx + 1)
 
     def visitWhileStmt(self, ctx: DoflirParser.WhileStmtContext):
         cond_quad_idx = self.current_quad_idx + 1
         self.visitIfCondition(ctx)
         self.visit(ctx.proc_body())
         pending_gotof = self.pending_jumps_stack.pop()
-        self.quads[pending_gotof].res = self.current_quad_idx + 2
+        self.quads[pending_gotof].res = QuadJump(self.current_quad_idx + 2)
         goto_quad = Quad(
             op=Ops.GOTO,
             left=None,
             right=None,
-            res=cond_quad_idx
+            res=QuadJump(cond_quad_idx)
         )
         self.quads.append(goto_quad)
 
@@ -433,7 +434,8 @@ class DoflirCustomVisitor(DoflirVisitor):
             address=self.global_table.new_address(
                 v_type=return_type,
                 is_glob=True,
-            )
+            ),
+            quad_idx=self.current_quad_idx + 1,
         )
         self.visit(ctx.proc_body())
         ret_val = VarTypes.VOID
@@ -476,7 +478,7 @@ class DoflirCustomVisitor(DoflirVisitor):
                         op=Ops.PARAM,
                         left=expr_res,
                         right=None,
-                        res=f"par_{par_num}"
+                        res=Param(par_num),
                     )
                     self.quads.append(param_quad)
                     par_num += 1
@@ -491,13 +493,21 @@ class DoflirCustomVisitor(DoflirVisitor):
 
         if target_fun.ret_type != VarTypes.VOID:
             ret_tmp = self.curr_scope.make_temp(temp_type=target_fun.ret_type)
+            assign_ret_quad = Quad(
+                op=Ops.ASSIGN,
+                left=target_fun,
+                right=None,
+                res=ret_tmp
+            )
+            self.quads.append(assign_ret_quad)
+
             # ret_tmp = self.new_temp(data_type=target_fun.ret_type)
             # ret_tmp = f"{fun_id}_{ret_tmp}"
             self.operands_stack.append(ret_tmp)
 
     def visitMain_def(self, ctx: DoflirParser.Main_defContext):
         pending_goto = self.pending_jumps_stack.pop()
-        self.quads[pending_goto].res = self.current_quad_idx + 1
+        self.quads[pending_goto].res = QuadJump(self.current_quad_idx + 1)
         self.visitChildren(ctx)
 
     def visitPrint_stmt(self, ctx: DoflirParser.Print_stmtContext):
@@ -514,4 +524,3 @@ class DoflirCustomVisitor(DoflirVisitor):
     # Visit a parse tree produced by DoflirParser#condition.
     def visitCondition(self, ctx: DoflirParser.ConditionContext):
         return self.visitChildren(ctx)
-

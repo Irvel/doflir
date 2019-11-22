@@ -188,23 +188,25 @@ class FunDir(object):
     def _add_fun(self, function):
         self._fun_dir[function.name] = function
 
-    def define_fun(self, name, ret_type, params, address):
+    def define_fun(self, name, ret_type, params, address, quad_idx):
         fun = Function(
             name=name,
             ret_type=ret_type,
             params=params,
-            address=address
+            address=address,
+            quad_idx=quad_idx,
         )
         self._add_fun(function=fun)
 
 
 class Function(object):
     """docstring for Function"""
-    def __init__(self, name, ret_type, params, address):
+    def __init__(self, name, ret_type, params, address, quad_idx):
         self.name = name
         self.ret_type = ret_type
         self.params = params
         self.address = address
+        self.quad_idx = quad_idx
 
     @property
     def num_params(self):
@@ -212,6 +214,10 @@ class Function(object):
             return len(self.params)
         else:
             return 0
+
+    @property
+    def value(self):
+        return f"{self.name}({self.quad_idx})"
 
 
 class Variable(object):
@@ -221,6 +227,10 @@ class Variable(object):
         self.data_type = data_type
         self.address = address
         self.vec_dims = vec_dims
+
+    @property
+    def value(self):
+        return self.name
 
     def __repr__(self):
         var_repr = (
@@ -236,13 +246,42 @@ class Constant(Variable):
     """docstring for Constant"""
     def __init__(self, value, data_type, address):
         super().__init__(str(value), data_type, address)
-        self.value = value
+        self._value = value
 
-    # def __repr__(self):
-        # return f"(val:{self.value} addr:{self.address})"
+    @property
+    def value(self):
+        return self._value
 
 
 class Temporal(Variable):
     """docstring for Temporal"""
     def __init__(self, name, data_type, address):
         super().__init__(name, data_type, address)
+
+
+class QuadJump(object):
+    def __init__(self, quad_idx):
+        self.quad_idx = quad_idx
+
+    @property
+    def value(self):
+        return self.quad_idx
+
+
+class Param(object):
+    def __init__(self, param_num):
+        self.param_num = param_num
+
+    @property
+    def value(self):
+        return self.param_num
+
+
+class Pointer(object):
+    def __init__(self, address, pointed_address):
+        self.address = address
+        self.pointed_address = pointed_address
+
+    @property
+    def value(self):
+        return self.address
