@@ -17,7 +17,7 @@ fun_def
 	;
 parameters: declaration (',' declaration)*;
 fun_call_stmt: fun_call ';' ;
-fun_call: ID '(' expr_list* ')' ;  // Function call.
+fun_call: ID '(' expr_list? ')' ;  // Function call.
 
 expr_list: (expr | (expr (',' expr)*)) ;
 
