@@ -298,14 +298,17 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.visit(ctx.expr(1))
         self.try_op(op=operand)
 
-    def visitMultExpr(self, ctx: DoflirParser.AddExprContext):
+    def visitMultExpr(self, ctx: DoflirParser.MultExprContext):
         self.visitBinOpExpr(ctx=ctx, operand=Ops.MULT)
 
-    def visitDivExpr(self, ctx: DoflirParser.AddExprContext):
+    def visitDivExpr(self, ctx: DoflirParser.DivExprContext):
         self.visitBinOpExpr(ctx=ctx, operand=Ops.DIV)
 
     def visitIntDivExpr(self, ctx: DoflirParser.IntDivExprContext):
         self.visitBinOpExpr(ctx=ctx, operand=Ops.INT_DIV)
+
+    def visitPowExpr(self, ctx: DoflirParser.PowExprContext):
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.POW)
 
     def visitAddExpr(self, ctx: DoflirParser.AddExprContext):
         self.visitBinOpExpr(ctx=ctx, operand=Ops.PLUS)
