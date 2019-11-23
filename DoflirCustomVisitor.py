@@ -274,8 +274,8 @@ class DoflirCustomVisitor(DoflirVisitor):
 
     def generate_bin_quad(self):
         operator = self.operators_stack.pop()
-        op_1 = self.operands_stack.pop()
         op_2 = self.operands_stack.pop()
+        op_1 = self.operands_stack.pop()
         result_type = self.cube.result_type(
             op_1_type=op_1.data_type,
             op_2_type=op_2.data_type,
