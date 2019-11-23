@@ -254,23 +254,8 @@ class DoflirCustomVisitor(DoflirVisitor):
                     right=None,
                     res=op_2
                 )
-                # print(new_quad)
                 self.quads.append(assign_quad)
             return
-            var_name = ctx.ID().getText()
-            value = ctx.expr()
-            if self.curr_scope.exists(var_name):
-                pass
-            if not self.var_table.search(var_name):
-                var = Variable(
-                    name=var_name, data_type="int", value=value, scope="ok"
-                )
-                self.var_table.add_symbol(var)
-            else:
-                # Array
-                pass
-        else:
-            pass
 
     def generate_bin_quad(self):
         operator = self.operators_stack.pop()
@@ -286,7 +271,6 @@ class DoflirCustomVisitor(DoflirVisitor):
                 f"Invalid operation: {op_1.data_type} {operator} {op_2.data_type} "
                 "is not a valid operation."
             )
-        # temp_name = self.new_temp(data_type=result_type)
         result_tmp = self.curr_scope.make_temp(temp_type=result_type)
         new_quad = Quad(
             op=operator,
@@ -294,7 +278,6 @@ class DoflirCustomVisitor(DoflirVisitor):
             right=op_2,
             res=result_tmp
         )
-        # print(new_quad)
         self.quads.append(new_quad)
         self.operands_stack.append(result_tmp)
 
