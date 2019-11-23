@@ -54,7 +54,7 @@ class DoflirVirtualMachine(object):
             pass
         else:
             logger.debug(
-                f"{self.ip} Put {value} into ({destination.address})"
+                f"{self.ip:<3} Put {value:<2} into  ({destination.address})"
             )
             self.current_context[destination.address] = value
 
@@ -65,10 +65,11 @@ class DoflirVirtualMachine(object):
     def run_bin_op(self, bin_op, quad):
         left_val, right_val = (self.get_val(quad.left),
                                self.get_val(quad.right))
-        logger.debug(
-            f"{self.ip} Do {left_val} ({bin_op.__name__}) {right_val}"
-        )
         res_val = bin_op(left_val, right_val)
+        logger.debug(
+            f"{self.ip:<3} Do  {left_val:<2} ({bin_op.__name__:3})  "
+            f"{right_val:<5} → {res_val}"
+        )
         self.set_value(value=res_val, destination=quad.res)
 
     def plus(self, quad):
@@ -89,9 +90,31 @@ class DoflirVirtualMachine(object):
     def pow(self, quad):
         self.run_bin_op(bin_op=operator.pow, quad=quad)
 
+    def gt(self, quad):
+        self.run_bin_op(bin_op=operator.gt, quad=quad)
+
+    def gt_eq(self, quad):
+        self.run_bin_op(bin_op=operator.gt_eq, quad=quad)
+
+    def lt(self, quad):
+        self.run_bin_op(bin_op=operator.lt, quad=quad)
+
+    def lt_eq(self, quad):
+        self.run_bin_op(bin_op=operator.lt_eq, quad=quad)
+
+    def eq(self, quad):
+        self.run_bin_op(bin_op=operator.eq, quad=quad)
+
+    def not_eq(self, quad):
+        self.run_bin_op(bin_op=operator.ne, quad=quad)
+
     def goto(self, quad):
         # IP is always incremented after running a quad, so we sub 1
         self.ip = quad.res.value - 1
+
+    def gotof(self, quad):
+        if not self.get_val(quad.left):
+            self.goto(quad)
 
     def assign(self, quad):
         self.set_value(value=self.get_val(quad.left), destination=quad.res)
