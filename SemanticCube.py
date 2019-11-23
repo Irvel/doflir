@@ -30,7 +30,7 @@ class Ops(Enum):
     ASSIGN = "="
     GOTO = "GOTO"
     GOTOF = "GOTOF"
-    RETURN = "RETURN"
+    RETURN_ = "RETURN"
     GOSUB = "GOSUB"
     PARAM = "PARAM"
     ERA = "ERA"

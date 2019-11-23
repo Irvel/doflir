@@ -6,6 +6,7 @@ from VariablesTable import QuadJump
 from VariablesTable import Constant
 from VariablesTable import Param
 from VariablesTable import Pointer
+from VariablesTable import VarTypes
 
 import argparse
 import logging
@@ -24,6 +25,9 @@ class DoflirVirtualMachine(object):
         self.ip = 0
         self.context_stack = deque()
         self.context_stack.append(bytecode.const_table)
+        self.pending_params_stack = deque()
+        self.pending_return_jump = deque()
+        self.pending_return_val = deque()
 
     @property
     def current_quad(self):
@@ -36,6 +40,10 @@ class DoflirVirtualMachine(object):
     def current_context(self):
         return self.context_stack[-1]
 
+    @property
+    def global_context(self):
+        return self.context_stack[0]
+
     def run(self):
         while self.current_quad is not None:
             self.run_quad(self.current_quad)
@@ -47,16 +55,22 @@ class DoflirVirtualMachine(object):
         elif isinstance(operand, Pointer):
             pass
         else:
-            return self.current_context[operand.address]
+            if operand.address in self.current_context:
+                return self.current_context[operand.address]
+            elif operand.address in self.global_context:
+                return self.global_context[operand.address]
 
-    def set_value(self, value, destination):
+    def set_value(self, value, destination, global_ctx=False):
         if isinstance(destination, Pointer):
             pass
         else:
             logger.debug(
                 f"{self.ip:<3} Put {value:<3} into  ({destination.address})"
             )
-            self.current_context[destination.address] = value
+            if global_ctx:
+                self.global_context[destination.address] = value
+            else:
+                self.current_context[destination.address] = value
 
     def run_quad(self, quad):
         op_method = getattr(self, enum_to_name(quad.op))
@@ -114,12 +128,13 @@ class DoflirVirtualMachine(object):
     def not_eq(self, quad):
         self.run_bin_op(bin_op=operator.ne, quad=quad)
 
-    def goto(self, quad):
-        logger.debug(
-            f"{self.ip:<3} Jmp  to quad ({quad.res.value})  "
-        )
+    def _goto(self, quad_idx):
+        logger.debug(f"{self.ip:<3} Jmp  to quad ({quad_idx})  ")
         # IP is always incremented after running a quad, so we sub 1
-        self.ip = quad.res.value - 1
+        self.ip = quad_idx - 1
+
+    def goto(self, quad):
+        self._goto(quad_idx=quad.res.value)
 
     def gotof(self, quad):
         if not self.get_val(quad.left):
@@ -130,6 +145,40 @@ class DoflirVirtualMachine(object):
 
     def print(self, quad):
         print(self.get_val(quad.res))
+
+    def era(self, quad):
+        self.context_stack.append({})
+        logger.debug(f"{self.ip:<3} ERA To    {quad.left.name}  ")
+
+        function = self.fun_dir.search(quad.left.name)
+        if function.params:
+            for param in function.params[::-1]:
+                self.pending_params_stack.append(param)
+        if function.ret_type != VarTypes.VOID:
+            self.pending_return_val.append(function)
+
+    def param(self, quad):
+        param_target = self.pending_params_stack.pop()
+        logger.debug(f"{self.ip:<3} Set param {param_target.param_id}"
+                     f"({param_target.address})  ")
+        self.set_value(value=self.get_val(quad.left), destination=param_target)
+
+    def gosub(self, quad):
+        self.pending_return_jump.append(self.ip)
+        self._goto(quad_idx=quad.left.quad_idx)
+
+    def return_(self, quad):
+        self.set_value(
+            value=self.get_val(quad.res),
+            destination=self.pending_return_val.pop(),
+            global_ctx=True,
+        )
+
+    def endproc(self, quad):
+        self.context_stack.pop()
+        old_ip = self.ip
+        self.ip = self.pending_return_jump.pop()
+        logger.debug(f"{old_ip:<3} Set ip to    ({self.ip})  ")
 
 
 def enum_to_name(enum):

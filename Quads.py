@@ -5,6 +5,8 @@ from VariablesTable import Param
 from VariablesTable import QuadJump
 from VariablesTable import Constant
 from VariablesTable import Temporal
+from VariablesTable import Function
+
 
 import collections
 
@@ -80,6 +82,8 @@ class Quad:
                     op_repr = "J"
                 elif isinstance(operand, Pointer):
                     op_repr = "*"
+                elif isinstance(operand, Function):
+                    op_repr = "F"
                 elif isinstance(operand, Param):
                     op_repr = "P"
                 elif isinstance(operand, Variable):

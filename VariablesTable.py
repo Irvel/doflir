@@ -1,7 +1,4 @@
 from SemanticCube import VarTypes
-import collections
-
-Params = collections.namedtuple("Params", "param_id param_type")
 
 
 class VariablesTable(object):
@@ -219,6 +216,20 @@ class Function(object):
     @property
     def value(self):
         return f"{self.name}({self.quad_idx})"
+
+
+class Params(object):
+    def __init__(self, param_id, param_type, address):
+        self.param_id = param_id
+        self.param_type = param_type
+        self.address = address
+
+    def __repr__(self):
+        param_repr = (
+            f"{self.param_id:>7}, {self.param_type.value:>6}, "
+            f"{self.address:>9}, "
+        )
+        return param_repr
 
 
 class Variable(object):

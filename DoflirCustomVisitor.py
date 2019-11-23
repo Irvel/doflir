@@ -454,7 +454,7 @@ class DoflirCustomVisitor(DoflirVisitor):
             ret_val = self.operands_stack.pop()
             if return_type != ret_val.data_type:
                 raise Exception(f"Returning a different type than what was defined.")
-        ret_quad = Quad(Ops.RETURN, None, None, ret_val)
+        ret_quad = Quad(Ops.RETURN_, None, None, ret_val)
         self.quads.append(ret_quad)
         ret_quad = Quad(Ops.ENDPROC, None, None, None)
         self.quads.append(ret_quad)
