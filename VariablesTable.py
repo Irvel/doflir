@@ -227,6 +227,7 @@ class Variable(object):
         self.data_type = data_type
         self.address = address
         self.vec_dims = vec_dims
+        self.is_initialized = False
 
     @property
     def value(self):
@@ -247,6 +248,7 @@ class Constant(Variable):
     def __init__(self, value, data_type, address):
         super().__init__(str(value), data_type, address)
         self._value = value
+        self.is_initialized = True
 
     @property
     def value(self):
@@ -257,6 +259,7 @@ class Temporal(Variable):
     """docstring for Temporal"""
     def __init__(self, name, data_type, address):
         super().__init__(name, data_type, address)
+        self.is_initialized = True
 
 
 class QuadJump(object):

@@ -248,6 +248,7 @@ class DoflirCustomVisitor(DoflirVisitor):
                 op_1 = self.operands_stack.pop()
                 op_2 = self.operands_stack.pop()
                 assert op_1.data_type == op_2.data_type
+                op_2.is_initialized = True
                 assign_quad = Quad(
                     op=Ops.ASSIGN,
                     left=op_1,
@@ -271,6 +272,11 @@ class DoflirCustomVisitor(DoflirVisitor):
                 f"Invalid operation: {op_1.data_type} {operator} {op_2.data_type} "
                 "is not a valid operation."
             )
+        if not op_1.is_initialized:
+            raise Exception(f"Attempt too use uninitialized variable.{op_1}")
+        if not op_2.is_initialized:
+            raise Exception(f"Attempt too use uninitialized variable.{op_2}")
+
         result_tmp = self.curr_scope.make_temp(temp_type=result_type)
         new_quad = Quad(
             op=operator,
