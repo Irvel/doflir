@@ -1,4 +1,5 @@
 test -> float;
+test = 2.2;
 
 define two -> float () {
 	return 8.0;
@@ -20,4 +21,13 @@ define main {
 	print("test");
 	test = one(two(), two());
 	test2 = three(two(), 9.21);
+	test3 -> float;
+	test3 = four(two(), 0.491) * test2;
+}
+
+define four -> float (esp -> float, cop -> float) {
+	cop = 9.3 - 2.9 * esp + cop;
+	other -> float;
+	other = ((test - cop)) / (1.2 + one(1.2, 2.8) * two()) / 3.12;
+	return 2.0 * (esp + cop) * other;
 }

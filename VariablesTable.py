@@ -43,7 +43,7 @@ class VariablesTable(object):
         self._vars[variable.name] = variable
 
     def declare_var(self, name, var_type, is_glob=False, is_tmp=False,
-                    is_const=False):
+                    is_const=False, is_initialized=False):
         var = Variable(
             name=name,
             data_type=var_type,
@@ -54,6 +54,7 @@ class VariablesTable(object):
                     is_const=is_const
                 )
             )
+        var.is_initialized = is_initialized
         self._add_var(variable=var)
 
     def declare_vector(self, name, vec_type, vec_dims, is_glob=False,

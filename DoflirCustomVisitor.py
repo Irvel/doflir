@@ -45,10 +45,10 @@ class DoflirCustomVisitor(DoflirVisitor):
         return f"t{data_type.value[0]}_{self._temp_num}"
 
     def visitProgram(self, ctx: DoflirParser.ProgramContext):
-        # exprText = ctx.getText()
-        # print(f"Expression after tokenization = {exprText}")
-        # print(ctx.fun_def())
-        # print(ctx.statement())
+        if ctx.statement:
+            for stmt in ctx.statement():
+                self.visit(stmt)
+
         goto_quad = Quad(
             op=Ops.GOTO,
             left=None,
@@ -57,8 +57,10 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
         self.quads.append(goto_quad)
         self.pending_jumps_stack.append(self.current_quad_idx)
-
-        self.visitChildren(ctx)
+        if ctx.fun_def:
+            for dfn in ctx.fun_def():
+                self.visit(dfn)
+        self.visit(ctx.main_def())
         self.print_stats()
         print_quads(quads=self.quads, viz_variant="name")
         print_quads(quads=self.quads, viz_variant="address")
