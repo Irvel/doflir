@@ -332,10 +332,10 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.visitBinOpExpr(ctx=ctx, operand=Ops.NOT_EQ)
 
     def visitAndExpr(self, ctx: DoflirParser.AndExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.AND)
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.AND_)
 
     def visitOrExpr(self, ctx: DoflirParser.OrExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.OR)
+        self.visitBinOpExpr(ctx=ctx, operand=Ops.OR_)
 
     def visitIfCondition(self, ctx):
         self.visit(ctx.expr())

@@ -34,9 +34,10 @@ def write_bytecode(bytecode, filename):
 def main():
     in_filename, input_code = read_input()
     bytecode = doflir_compile(input_code)
-    write_bytecode(bytecode, make_obj_filename(in_filename))
+    out_filename = make_obj_filename(in_filename)
+    write_bytecode(bytecode, out_filename)
     print("\n" + input_code)
-    print(bytecode)
+    print(f'Saved bytecode to "{out_filename}"!')
 
 
 def doflir_compile(input_code):

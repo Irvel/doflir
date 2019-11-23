@@ -2,7 +2,7 @@ define main {
 	result -> int;
 	result = 1 + 2 * 8;
 	result = result * 8 - 2 * (3 + (4 - 2));
-
+	print(result);
 	# res_2 -> float;
 	# res_2 = 2 * 2.0;
 

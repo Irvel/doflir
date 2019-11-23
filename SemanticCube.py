@@ -19,8 +19,8 @@ class Ops(Enum):
     POW = "^"
     MAT_MULT = "@"
     DOT = ".."
-    AND = "and"
-    OR = "or"
+    AND_ = "and"
+    OR_ = "or"
     GT = ">"
     GT_EQ = ">="
     LT = "<"
@@ -56,7 +56,7 @@ class SemanticCube(object):
         ]
 
         self._REL_OPS = [
-            Ops.AND, Ops.OR, Ops.GT, Ops.GT_EQ, Ops.LT, Ops.LT_EQ, Ops.EQ,
+            Ops.AND_, Ops.OR_, Ops.GT, Ops.GT_EQ, Ops.LT, Ops.LT_EQ, Ops.EQ,
             Ops.NOT_EQ,
         ]
 
