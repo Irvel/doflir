@@ -416,7 +416,8 @@ class DoflirCustomVisitor(DoflirVisitor):
                 if self.fun_dir.exists(param_id) or fun_id == param_id:
                     raise Exception(f"Parameter with ID {param_id} is same name of function")
                 param_type = self.cube.type_to_enum(type_str=param_type_str)
-                self.curr_scope.declare_var(name=param_id, var_type=param_type)
+                self.curr_scope.declare_var(name=param_id, var_type=param_type,
+                                            is_initialized=True)
                 params.append(Params(param_id, param_type))
         logging.debug(f"Defining function ({fun_id}, {return_type})")
         self.fun_dir.define_fun(
