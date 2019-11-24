@@ -24,7 +24,7 @@ expr_list: (expr | (expr (',' expr)*)) ;
 
 vec_declaration_stmt: declaration vec_list ';' ;
 vec_list: '[' expr_list ']';
-vec_indexing: ID '[' expr_list ']' ';' ;
+vec_indexing: ID '[' expr_list ']' ;
 vec_filtering: (ID|vec_indexing) '{' expr_list '}' ';';
 
 expr
