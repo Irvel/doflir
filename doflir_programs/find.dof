@@ -1,0 +1,40 @@
+define find -> bool (objetivo -> string, array -> string [5]) {
+    idx -> int;
+    idx = 0;
+    while (idx < 5) {
+        if (array[idx] == objetivo) {
+            return true;
+        }
+        idx = idx + 1;
+    }
+    return false;
+}
+
+define print_array -> void (array -> string [5]) {
+    idx -> int;
+    idx = 0;
+    while (idx < 5) {
+        print(array[idx], " ");
+        idx = idx + 1;
+    }
+}
+
+define main {
+    palabras -> string [5];
+    palabras[0] = "perro";
+    palabras[1] = "gato";
+    palabras[2] = "lobo";
+    palabras[3] = "conejo";
+    palabras[4] = "jaguar";
+    print("Palabras en lista: [");
+    print_array(palabras);
+    println("] ");
+
+    objetivo -> string;
+    objetivo = "lobo";
+
+    existe -> bool;
+    existe = find(objetivo, palabras);
+    print("Existe ", objetivo, " en la lista? -> ", existe);
+}
+

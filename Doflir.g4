@@ -6,7 +6,7 @@ main_def: 'define main''{' proc_body '}' ;
 
 proc_body: (NL*|statement) (NL|statement)*;
 
-statement: (assignment | condition | iterable | vec_filtering | fun_call_stmt | declaration_stmt | print_stmt | vec_declaration_stmt | flow_call);
+statement: (assignment | condition | iterable | vec_filtering | fun_call_stmt | declaration_stmt | print_stmt | println_stmt | vec_declaration_stmt | flow_call);
 
 assignment: (ID|vec_indexing) '=' expr ';' ;
 declaration_stmt: declaration ';' ;
@@ -15,14 +15,15 @@ declaration: ID '->' TYPE_NAME ;
 fun_def
 	: 'define' ID '->' TYPE_NAME '(' parameters? ')' '{' proc_body '}'  // Function definition.
 	;
-parameters: declaration (',' declaration)*;
+parameters: (vec_declaration|declaration) (',' (vec_declaration|declaration))*;
 fun_call_stmt: fun_call ';' ;
 fun_call: ID '(' expr_list? ')' ;  // Function call.
 flow_call: 'return' (expr)? ';' NL*;
 
 expr_list: (expr | (expr (',' expr)*)) ;
 
-vec_declaration_stmt: declaration vec_list ';' ;
+vec_declaration: declaration vec_list ;
+vec_declaration_stmt: vec_declaration ';' ;
 vec_list: '[' expr_list ']';
 vec_indexing: ID '[' expr_list ']' ;
 vec_filtering: (ID|vec_indexing) '{' expr_list '}' ';';
@@ -72,7 +73,9 @@ iterable
     | 'while' '(' expr ')' '{' proc_body '}'  			#whileStmt
     ;
 
-print_stmt: 'print' '(' expr ')' ';' ;
+print_stmt: 'print' '(' expr_list ')' ';' ;
+println_stmt: 'println' '(' expr_list ')' ';' ;
+
 
 TYPE_NAME
 	: 'int'
@@ -84,7 +87,6 @@ TYPE_NAME
 	;
 
 // Lexer
-ID: [a-zA-Z][a-zA-Z0-9_]*;
 STRING_LITERAL:  '"' (~["\\\r\n])* '"';
 //VECTOR_LITERAL:  '[' (ID | INTEGER | FLOAT)? (',' (ID | INTEGER | FLOAT | VECTOR_LITERAL))* ']';
 fragment DIGIT : [0-9] ;
@@ -92,6 +94,7 @@ INTEGER        : DIGIT+ ;
 FLOAT          : (DIGIT+ '.' DIGIT* | '.' DIGIT+) ;
 NUMBER         : (INTEGER | FLOAT) ;
 BOOL: 'true' | 'false';
+ID: [a-zA-Z][a-zA-Z0-9_]*;
 
 
 BLOCK_COMMENT: '/*'.*?'*/' -> skip;

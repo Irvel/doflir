@@ -38,6 +38,7 @@ class Ops(Enum):
     ERA = "ERA"
     ENDPROC = "ENDPROC"
     PRINT = "PRINT"
+    PRINTLN = "PRINTLN"
     ALLOC = "ALLOC"
     VER = "VER"
 
@@ -110,6 +111,9 @@ class SemanticCube(object):
 
             float_op = (VarTypes.FLOAT, VarTypes.FLOAT, op)
             semantic_cube[float_op] = VarTypes.BOOL
+
+            str_op = (VarTypes.STRING, VarTypes.STRING, op)
+            semantic_cube[str_op] = VarTypes.BOOL
 
             float_int_op = (VarTypes.FLOAT, VarTypes.INT, op)
             semantic_cube[float_int_op] = VarTypes.BOOL

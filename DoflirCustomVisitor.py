@@ -107,10 +107,12 @@ class DoflirCustomVisitor(DoflirVisitor):
     def visitVec_indexing(self, ctx: DoflirParser.Vec_indexingContext):
         vec_id = ctx.ID().getText()
         vec = self.curr_scope.search(vec_id) or self.global_table.search(vec_id)
+        print(vec.vec_dims)
         if not vec:
             raise Exception(
                 f"Attempted to use undeclared vector {vec_id}"
             )
+        print(ctx.expr_list().expr())
         if len(vec.vec_dims) != len(ctx.expr_list().expr()):
             raise Exception(
                 f"Provided more indices than declared in {vec_id}"
@@ -219,8 +221,8 @@ class DoflirCustomVisitor(DoflirVisitor):
         return self.visitChildren(ctx)
 
     def visitVec_declaration_stmt(self, ctx: DoflirParser.Vec_declaration_stmtContext):
-        vec_id = ctx.declaration().ID().getText()
-        vec_type = ctx.declaration().TYPE_NAME().getText().upper()
+        vec_id = ctx.vec_declaration().declaration().ID().getText()
+        vec_type = ctx.vec_declaration().declaration().TYPE_NAME().getText().upper()
         if self.curr_scope.exists(vec_id):
             raise Exception(f"Vector with ID {vec_id} already used")
         is_glob = False
@@ -228,7 +230,7 @@ class DoflirCustomVisitor(DoflirVisitor):
             is_glob = True
 
         vec_dims = []
-        for dim in ctx.vec_list().expr_list().expr():
+        for dim in ctx.vec_declaration().vec_list().expr_list().expr():
             self.visit(dim)
             dim_expr = self.operands_stack.pop()
             if dim_expr.data_type != VarTypes.INT:
@@ -485,6 +487,46 @@ class DoflirCustomVisitor(DoflirVisitor):
                         address=param_address
                     )
                 )
+            for param in ctx.parameters().vec_declaration():
+                param_id = param.declaration().ID().getText()
+                param_type_str = param.declaration().TYPE_NAME().getText()
+                if self.global_table.exists(param_id):
+                    raise Exception(f"Parameter with ID {param_id} already globally used")
+                if self.fun_dir.exists(param_id) or fun_id == param_id:
+                    raise Exception(f"Parameter with ID {param_id} is same name of function")
+                param_type = self.cube.type_to_enum(type_str=param_type_str)
+                param_address = self.curr_scope.new_address(
+                    v_type=param_type,
+                    is_glob=False,
+                )
+
+                vec_dims = []
+                for dim in param.vec_list().expr_list().expr():
+                    self.visit(dim)
+                    dim_expr = self.operands_stack.pop()
+                    if dim_expr.data_type != VarTypes.INT:
+                        raise Exception(f"Vector dimensions must be int {dim_expr.data_type} given instead.")
+                    vec_dims.append(dim_expr)
+                logging.debug(f"Declaring vector ({param_id}, {param_type})")
+                vec = self.curr_scope.declare_vector(
+                    name=param_id, vec_type=param_type, vec_dims=vec_dims,
+                    is_glob=False
+                )
+                params.append(
+                    Params(
+                        param_id=param_id,
+                        param_type=param_type,
+                        address=vec.address,
+                    )
+                )
+                allocate_quad = Quad(
+                    op=Ops.ALLOC,
+                    left=None,
+                    right=None,
+                    res=vec
+                )
+                self.quads.append(allocate_quad)
+
         logging.debug(f"Defining function ({fun_id}, {return_type})")
         self.fun_dir.define_fun(
             name=fun_id,
@@ -575,15 +617,28 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.visitChildren(ctx)
 
     def visitPrint_stmt(self, ctx: DoflirParser.Print_stmtContext):
-        self.visitChildren(ctx)
-        print_expr = self.operands_stack.pop()
-        print_quad = Quad(
-            op=Ops.PRINT,
-            left=None,
-            right=None,
-            res=print_expr
-        )
-        self.quads.append(print_quad)
+        for expr in ctx.expr_list().expr():
+            self.visit(expr)
+            print_expr = self.operands_stack.pop()
+            print_quad = Quad(
+                op=Ops.PRINT,
+                left=None,
+                right=None,
+                res=print_expr
+            )
+            self.quads.append(print_quad)
+
+    def visitPrintln_stmt(self, ctx: DoflirParser.Println_stmtContext):
+        for expr in ctx.expr_list().expr():
+            self.visit(expr)
+            print_expr = self.operands_stack.pop()
+            print_quad = Quad(
+                op=Ops.PRINTLN,
+                left=None,
+                right=None,
+                res=print_expr
+            )
+            self.quads.append(print_quad)
 
     # Visit a parse tree produced by DoflirParser#condition.
     def visitCondition(self, ctx: DoflirParser.ConditionContext):

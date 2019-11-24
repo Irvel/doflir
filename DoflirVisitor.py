@@ -74,6 +74,11 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by DoflirParser#vec_declaration.
+    def visitVec_declaration(self, ctx:DoflirParser.Vec_declarationContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by DoflirParser#vec_declaration_stmt.
     def visitVec_declaration_stmt(self, ctx:DoflirParser.Vec_declaration_stmtContext):
         return self.visitChildren(ctx)
@@ -246,6 +251,11 @@ class DoflirVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by DoflirParser#print_stmt.
     def visitPrint_stmt(self, ctx:DoflirParser.Print_stmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#println_stmt.
+    def visitPrintln_stmt(self, ctx:DoflirParser.Println_stmtContext):
         return self.visitChildren(ctx)
 
 

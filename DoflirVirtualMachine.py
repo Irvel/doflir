@@ -35,7 +35,7 @@ class DoflirVirtualMachine(object):
             VarTypes.INT: np.int,
             VarTypes.FLOAT: np.float,
             VarTypes.BOOL: np.bool,
-            VarTypes.STRING: np.str,
+            VarTypes.STRING: "<U20",
         }
 
     @property
@@ -177,6 +177,9 @@ class DoflirVirtualMachine(object):
         self.set_value(value=self.get_val(quad.left), dst=quad.res)
 
     def print(self, quad):
+        print(self.get_val(quad.res), end="")
+
+    def println(self, quad):
         print(self.get_val(quad.res))
 
     def era(self, quad):
@@ -210,12 +213,14 @@ class DoflirVirtualMachine(object):
         )
         self.set_value(
             value=self.get_val(quad.res),
-            dst=self.pending_return_val.pop(),
+            dst=self.pending_return_val[-1],
             global_ctx=True,
         )
 
     def endproc(self, quad):
         self.context_stack.pop()
+        if self.pending_return_val:
+            self.pending_return_val.pop()
         old_ip = self.ip
         self.ip = self.pending_return_jump.pop()
         logger.debug(f"{old_ip:<3} Set ip to    ({self.ip})  ")
