@@ -6,18 +6,19 @@ main_def: 'define main''{' proc_body '}' ;
 
 proc_body: (NL*|statement) (NL|statement)*;
 
-statement: (assignment | condition | iterable | vec_filtering | fun_call_stmt | declaration_stmt | print_stmt | vec_declaration_stmt);
+statement: (assignment | condition | iterable | vec_filtering | fun_call_stmt | declaration_stmt | print_stmt | vec_declaration_stmt | flow_call);
 
 assignment: (ID|vec_indexing) '=' expr ';' ;
 declaration_stmt: declaration ';' ;
 declaration: ID '->' TYPE_NAME ;
 
 fun_def
-	: 'define' ID '->' TYPE_NAME '(' parameters? ')' '{' proc_body flow_call '}'  // Function definition.
+	: 'define' ID '->' TYPE_NAME '(' parameters? ')' '{' proc_body '}'  // Function definition.
 	;
 parameters: declaration (',' declaration)*;
 fun_call_stmt: fun_call ';' ;
 fun_call: ID '(' expr_list? ')' ;  // Function call.
+flow_call: 'return' (expr)? ';' NL*;
 
 expr_list: (expr | (expr (',' expr)*)) ;
 
@@ -59,7 +60,6 @@ expr
 
 
 
-flow_call: 'return' (expr)? ';' NL*;
 
 condition
 	: 'if' '(' expr ')' '{' proc_body '}'   #ifStmt

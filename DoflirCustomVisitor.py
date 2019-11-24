@@ -29,6 +29,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.operands_stack = deque()
         self.operators_stack = deque()
         self.pending_jumps_stack = deque()
+        self.return_type_stack = deque()
         self.quads = []
         self._temp_num = 0
 
@@ -447,18 +448,23 @@ class DoflirCustomVisitor(DoflirVisitor):
             ),
             quad_idx=self.current_quad_idx + 1,
         )
+        self.return_type_stack.append(return_type)
         self.visit(ctx.proc_body())
+        ret_quad = Quad(Ops.ENDPROC, None, None, None)
+        self.quads.append(ret_quad)
+        self.return_type_stack.pop()
+        self.scope_stack.pop()
+
+    def visitFlow_call(self, ctx: DoflirParser.Flow_callContext):
         ret_val = VarTypes.VOID
-        if ctx.flow_call().expr():
-            self.visit(ctx.flow_call().expr())
+        return_type = self.return_type_stack[-1]
+        if ctx.expr():
+            self.visit(ctx.expr())
             ret_val = self.operands_stack.pop()
             if return_type != ret_val.data_type:
                 raise Exception(f"Returning a different type than what was defined.")
         ret_quad = Quad(Ops.RETURN_, None, None, ret_val)
         self.quads.append(ret_quad)
-        ret_quad = Quad(Ops.ENDPROC, None, None, None)
-        self.quads.append(ret_quad)
-        self.scope_stack.pop()
 
     def visitFun_call(self, ctx: DoflirParser.Fun_callContext):
         fun_id = ctx.ID().getText()
