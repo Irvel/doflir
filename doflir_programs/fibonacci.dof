@@ -1,0 +1,20 @@
+define fibo_recursive -> int (n -> int) {
+	if (n <= 1) {
+		return n;
+	}
+	else {
+       return fibo_recursive(n - 1) + fibo_recursive(n - 2);
+	}
+}
+
+define fibo_iterative -> int (n -> int) {
+	return 1;
+}
+
+define main {
+	print("Result recursive for 8:");
+	print(fibo_recursive(8));
+
+	print("Result recursive for 14:");
+	print(fibo_recursive(14));
+}

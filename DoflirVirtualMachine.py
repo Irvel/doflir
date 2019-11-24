@@ -25,6 +25,7 @@ class DoflirVirtualMachine(object):
         self.ip = 0
         self.context_stack = deque()
         self.context_stack.append(bytecode.const_table)
+        self.temp_context = None
         self.pending_params_stack = deque()
         self.pending_return_jump = deque()
         self.pending_return_val = deque()
@@ -60,7 +61,7 @@ class DoflirVirtualMachine(object):
             elif operand.address in self.global_context:
                 return self.global_context[operand.address]
 
-    def set_value(self, value, destination, global_ctx=False):
+    def set_value(self, value, destination, global_ctx=False, temp_ctx=False):
         if isinstance(destination, Pointer):
             pass
         else:
@@ -69,6 +70,8 @@ class DoflirVirtualMachine(object):
             )
             if global_ctx:
                 self.global_context[destination.address] = value
+            elif temp_ctx:
+                self.temp_context[destination.address] = value
             else:
                 self.current_context[destination.address] = value
 
@@ -114,13 +117,13 @@ class DoflirVirtualMachine(object):
         self.run_bin_op(bin_op=operator.gt, quad=quad)
 
     def gt_eq(self, quad):
-        self.run_bin_op(bin_op=operator.gt_eq, quad=quad)
+        self.run_bin_op(bin_op=operator.ge, quad=quad)
 
     def lt(self, quad):
         self.run_bin_op(bin_op=operator.lt, quad=quad)
 
     def lt_eq(self, quad):
-        self.run_bin_op(bin_op=operator.lt_eq, quad=quad)
+        self.run_bin_op(bin_op=operator.le, quad=quad)
 
     def eq(self, quad):
         self.run_bin_op(bin_op=operator.eq, quad=quad)
@@ -147,7 +150,7 @@ class DoflirVirtualMachine(object):
         print(self.get_val(quad.res))
 
     def era(self, quad):
-        self.context_stack.append({})
+        self.temp_context = {}
         logger.debug(f"{self.ip:<3} ERA To    {quad.left.name}  ")
 
         function = self.fun_dir.search(quad.left.name)
@@ -161,9 +164,13 @@ class DoflirVirtualMachine(object):
         param_target = self.pending_params_stack.pop()
         logger.debug(f"{self.ip:<3} Set param {param_target.param_id}"
                      f"({param_target.address})  ")
-        self.set_value(value=self.get_val(quad.left), destination=param_target)
+        self.set_value(value=self.get_val(quad.left),
+                       destination=param_target,
+                       temp_ctx=True)
 
     def gosub(self, quad):
+        self.context_stack.append(self.temp_context)
+        self.temp_context = None
         self.pending_return_jump.append(self.ip)
         self._goto(quad_idx=quad.left.quad_idx)
 
