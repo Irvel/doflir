@@ -30,23 +30,23 @@ define fibo_iterative -> int (n -> int) {
 
 
 define main {
-	print("Result recursive for 8:");
+	print("Result recursive fibonacci for 8:");
 	print(fibo_recursive(8));
 
-	print("Result recursive for 14:");
+	print("Result recursive fibonacci for 14:");
 	print(fibo_recursive(14));
 
-	print("Result recursive for 23:");
+	print("Result recursive fibonacci for 23:");
 	print(fibo_recursive(23));
 
 	print("----------------------------");
 
-	print("Result iterative for 8:");
+	print("Result iterative fibonacci for 8:");
 	print(fibo_iterative(8));
 
-	print("Result iterative for 14:");
+	print("Result iterative fibonacci for 14:");
 	print(fibo_iterative(14));
 
-	print("Result iterative for 23:");
+	print("Result iterative fibonacci for 23:");
 	print(fibo_iterative(23));
 }

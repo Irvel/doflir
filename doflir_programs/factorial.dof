@@ -1,0 +1,46 @@
+define factorial_recursive -> int (n -> int) {
+	if (n == 1) {
+		return n;
+	}
+	else {
+       return n * factorial_recursive(n - 1);
+	}
+}
+
+define factorial_iterative -> int (n -> int) {
+	x -> int;
+    x = 1;
+    while (n >= 1) {
+        x = x * n;
+        n = n - 1;
+	}
+	return x;
+}
+
+define main {
+	print("Result recursive factorial for 3:");
+	print(factorial_recursive(3));
+
+	print("Result recursive factorial for 6:");
+	print(factorial_recursive(6));
+
+	print("Result recursive factorial for 11:");
+	print(factorial_recursive(11));
+
+	print("Result recursive factorial for 14:");
+	print(factorial_recursive(14));
+
+	print("----------------------------");
+
+	print("Result iterative factorial for 3:");
+	print(factorial_iterative(3));
+
+	print("Result iterative factorial for 6:");
+	print(factorial_iterative(6));
+
+	print("Result iterative factorial for 11:");
+	print(factorial_iterative(11));
+
+	print("Result iterative factorial for 14:");
+	print(factorial_iterative(14));
+}
