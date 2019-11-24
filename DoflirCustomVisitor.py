@@ -99,11 +99,9 @@ class DoflirCustomVisitor(DoflirVisitor):
                       f"{'[]':>16}, {fun.address:>9}")
         print("\n")
 
-    # Visit a parse tree produced by DoflirParser#statement.
     def visitStatement(self, ctx: DoflirParser.StatementContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by DoflirParser#vec_indexing.
     def visitVec_indexing(self, ctx: DoflirParser.Vec_indexingContext):
         vec_id = ctx.ID().getText()
         vec = self.curr_scope.search(vec_id) or self.global_table.search(vec_id)
@@ -136,24 +134,11 @@ class DoflirCustomVisitor(DoflirVisitor):
                    data_type=vec.data_type)
         )
 
-    # Visit a parse tree produced by DoflirParser#vec_filtering.
     def visitVec_filtering(self, ctx: DoflirParser.Vec_filteringContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by DoflirParser#parameters.
     def visitParameters(self, ctx: DoflirParser.ParametersContext):
         return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by DoflirParser#expr.
-    # def visitExpr(self, ctx: DoflirParser.ExprContext):
-        # exprText = ctx.getText()
-        # print(dir(ctx))
-        # print(f"Expression after tokenization = {exprText}")
-        # if ctx.NUMBER():
-        #     num = ctx.NUMBER().getText()
-        #     print(num)
-        #     return num
-        # return self.visitChildren(ctx)
 
     def visitTokIdExpr(self, ctx: DoflirParser.TokIdExprContext):
         var_id = ctx.ID().getText()
@@ -183,9 +168,6 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
 
     def visitTokStrExpr(self, ctx: DoflirParser.TokStrExprContext):
-        # self.operands_stack.append(
-        #     (str(ctx.getText())[1:-1], VarTypes.STRING)
-        # )
         self.operands_stack.append(
             self.global_table.declare_or_search(
                 value=str(ctx.getText()),
@@ -195,9 +177,6 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
 
     def visitTokBoolExpr(self, ctx: DoflirParser.TokBoolExprContext):
-        # self.operands_stack.append(
-        #     (bool(ctx.getText().capitalize()), VarTypes.BOOL)
-        # )
         self.operands_stack.append(
             self.global_table.declare_or_search(
                 value=bool(ctx.getText().capitalize()),
@@ -456,7 +435,6 @@ class DoflirCustomVisitor(DoflirVisitor):
             raise Exception("Cannot define function with variable of the same name")
         if self.fun_dir.exists(fun_name=fun_id):
             raise Exception("Cannot define two functions the same name")
-        # self.fun_dir.add(fun_id)
         self.scope_stack.append(VariablesTable())
         params = None
         if ctx.parameters():
@@ -606,9 +584,6 @@ class DoflirCustomVisitor(DoflirVisitor):
                 res=ret_tmp
             )
             self.quads.append(assign_ret_quad)
-
-            # ret_tmp = self.new_temp(data_type=target_fun.ret_type)
-            # ret_tmp = f"{fun_id}_{ret_tmp}"
             self.operands_stack.append(ret_tmp)
 
     def visitMain_def(self, ctx: DoflirParser.Main_defContext):
@@ -639,7 +614,3 @@ class DoflirCustomVisitor(DoflirVisitor):
                 res=print_expr
             )
             self.quads.append(print_quad)
-
-    # Visit a parse tree produced by DoflirParser#condition.
-    def visitCondition(self, ctx: DoflirParser.ConditionContext):
-        return self.visitChildren(ctx)
