@@ -1,0 +1,66 @@
+array -> int [10];
+
+define partition -> int (low -> int, high -> int) {
+    i -> int;
+    pivot -> int;
+    temp -> int;
+
+    i = low - 1;
+    pivot = array[high];
+
+    j -> int;
+    j = low;
+    while (j < high) {
+        if (array[j] <= pivot) {
+            i = i + 1;
+            temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+        j = j + 1;
+    }
+
+    temp = array[i + 1];
+    array[i + 1] = array[high];
+    array[high] = temp;
+    return i + 1;
+}
+
+define quick_sort -> void (low -> int, high -> int) {
+    pi -> int;
+    if (low < high) {
+        pi = partition(low, high);
+        quick_sort(low, pi - 1);
+        quick_sort(pi + 1, high);
+    }
+}
+
+define print_array -> void () {
+    idx -> int;
+    idx = 0;
+    while (idx < 10) {
+        print(array[idx]);
+        idx = idx + 1;
+    }
+    print("");
+}
+
+define main {
+    array[0] = 3;
+    array[1] = 35;
+    array[2] = 2;
+    array[3] = 7;
+    array[4] = 85;
+    array[5] = 2;
+    array[6] = -11;
+    array[7] = 29;
+    array[8] = 4;
+    array[9] = 9;
+
+    print("Array before sorting:");
+    print_array();
+    quick_sort(0, 9);
+    print("Array after sorting:");
+    print_array();
+}
+

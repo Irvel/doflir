@@ -90,6 +90,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         print(f"\n{'='*10} Function directory {'='*10}\n")
         for fun in self.fun_dir.functions:
             if fun.params:
+                print(fun.address)
                 print(f"- {fun.name:>7}, {fun.ret_type.value:>6}, "
                       f"{str([p.param_id for p in fun.params]):>16}, "
                       f"{fun.address:>9}")

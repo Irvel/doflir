@@ -6,22 +6,26 @@ class VariablesTable(object):
     def __init__(self):
         self._vars = {}
         self._curr_address = 0
-        self.global_i = 5_000
-        self.global_f = 8_000
-        self.global_b = 9_000
-        self.global_s = 10_000
+        self.global_i = 4_000
+        self.global_f = 6_000
+        self.global_b = 8_000
+        self.global_s = 9_000
+        self.global_v = 10_000
         self.local_i = 11_000
         self.local_f = 13_000
         self.local_b = 15_000
-        self.local_s = 16_000
-        self.temp_i = 17_000
-        self.temp_f = 19_000
-        self.temp_b = 21_000
-        self.temp_s = 22_000
-        self.const_i = 23_000
-        self.const_f = 23_500
-        self.const_b = 24_000
-        self.const_s = 25_000
+        self.local_s = 17_000
+        self.local_v = 18_000
+        self.temp_i = 19_000
+        self.temp_f = 21_000
+        self.temp_b = 22_000
+        self.temp_s = 23_000
+        self.temp_v = 24_000
+        self.const_i = 25_000
+        self.const_f = 25_500
+        self.const_b = 26_000
+        self.const_s = 27_000
+        self.const_v = 28_000
         self._temp_num = 1
 
     def search(self, var_name):
@@ -136,6 +140,9 @@ class VariablesTable(object):
             elif v_type == VarTypes.STRING:
                 new_address = self.global_s
                 self.global_s += 1
+            elif v_type == VarTypes.VOID:
+                new_address = self.global_v
+                self.global_v += 1
         elif is_tmp:
             if v_type == VarTypes.INT:
                 new_address = self.temp_i
@@ -149,6 +156,9 @@ class VariablesTable(object):
             elif v_type == VarTypes.STRING:
                 new_address = self.temp_s
                 self.temp_s += 1
+            elif v_type == VarTypes.VOID:
+                new_address = self.temp_v
+                self.temp_v += 1
         elif is_const:
             if v_type == VarTypes.INT:
                 new_address = self.const_i
@@ -162,6 +172,9 @@ class VariablesTable(object):
             elif v_type == VarTypes.STRING:
                 new_address = self.const_s
                 self.const_s += 1
+            elif v_type == VarTypes.VOID:
+                new_address = self.const_v
+                self.const_v += 1
         else:
             if v_type == VarTypes.INT:
                 new_address = self.local_i
@@ -175,6 +188,9 @@ class VariablesTable(object):
             elif v_type == VarTypes.STRING:
                 new_address = self.local_s
                 self.local_s += 1
+            elif v_type == VarTypes.VOID:
+                new_address = self.local_v
+                self.local_v += 1
         return new_address
 
 

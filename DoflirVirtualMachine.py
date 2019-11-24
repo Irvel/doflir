@@ -76,7 +76,7 @@ class DoflirVirtualMachine(object):
     def set_value(self, value, dst, global_ctx=False, temp_ctx=False):
         if isinstance(dst, VecIdx):
             idx_val = tuple([self.get_val(idx) for idx in dst.idx])
-            if global_ctx:
+            if global_ctx or dst.address in self.global_context:
                 self.global_context[dst.address][idx_val] = value
             elif temp_ctx:
                 self.temp_context[dst.address][idx_val] = value
@@ -93,6 +93,14 @@ class DoflirVirtualMachine(object):
     def run_quad(self, quad):
         op_method = getattr(self, enum_to_name(quad.op))
         op_method(quad)
+
+    def neg(self, quad):
+        res_val = -(self.get_val(quad.left))
+        self.set_value(value=res_val, dst=quad.res)
+
+    def pos(self, quad):
+        res_val = +(self.get_val(quad.left))
+        self.set_value(value=res_val, dst=quad.res)
 
     def run_bin_op(self, bin_op, quad):
         left_val, right_val = (self.get_val(quad.left),
