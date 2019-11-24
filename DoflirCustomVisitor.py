@@ -8,6 +8,7 @@ from VariablesTable import Params
 from VariablesTable import QuadJump
 from VariablesTable import Constant
 from VariablesTable import Param
+from VariablesTable import VecIdx
 from SemanticCube import Ops
 from SemanticCube import SemanticCube
 from SemanticCube import VarTypes
@@ -109,23 +110,28 @@ class DoflirCustomVisitor(DoflirVisitor):
             raise Exception(
                 f"Attempted to use undeclared vector {vec_id}"
             )
-
-        vec_dims = []
-        for dim_idx, dim in enumerate(ctx.vec_list().expr_list().expr()):
-            self.visit(dim)
-            dim_expr = self.operands_stack.pop()
-            if dim_expr.data_type != VarTypes.INT:
-                raise Exception(f"Vector index must be int {dim_expr.data_type} given instead.")
-            vec_dims.append(dim_expr)
+        if len(vec.vec_dims) != len(ctx.expr_list().expr()):
+            raise Exception(
+                f"Provided more indices than declared in {vec_id}"
+            )
+        vec_idx = []
+        for idx_num, idx_expr in enumerate(ctx.expr_list().expr()):
+            self.visit(idx_expr)
+            idx_res = self.operands_stack.pop()
+            if idx_res.data_type != VarTypes.INT:
+                raise Exception(f"Vector index must be int {idx_res.data_type} given instead.")
+            vec_idx.append(idx_res)
             ver_quad = Quad(
                 op=Ops.VER,
-                left=dim_expr,
+                left=idx_res,
                 right=None,
-                res=vec.vec_dims[dim_idx]
+                res=vec.vec_dims[idx_num]
             )
             self.quads.append(ver_quad)
-        print(vec_dims)
-        return self.visitChildren(ctx)
+        self.operands_stack.append(
+            VecIdx(vec_id=vec_id, idx=vec_idx, address=vec.address,
+                   data_type=vec.data_type)
+        )
 
     # Visit a parse tree produced by DoflirParser#vec_filtering.
     def visitVec_filtering(self, ctx: DoflirParser.Vec_filteringContext):
@@ -214,7 +220,6 @@ class DoflirCustomVisitor(DoflirVisitor):
     def visitVec_declaration_stmt(self, ctx: DoflirParser.Vec_declaration_stmtContext):
         vec_id = ctx.declaration().ID().getText()
         vec_type = ctx.declaration().TYPE_NAME().getText().upper()
-        logging.debug(f"Declaring vector ({vec_id}, {vec_type})")
         if self.curr_scope.exists(vec_id):
             raise Exception(f"Vector with ID {vec_id} already used")
         is_glob = False
@@ -228,13 +233,18 @@ class DoflirCustomVisitor(DoflirVisitor):
             if dim_expr.data_type != VarTypes.INT:
                 raise Exception(f"Vector dimensions must be int {dim_expr.data_type} given instead.")
             vec_dims.append(dim_expr)
-        print(vec_dims)
-        self.curr_scope.declare_vector(
+        logging.debug(f"Declaring vector ({vec_id}, {vec_type})")
+        vec = self.curr_scope.declare_vector(
             name=vec_id, vec_type=VarTypes[vec_type], vec_dims=vec_dims,
             is_glob=is_glob
         )
-
-        return self.visitChildren(ctx)
+        allocate_quad = Quad(
+            op=Ops.ALLOC,
+            left=None,
+            right=None,
+            res=vec
+        )
+        self.quads.append(allocate_quad)
 
     def visitVec_list(self, ctx: DoflirParser.Vec_listContext):
         return self.visitChildren(ctx)
@@ -243,25 +253,38 @@ class DoflirCustomVisitor(DoflirVisitor):
         if ctx.ID():
             # We need to do this again cause ID here is not an expr
             identifier = ctx.ID().getText()
-            variable = self.curr_scope.search(identifier) or self.global_table.search(identifier)
+            variable = (
+                self.curr_scope.search(identifier) or
+                self.global_table.search(identifier)
+            )
             if not variable:
                 raise Exception(f"Attempted to use undeclared variable {identifier}")
             self.operands_stack.append(variable)
-            self.operators_stack.append(Ops.ASSIGN)
-            self.visitChildren(ctx)
-            if self.operators_stack and self.operators_stack[-1] == Ops.ASSIGN:
-                op_1 = self.operands_stack.pop()
-                op_2 = self.operands_stack.pop()
-                assert op_1.data_type == op_2.data_type
-                op_2.is_initialized = True
-                assign_quad = Quad(
-                    op=Ops.ASSIGN,
-                    left=op_1,
-                    right=None,
-                    res=op_2
-                )
-                self.quads.append(assign_quad)
-            return
+
+        elif ctx.vec_indexing():
+            identifier = ctx.vec_indexing().ID().getText()
+            vec = (
+                self.curr_scope.search(identifier) or
+                self.global_table.search(identifier)
+            )
+            if not vec:
+                raise Exception(f"Attempted to use undeclared vector {identifier}")
+            self.visit(ctx.vec_indexing())
+
+        self.operators_stack.append(Ops.ASSIGN)
+        self.visit(ctx.expr())
+        if self.operators_stack and self.operators_stack[-1] == Ops.ASSIGN:
+            op_1 = self.operands_stack.pop()
+            op_2 = self.operands_stack.pop()
+            assert op_1.data_type == op_2.data_type
+            op_2.is_initialized = True
+            assign_quad = Quad(
+                op=Ops.ASSIGN,
+                left=op_1,
+                right=None,
+                res=op_2
+            )
+            self.quads.append(assign_quad)
 
     def generate_bin_quad(self):
         operator = self.operators_stack.pop()

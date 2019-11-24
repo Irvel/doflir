@@ -38,6 +38,7 @@ class Ops(Enum):
     ERA = "ERA"
     ENDPROC = "ENDPROC"
     PRINT = "PRINT"
+    ALLOC = "ALLOC"
     VER = "VER"
 
 

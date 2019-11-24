@@ -6,9 +6,11 @@ from VariablesTable import QuadJump
 from VariablesTable import Constant
 from VariablesTable import Param
 from VariablesTable import Pointer
+from VariablesTable import VecIdx
 from VariablesTable import VarTypes
 
 import argparse
+import numpy as np
 import logging
 import operator
 import pickle
@@ -29,6 +31,12 @@ class DoflirVirtualMachine(object):
         self.pending_params_stack = deque()
         self.pending_return_jump = deque()
         self.pending_return_val = deque()
+        self.np_type_map = {
+            VarTypes.INT: np.int,
+            VarTypes.FLOAT: np.float,
+            VarTypes.BOOL: np.bool,
+            VarTypes.STRING: np.str,
+        }
 
     @property
     def current_quad(self):
@@ -53,27 +61,34 @@ class DoflirVirtualMachine(object):
     def get_val(self, operand):
         if isinstance(operand, Constant):
             return operand.value
-        elif isinstance(operand, Pointer):
-            pass
+        elif isinstance(operand, VecIdx):
+            idx_val = tuple([self.get_val(idx) for idx in operand.idx])
+            if operand.address in self.current_context:
+                return self.current_context[operand.address][idx_val]
+            elif operand.address in self.global_context:
+                return self.global_context[operand.address][idx_val]
         else:
             if operand.address in self.current_context:
                 return self.current_context[operand.address]
             elif operand.address in self.global_context:
                 return self.global_context[operand.address]
 
-    def set_value(self, value, destination, global_ctx=False, temp_ctx=False):
-        if isinstance(destination, Pointer):
-            pass
-        else:
-            logger.debug(
-                f"{self.ip:<3} Put {value:<3} into  ({destination.address})"
-            )
+    def set_value(self, value, dst, global_ctx=False, temp_ctx=False):
+        if isinstance(dst, VecIdx):
+            idx_val = tuple([self.get_val(idx) for idx in dst.idx])
             if global_ctx:
-                self.global_context[destination.address] = value
+                self.global_context[dst.address][idx_val] = value
             elif temp_ctx:
-                self.temp_context[destination.address] = value
+                self.temp_context[dst.address][idx_val] = value
             else:
-                self.current_context[destination.address] = value
+                self.current_context[dst.address][idx_val] = value
+        else:
+            if global_ctx:
+                self.global_context[dst.address] = value
+            elif temp_ctx:
+                self.temp_context[dst.address] = value
+            else:
+                self.current_context[dst.address] = value
 
     def run_quad(self, quad):
         op_method = getattr(self, enum_to_name(quad.op))
@@ -87,7 +102,10 @@ class DoflirVirtualMachine(object):
             f"{self.ip:<3} Do  {left_val:<3} ({bin_op.__name__:3})  "
             f"{right_val:<5} → {res_val}"
         )
-        self.set_value(value=res_val, destination=quad.res)
+        logger.debug(
+            f"{self.ip:<3} Put {res_val:<3} into  ({quad.res})"
+        )
+        self.set_value(value=res_val, dst=quad.res)
 
     def plus(self, quad):
         self.run_bin_op(bin_op=operator.add, quad=quad)
@@ -144,7 +162,11 @@ class DoflirVirtualMachine(object):
             self.goto(quad)
 
     def assign(self, quad):
-        self.set_value(value=self.get_val(quad.left), destination=quad.res)
+        logger.debug(
+            f"{self.ip:<3} Assign   {self.get_val(quad.left):<3} to "
+            f"  ({quad.res.address})"
+        )
+        self.set_value(value=self.get_val(quad.left), dst=quad.res)
 
     def print(self, quad):
         print(self.get_val(quad.res))
@@ -163,9 +185,9 @@ class DoflirVirtualMachine(object):
     def param(self, quad):
         param_target = self.pending_params_stack.pop()
         logger.debug(f"{self.ip:<3} Set param {param_target.param_id}"
-                     f"({param_target.address})  ")
+                     f"({param_target.address})({self.get_val(quad.left)})  ")
         self.set_value(value=self.get_val(quad.left),
-                       destination=param_target,
+                       dst=param_target,
                        temp_ctx=True)
 
     def gosub(self, quad):
@@ -175,9 +197,12 @@ class DoflirVirtualMachine(object):
         self._goto(quad_idx=quad.left.quad_idx)
 
     def return_(self, quad):
+        logger.debug(
+            f"{self.ip:<3} Return {self.get_val(quad.res):<3})"
+        )
         self.set_value(
             value=self.get_val(quad.res),
-            destination=self.pending_return_val.pop(),
+            dst=self.pending_return_val.pop(),
             global_ctx=True,
         )
 
@@ -186,6 +211,24 @@ class DoflirVirtualMachine(object):
         old_ip = self.ip
         self.ip = self.pending_return_jump.pop()
         logger.debug(f"{old_ip:<3} Set ip to    ({self.ip})  ")
+
+    def alloc(self, quad):
+        spec = quad.res
+        vec_shape = [self.get_val(d) for d in spec.vec_dims]
+        vec_type = self.np_type_map[spec.data_type]
+        logger.debug(f"{self.ip:<3} ALLOC   {spec.name}({spec.address})"
+                     f"({vec_shape})  ")
+        self.set_value(
+            value=np.zeros(shape=vec_shape, dtype=vec_type),
+            dst=spec,
+        )
+
+    def ver(self, quad):
+        val_to_ver, upper_lim = (self.get_val(quad.left),
+                                 self.get_val(quad.res))
+        if val_to_ver < 0 or val_to_ver >= upper_lim:
+            raise Exception("Out of bounds access.")
+        logger.debug(f"{self.ip:<3} VER     {val_to_ver} < {upper_lim}  ")
 
 
 def enum_to_name(enum):

@@ -71,6 +71,7 @@ class VariablesTable(object):
             vec_dims=vec_dims,
         )
         self._add_var(variable=vec)
+        return vec
 
     def declare_constant(self, value, const_type, is_glob=False, is_tmp=False,
                          is_const=False):
@@ -246,6 +247,24 @@ class Params(object):
             f"{self.address:>9}, "
         )
         return param_repr
+
+
+class VecIdx(object):
+    def __init__(self, vec_id, idx, address, data_type):
+        self.vec_id = vec_id
+        self.idx = idx
+        self.address = address
+        self.data_type = data_type
+        self.is_initialized = True  # Vectors are init by default to 0
+
+    @property
+    def name(self):
+        return self.value
+
+    @property
+    def value(self):
+        short_idx = tuple([i.value for i in self.idx])
+        return f"{self.vec_id}{short_idx}"
 
 
 class Variable(object):
