@@ -72,6 +72,8 @@ class DoflirCustomVisitor(DoflirVisitor):
         const_table = {}
         for var in self.global_table.variables:
             if isinstance(var, Constant):
+                if var.data_type == VarTypes.STRING:
+                    var._value = var._value[1:-1]
                 const_table[var.address] = var
         return ByteCodeFormat(
             quads=self.quads,
@@ -177,7 +179,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         # )
         self.operands_stack.append(
             self.global_table.declare_or_search(
-                value=str(ctx.getText())[1:-1],
+                value=str(ctx.getText()),
                 const_type=VarTypes.STRING,
                 is_const=True,
             )
