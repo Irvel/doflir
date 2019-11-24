@@ -64,8 +64,8 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.visit(ctx.main_def())
         self.print_stats()
         print_quads(quads=self.quads, viz_variant="name")
-        print_quads(quads=self.quads, viz_variant="address")
-        print_quads(quads=self.quads, viz_variant="type")
+        # print_quads(quads=self.quads, viz_variant="address")
+        # print_quads(quads=self.quads, viz_variant="type")
         return self.generate_obj_code()
 
     def generate_obj_code(self):
@@ -294,54 +294,76 @@ class DoflirCustomVisitor(DoflirVisitor):
         if self.operators_stack and self.operators_stack[-1] == op:
             self.generate_bin_quad()
 
-    def visitBinOpExpr(self, ctx, operand):
+    def visitUnOpExpr(self, ctx, operator):
+        self.visit(ctx.expr())
+        operand = self.operands_stack.pop()
+        if not operand.is_initialized:
+            raise Exception(f"Attempt too use uninitialized variable.{operand}")
+
+        result_tmp = self.curr_scope.make_temp(temp_type=operand.data_type)
+        new_quad = Quad(
+            op=operator,
+            left=operand,
+            right=None,
+            res=result_tmp
+        )
+        self.quads.append(new_quad)
+        self.operands_stack.append(result_tmp)
+
+    def visitNegExpr(self, ctx: DoflirParser.NegExprContext):
+        self.visitUnOpExpr(ctx=ctx, operator=Ops.NEG)
+
+    def visitPosExpr(self, ctx: DoflirParser.PosExprContext):
+        self.visitUnOpExpr(ctx=ctx, operator=Ops.POS)
+
+    def visitBinOpExpr(self, ctx, operator):
         self.visit(ctx.expr(0))
-        self.try_op(op=operand)
-        self.operators_stack.append(operand)
+        self.try_op(op=operator)
+        self.operators_stack.append(operator)
         self.visit(ctx.expr(1))
-        self.try_op(op=operand)
+        self.try_op(op=operator)
 
     def visitMultExpr(self, ctx: DoflirParser.MultExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.MULT)
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.MULT)
 
     def visitDivExpr(self, ctx: DoflirParser.DivExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.DIV)
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.DIV)
 
     def visitIntDivExpr(self, ctx: DoflirParser.IntDivExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.INT_DIV)
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.INT_DIV)
 
     def visitPowExpr(self, ctx: DoflirParser.PowExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.POW)
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.POW)
 
     def visitAddExpr(self, ctx: DoflirParser.AddExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.PLUS)
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.PLUS)
 
     def visitSubExpr(self, ctx: DoflirParser.SubExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.MINUS)
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.MINUS)
 
     def visitGtExpr(self, ctx: DoflirParser.GtExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.GT)
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.GT)
 
     def visitGtEqExpr(self, ctx: DoflirParser.GtEqExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.GT_EQ)
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.GT_EQ)
 
     def visitLtExpr(self, ctx: DoflirParser.LtExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.LT)
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.LT)
 
     def visitLtEqExpr(self, ctx: DoflirParser.LtEqExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.LT_EQ)
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.LT_EQ)
 
     def visitEqExpr(self, ctx: DoflirParser.EqExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.EQ)
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.EQ)
 
     def visitNotEqExpr(self, ctx: DoflirParser.NotEqExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.NOT_EQ)
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.NOT_EQ)
 
     def visitAndExpr(self, ctx: DoflirParser.AndExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.AND_)
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.AND_)
 
     def visitOrExpr(self, ctx: DoflirParser.OrExprContext):
-        self.visitBinOpExpr(ctx=ctx, operand=Ops.OR_)
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.OR_)
 
     def visitIfCondition(self, ctx):
         self.visit(ctx.expr())

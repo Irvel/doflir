@@ -33,7 +33,8 @@ expr
 	| vec_filtering                #unExpr
 	| fun_call                     #unExpr
 	| <assoc=right> expr '^' expr  #powExpr    // Exponentiation.
-	| ('-'|'+') expr               #unExpr     // Conversion to negative/positive.
+	| '-' expr                     #negExpr    // Negative unary symbol.
+	| '+' expr                     #posExpr    // Positive unary simbol.
     | 'not' expr                   #unExpr     // Negation.
 	| expr  '@'  expr              #matExpr    // Matrix multiplication.
 	| expr '..'  expr              #dotExpr    // Dot product.
@@ -87,8 +88,8 @@ ID: [a-zA-Z][a-zA-Z0-9_]*;
 STRING_LITERAL:  '"' (~["\\\r\n])* '"';
 //VECTOR_LITERAL:  '[' (ID | INTEGER | FLOAT)? (',' (ID | INTEGER | FLOAT | VECTOR_LITERAL))* ']';
 fragment DIGIT : [0-9] ;
-INTEGER        : ('-'?)DIGIT+ ;
-FLOAT          : ('-'?)(DIGIT+ '.' DIGIT* | '.' DIGIT+) ;
+INTEGER        : DIGIT+ ;
+FLOAT          : (DIGIT+ '.' DIGIT* | '.' DIGIT+) ;
 NUMBER         : (INTEGER | FLOAT) ;
 BOOL: 'true' | 'false';
 

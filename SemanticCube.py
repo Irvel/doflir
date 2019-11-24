@@ -11,6 +11,8 @@ class VarTypes(Enum):
 
 
 class Ops(Enum):
+    NEG = "neg"
+    POS = "pos"
     PLUS = "+"
     MINUS = "-"
     MULT = "*"
