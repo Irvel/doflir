@@ -1,4 +1,3 @@
-from enum import Enum, auto
 from VariablesTable import Pointer
 from VariablesTable import Variable
 from VariablesTable import Param
@@ -6,20 +5,6 @@ from VariablesTable import QuadJump
 from VariablesTable import Constant
 from VariablesTable import Temporal
 from VariablesTable import Function
-
-
-import collections
-
-
-class QuadOpType(Enum):
-    ADDRESS = auto()
-    REFERENCE = auto()
-    QUAD_IDX = auto()
-    CONST = auto()
-    PARAM_NUM = auto()
-
-
-QuadOp = collections.namedtuple("QuadOp", "value op_type")
 
 
 class Quad:
