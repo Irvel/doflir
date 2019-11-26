@@ -3,15 +3,19 @@ define main {
     B -> int;
     C -> int;
     D -> int;
-    A = 1 + 2;
+    B = 493;
+    D = 2;
+    C = 32;
+    A = (1 + (2 * 2) ^ 2) ^ 3;
     while (A + B > D) {
-        if (A < B) {
-            A = 0;
+        if (A > B) {
+            A = A // 4;
             B = B + D;
         }
         else {
             C = A + B;
         }
+        D = D + 87;
     }
-    D = B + A * C;
+    D = (B + A * C) * D;
 }

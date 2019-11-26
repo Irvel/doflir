@@ -18,29 +18,29 @@ define factorial_iterative -> int (n -> int) {
 }
 
 define main {
-	print("Result recursive factorial for 3:");
-	print(factorial_recursive(3));
+	println("Result recursive factorial for 3:");
+	println(factorial_recursive(3), "");
 
-	print("Result recursive factorial for 6:");
-	print(factorial_recursive(6));
+	println("Result recursive factorial for 6:");
+	println(factorial_recursive(6), "");
 
-	print("Result recursive factorial for 11:");
-	print(factorial_recursive(11));
+	println("Result recursive factorial for 11:");
+	println(factorial_recursive(11), "");
 
-	print("Result recursive factorial for 14:");
-	print(factorial_recursive(14));
+	println("Result recursive factorial for 14:");
+	println(factorial_recursive(14), "");
 
-	print("----------------------------");
+	println("----------------------------");
 
-	print("Result iterative factorial for 3:");
-	print(factorial_iterative(3));
+	println("Result iterative factorial for 3:");
+	println(factorial_iterative(3), "");
 
-	print("Result iterative factorial for 6:");
-	print(factorial_iterative(6));
+	println("Result iterative factorial for 6:");
+	println(factorial_iterative(6), "");
 
-	print("Result iterative factorial for 11:");
-	print(factorial_iterative(11));
+	println("Result iterative factorial for 11:");
+	println(factorial_iterative(11), "");
 
-	print("Result iterative factorial for 14:");
-	print(factorial_iterative(14));
+	println("Result iterative factorial for 14:");
+	println(factorial_iterative(14), "");
 }

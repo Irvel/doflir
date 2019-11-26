@@ -7,9 +7,12 @@ define main {
     print("Reading list:  ");
     println(list_filename);
     array = read_array -> float [list_size] (list_filename);
-    println("Value #330 is: ", array[330]);
-    println("Value #111 is: ", array[111]);
-    println("Value #25  is: ", array[25]);
+    print("Value #330 is: ", array[330]);
+    println("");
+    print("Value #111 is: ", array[111]);
+    println("");
+    print("Value #25  is: ", array[25]);
+    println("");
     println("Plot of array is: ");
     plot(array);
     println("");

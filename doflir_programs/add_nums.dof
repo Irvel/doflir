@@ -1,5 +1,6 @@
 define main {
 	result -> int;
+	# result -> int;
 	result = 1 + 2 * 8;
 	result = result * 8 - 2 * (3 + (4 - 2));
 	print(result);

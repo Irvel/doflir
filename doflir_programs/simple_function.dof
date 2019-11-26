@@ -1,33 +1,16 @@
 test -> float;
 test = 2.2;
 
-define two -> float () {
-	return 8.0;
-}
 
-define one -> float (pi -> float, tau -> float) {
-	return 2.0 * pi + tau;
-}
-
-define three -> float (esp -> float, cop -> float) {
-	cop = 1.344 + 2 * esp + cop;
-	other -> float;
-	other = ((test + cop) * 1.2 + 2.34) / (1.2 + one(1.2, 2.8) + two()) * 2.1;
-	return 2.0 * esp + cop * other;
+define times_two -> float (num -> float) {
+	return num * 2.0;
 }
 
 define main {
-	test2 -> float;
-	print("test");
-	test = one(two(), two());
-	test2 = three(two(), 9.21);
-	test3 -> float;
-	test3 = four(two(), 0.491) * test2;
-}
-
-define four -> float (esp -> float, cop -> float) {
-	cop = 9.3 - 2.9 * esp + cop;
-	other -> float;
-	other = ((test - cop)) / (1.2 + one(1.2, 2.8) * two()) / 3.12;
-	return 2.0 * (esp + cop) * other;
+	eight -> float;
+	result -> float;
+	eight = 8.0;
+	result = times_two(eight);
+	print("This should be 16: ");
+	print(result);
 }
