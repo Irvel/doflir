@@ -324,6 +324,9 @@ class DoflirVirtualMachine(object):
     def f_sort(self, quad):
         self.run_filter_op(vec_filter=np.sort, quad=quad)
 
+    def f_reverse(self, quad):
+        self.run_filter_op(vec_filter=vec_reverse, quad=quad)
+
 
 def vec_strip(vector):
     stripped = []
@@ -344,6 +347,10 @@ def vec_upper(vector):
     for val in vector:
         uppered.append(str(val).upper())
     return uppered
+
+
+def vec_reverse(vector):
+    return vector[::-1]
 
 
 def cube(vector):
