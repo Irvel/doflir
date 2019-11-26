@@ -22,7 +22,7 @@ flow_call: 'return' (expr)? ';' NL*;
 
 expr_list: expr (',' expr)* ;
 tok_list: token (',' token)* ;
-
+filter_list: FILTER (',' FILTER)* ;
 
 vec_declaration: declaration vec_list ;
 vec_declaration_stmt: vec_declaration ';' ;
@@ -32,7 +32,7 @@ vec_init_list: '[' tok_list ']';
 mat_init_list: '[' vec_init_list (',' vec_init_list)* ']';
 
 vec_indexing: ID '[' expr_list ']' ;
-vec_filtering: (ID|vec_indexing) '{' expr_list '}' ';';
+vec_filtering: ID '{' tok_list '}' ';';
 
 expr
 	: '('expr')'                   #parenExpr
@@ -72,6 +72,21 @@ token
     | 'NaN'                        #tokNanExpr
 	;
 
+FILTER
+	: 'f_sum'
+	| 'f_mean'
+	| 'f_min'
+	| 'f_max'
+	| 'f_std'
+	| 'f_normalize'
+	| 'f_square'
+	| 'f_split'
+	| 'f_strip'
+	| 'f_lowercase'
+	| 'f_uppercase'
+	| 'f_sort'
+	;
+
 
 condition
 	: 'if' '(' expr ')' '{' proc_body '}'   #ifStmt
@@ -83,6 +98,8 @@ iterable
     | 'while' '(' expr ')' '{' proc_body '}'  			#whileStmt
     ;
 
+read_file_stmt: 'read_file' '(' expr ')' ';' ;
+read_console_stmt: 'read_console' '(' expr ')' ';' ;
 print_stmt: 'print' '(' expr_list ')' ';' ;
 println_stmt: 'println' '(' expr_list ')' ';' ;
 
