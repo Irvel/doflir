@@ -16,9 +16,9 @@ def read_input():
                         type=str, help="Filename of Doflir program to compile")
     parser.add_argument("--debug", action="store_true")
     args = parser.parse_args()
-    print(f"Compiling {args.in_file}...\n")
-    input_file = open(args.in_file, "r")
-    return args.in_file, input_file.read()
+    with open(args.in_file, "r") as input_file:
+        in_code = input_file.read()
+    return args.in_file, in_code, args.debug
 
 
 def make_obj_filename(in_filename):
