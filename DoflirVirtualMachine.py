@@ -316,10 +316,10 @@ class DoflirVirtualMachine(object):
         self.run_filter_op(vec_filter=vec_strip, quad=quad)
 
     def f_lowercase(self, quad):
-        self.run_filter_op(vec_filter=np.vec_lower, quad=quad)
+        self.run_filter_op(vec_filter=vec_lower, quad=quad)
 
     def f_uppercase(self, quad):
-        self.run_filter_op(vec_filter=np.vec_upper, quad=quad)
+        self.run_filter_op(vec_filter=vec_upper, quad=quad)
 
     def f_sort(self, quad):
         self.run_filter_op(vec_filter=np.sort, quad=quad)
