@@ -1,0 +1,7 @@
+define main {
+    vec -> int [3];
+    vec = [1,2,2];
+    var -> int;
+    var = 2;
+    var = vec;
+}

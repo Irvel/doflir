@@ -1,0 +1,7 @@
+define main {
+    matrix_1 -> int [3, 3];
+
+    matrix_1 = [[1,      1,   1],
+                [2, "hola",   2],
+                [3,      3,   3]];
+}

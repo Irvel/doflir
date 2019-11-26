@@ -1,0 +1,7 @@
+
+define main {
+    list_size -> int;
+    list_filename -> string;
+    list_size -> float;
+    list_filename = "doflir_programs/heights_list.csv";
+}
