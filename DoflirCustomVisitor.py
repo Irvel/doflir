@@ -151,24 +151,36 @@ class DoflirCustomVisitor(DoflirVisitor):
                     )
             vec_filters.append(vec_filter)
 
+        tmp_vec = self.allocate_temp_vec(
+            data_type=vec.data_type,
+            vec_dims=vec.vec_dims
+        )
+        self.quads.append(
+            Quad(
+                op=Ops.ASSIGN,
+                left=vec,
+                right=None,
+                res=tmp_vec
+            )
+        )
         for vec_filter in vec_filters[:-1]:
             self.quads.append(
                 Quad(
                     op=vec_filter,
-                    left=vec,
+                    left=tmp_vec,
                     right=None,
-                    res=vec
+                    res=tmp_vec
                 )
             )
         result_var = None
         if is_reduced:
             result_var = self.curr_scope.make_temp(temp_type=vec.data_type)
         else:
-            result_var = vec
+            result_var = tmp_vec
         self.operands_stack.append(result_var)
         final_quad = Quad(
             op=vec_filters[-1],
-            left=vec,
+            left=tmp_vec,
             right=None,
             res=result_var,
         )
