@@ -391,7 +391,7 @@ def main():
     parser = argparse.ArgumentParser(description="Doflir VM")
     parser.add_argument("in_file",
                         type=str, help="Filename of Doflir obj to run")
-    parser.add_argument("--debug", type=bool, default=False, required=False,
+    parser.add_argument("--debug", action="store_true",
                         help="Enable debug logging")
     args = parser.parse_args()
 
