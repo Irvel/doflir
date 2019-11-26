@@ -10,15 +10,19 @@ import io
 import pickle
 
 
-def read_input():
+def parse_arguments():
     parser = argparse.ArgumentParser(description="Doflir Compiler")
     parser.add_argument("in_file",
                         type=str, help="Filename of Doflir program to compile")
     parser.add_argument("--debug", action="store_true")
     args = parser.parse_args()
-    with open(args.in_file, "r") as input_file:
+    return args.in_file, args.debug
+
+
+def read_input(filename):
+    with open(filename, "r") as input_file:
         in_code = input_file.read()
-    return args.in_file, in_code, args.debug
+    return in_code
 
 
 def make_obj_filename(in_filename):
@@ -32,8 +36,9 @@ def write_bytecode(bytecode, filename):
         pickle.dump(bytecode, f, pickle.HIGHEST_PROTOCOL)
 
 
-def main():
-    in_filename, input_code, debug = read_input()
+def make_obj_code(in_filename, debug=False):
+    input_code = read_input(in_filename)
+    in_filename = str(in_filename)
     bytecode = doflir_compile(in_filename, input_code, debug)
     out_filename = make_obj_filename(in_filename)
     write_bytecode(bytecode, out_filename)
@@ -42,11 +47,16 @@ def main():
     print(f'Saved bytecode to "{out_filename}"!')
 
 
+def console_run():
+    in_filename, debug = parse_arguments()
+    make_obj_code(in_filename, debug)
+
+
 def doflir_compile(in_filename, input_code, debug):
     lexer = DoflirLexer(antlr4.InputStream(input_code))
     tokens = antlr4.CommonTokenStream(lexer)
     parser = DoflirParser(tokens)
-    visitor = DoflirCustomVisitor(in_filename, input_code, debug)
+    visitor = DoflirCustomVisitor(str(in_filename), input_code, debug)
 
     # parser.removeErrorListeners()
     # self.error = io.StringIO()
@@ -57,4 +67,4 @@ def doflir_compile(in_filename, input_code, debug):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    main()
+    console_run()
