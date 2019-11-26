@@ -8,8 +8,8 @@ import sys
 
 def serializedATN():
     with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\67")
-        buf.write("\u0197\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
+        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\64")
+        buf.write("\u018a\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
         buf.write("\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4\23\t\23")
         buf.write("\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31")
@@ -38,163 +38,155 @@ def serializedATN():
         buf.write("\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30")
         buf.write("\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30")
         buf.write("\3\30\3\30\3\30\7\30\u0134\n\30\f\30\16\30\u0137\13\30")
-        buf.write("\3\31\3\31\3\31\3\31\3\31\3\31\5\31\u013f\n\31\3\32\3")
+        buf.write("\3\31\3\31\3\31\3\31\3\31\5\31\u013e\n\31\3\32\3\32\3")
         buf.write("\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32")
-        buf.write("\3\32\3\32\3\32\3\32\7\32\u0151\n\32\f\32\16\32\u0154")
-        buf.write("\13\32\3\32\3\32\3\32\3\32\3\32\5\32\u015b\n\32\3\33\3")
-        buf.write("\33\3\33\3\33\3\33\3\33\3\33\3\33\3\33\3\33\3\33\3\33")
-        buf.write("\3\33\3\33\3\33\3\33\3\33\3\33\5\33\u016f\n\33\3\34\3")
-        buf.write("\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34")
-        buf.write("\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\36")
-        buf.write("\3\36\3\36\3\36\3\37\3\37\3\37\3\37\3\37\3\37\3 \3 \3")
-        buf.write(" \3 \3 \3 \3 \2\3.!\2\4\6\b\n\f\16\20\22\24\26\30\32\34")
-        buf.write("\36 \"$&(*,.\60\62\64\668:<>\2\2\2\u01b9\2E\3\2\2\2\4")
-        buf.write("R\3\2\2\2\6^\3\2\2\2\bq\3\2\2\2\nu\3\2\2\2\f{\3\2\2\2")
-        buf.write("\16~\3\2\2\2\20\u0082\3\2\2\2\22\u0091\3\2\2\2\24\u009d")
-        buf.write("\3\2\2\2\26\u00a0\3\2\2\2\30\u00a7\3\2\2\2\32\u00b2\3")
-        buf.write("\2\2\2\34\u00ba\3\2\2\2\36\u00c2\3\2\2\2 \u00ca\3\2\2")
-        buf.write("\2\"\u00cd\3\2\2\2$\u00d0\3\2\2\2&\u00d4\3\2\2\2(\u00d8")
-        buf.write("\3\2\2\2*\u00e3\3\2\2\2,\u00e8\3\2\2\2.\u0101\3\2\2\2")
-        buf.write("\60\u013e\3\2\2\2\62\u015a\3\2\2\2\64\u016e\3\2\2\2\66")
-        buf.write("\u0170\3\2\2\28\u017c\3\2\2\2:\u0186\3\2\2\2<\u018a\3")
-        buf.write("\2\2\2>\u0190\3\2\2\2@D\5\20\t\2AD\5\b\5\2BD\7\66\2\2")
-        buf.write("C@\3\2\2\2CA\3\2\2\2CB\3\2\2\2DG\3\2\2\2EC\3\2\2\2EF\3")
-        buf.write("\2\2\2FH\3\2\2\2GE\3\2\2\2HM\5\4\3\2IL\5\20\t\2JL\7\66")
-        buf.write("\2\2KI\3\2\2\2KJ\3\2\2\2LO\3\2\2\2MK\3\2\2\2MN\3\2\2\2")
-        buf.write("NP\3\2\2\2OM\3\2\2\2PQ\7\2\2\3Q\3\3\2\2\2RS\7\3\2\2ST")
-        buf.write("\7\4\2\2TU\5\6\4\2UV\7\5\2\2V\5\3\2\2\2WY\7\66\2\2XW\3")
-        buf.write("\2\2\2Y\\\3\2\2\2ZX\3\2\2\2Z[\3\2\2\2[_\3\2\2\2\\Z\3\2")
-        buf.write("\2\2]_\5\b\5\2^Z\3\2\2\2^]\3\2\2\2_d\3\2\2\2`c\7\66\2")
-        buf.write("\2ac\5\b\5\2b`\3\2\2\2ba\3\2\2\2cf\3\2\2\2db\3\2\2\2d")
-        buf.write("e\3\2\2\2e\7\3\2\2\2fd\3\2\2\2gr\5\n\6\2hr\5\62\32\2i")
-        buf.write("r\5\64\33\2jr\5,\27\2kr\5\24\13\2lr\5\f\7\2mr\5<\37\2")
-        buf.write("nr\5> \2or\5\"\22\2pr\5\30\r\2qg\3\2\2\2qh\3\2\2\2qi\3")
-        buf.write("\2\2\2qj\3\2\2\2qk\3\2\2\2ql\3\2\2\2qm\3\2\2\2qn\3\2\2")
-        buf.write("\2qo\3\2\2\2qp\3\2\2\2r\t\3\2\2\2sv\7\63\2\2tv\5*\26\2")
-        buf.write("us\3\2\2\2ut\3\2\2\2vw\3\2\2\2wx\7\6\2\2xy\5.\30\2yz\7")
-        buf.write("\7\2\2z\13\3\2\2\2{|\5\16\b\2|}\7\7\2\2}\r\3\2\2\2~\177")
-        buf.write("\7\63\2\2\177\u0080\7\b\2\2\u0080\u0081\7-\2\2\u0081\17")
-        buf.write("\3\2\2\2\u0082\u0083\7\t\2\2\u0083\u0084\7\63\2\2\u0084")
-        buf.write("\u0085\7\b\2\2\u0085\u0086\7-\2\2\u0086\u0088\7\n\2\2")
-        buf.write("\u0087\u0089\5\22\n\2\u0088\u0087\3\2\2\2\u0088\u0089")
-        buf.write("\3\2\2\2\u0089\u008a\3\2\2\2\u008a\u008b\7\13\2\2\u008b")
-        buf.write("\u008c\7\4\2\2\u008c\u008d\5\6\4\2\u008d\u008e\7\5\2\2")
-        buf.write("\u008e\21\3\2\2\2\u008f\u0092\5 \21\2\u0090\u0092\5\16")
-        buf.write("\b\2\u0091\u008f\3\2\2\2\u0091\u0090\3\2\2\2\u0092\u009a")
-        buf.write("\3\2\2\2\u0093\u0096\7\f\2\2\u0094\u0097\5 \21\2\u0095")
-        buf.write("\u0097\5\16\b\2\u0096\u0094\3\2\2\2\u0096\u0095\3\2\2")
-        buf.write("\2\u0097\u0099\3\2\2\2\u0098\u0093\3\2\2\2\u0099\u009c")
-        buf.write("\3\2\2\2\u009a\u0098\3\2\2\2\u009a\u009b\3\2\2\2\u009b")
-        buf.write("\23\3\2\2\2\u009c\u009a\3\2\2\2\u009d\u009e\5\26\f\2\u009e")
-        buf.write("\u009f\7\7\2\2\u009f\25\3\2\2\2\u00a0\u00a1\7\63\2\2\u00a1")
-        buf.write("\u00a3\7\n\2\2\u00a2\u00a4\5\32\16\2\u00a3\u00a2\3\2\2")
-        buf.write("\2\u00a3\u00a4\3\2\2\2\u00a4\u00a5\3\2\2\2\u00a5\u00a6")
-        buf.write("\7\13\2\2\u00a6\27\3\2\2\2\u00a7\u00a9\7\r\2\2\u00a8\u00aa")
-        buf.write("\5.\30\2\u00a9\u00a8\3\2\2\2\u00a9\u00aa\3\2\2\2\u00aa")
-        buf.write("\u00ab\3\2\2\2\u00ab\u00af\7\7\2\2\u00ac\u00ae\7\66\2")
-        buf.write("\2\u00ad\u00ac\3\2\2\2\u00ae\u00b1\3\2\2\2\u00af\u00ad")
-        buf.write("\3\2\2\2\u00af\u00b0\3\2\2\2\u00b0\31\3\2\2\2\u00b1\u00af")
-        buf.write("\3\2\2\2\u00b2\u00b7\5.\30\2\u00b3\u00b4\7\f\2\2\u00b4")
-        buf.write("\u00b6\5.\30\2\u00b5\u00b3\3\2\2\2\u00b6\u00b9\3\2\2\2")
-        buf.write("\u00b7\u00b5\3\2\2\2\u00b7\u00b8\3\2\2\2\u00b8\33\3\2")
-        buf.write("\2\2\u00b9\u00b7\3\2\2\2\u00ba\u00bf\5\60\31\2\u00bb\u00bc")
-        buf.write("\7\f\2\2\u00bc\u00be\5\60\31\2\u00bd\u00bb\3\2\2\2\u00be")
-        buf.write("\u00c1\3\2\2\2\u00bf\u00bd\3\2\2\2\u00bf\u00c0\3\2\2\2")
-        buf.write("\u00c0\35\3\2\2\2\u00c1\u00bf\3\2\2\2\u00c2\u00c7\7,\2")
-        buf.write("\2\u00c3\u00c4\7\f\2\2\u00c4\u00c6\7,\2\2\u00c5\u00c3")
-        buf.write("\3\2\2\2\u00c6\u00c9\3\2\2\2\u00c7\u00c5\3\2\2\2\u00c7")
-        buf.write("\u00c8\3\2\2\2\u00c8\37\3\2\2\2\u00c9\u00c7\3\2\2\2\u00ca")
-        buf.write("\u00cb\5\16\b\2\u00cb\u00cc\5$\23\2\u00cc!\3\2\2\2\u00cd")
-        buf.write("\u00ce\5 \21\2\u00ce\u00cf\7\7\2\2\u00cf#\3\2\2\2\u00d0")
-        buf.write("\u00d1\7\16\2\2\u00d1\u00d2\5\34\17\2\u00d2\u00d3\7\17")
-        buf.write("\2\2\u00d3%\3\2\2\2\u00d4\u00d5\7\16\2\2\u00d5\u00d6\5")
-        buf.write("\34\17\2\u00d6\u00d7\7\17\2\2\u00d7\'\3\2\2\2\u00d8\u00d9")
-        buf.write("\7\16\2\2\u00d9\u00de\5&\24\2\u00da\u00db\7\f\2\2\u00db")
-        buf.write("\u00dd\5&\24\2\u00dc\u00da\3\2\2\2\u00dd\u00e0\3\2\2\2")
-        buf.write("\u00de\u00dc\3\2\2\2\u00de\u00df\3\2\2\2\u00df\u00e1\3")
-        buf.write("\2\2\2\u00e0\u00de\3\2\2\2\u00e1\u00e2\7\17\2\2\u00e2")
-        buf.write(")\3\2\2\2\u00e3\u00e4\7\63\2\2\u00e4\u00e5\7\16\2\2\u00e5")
-        buf.write("\u00e6\5\32\16\2\u00e6\u00e7\7\17\2\2\u00e7+\3\2\2\2\u00e8")
-        buf.write("\u00e9\7\63\2\2\u00e9\u00ea\7\4\2\2\u00ea\u00eb\5\36\20")
-        buf.write("\2\u00eb\u00ec\7\5\2\2\u00ec-\3\2\2\2\u00ed\u00ee\b\30")
-        buf.write("\1\2\u00ee\u00ef\7\n\2\2\u00ef\u00f0\5.\30\2\u00f0\u00f1")
-        buf.write("\7\13\2\2\u00f1\u0102\3\2\2\2\u00f2\u0102\5*\26\2\u00f3")
-        buf.write("\u0102\5,\27\2\u00f4\u0102\5&\24\2\u00f5\u0102\5(\25\2")
-        buf.write("\u00f6\u0102\5\26\f\2\u00f7\u00f8\7\21\2\2\u00f8\u0102")
-        buf.write("\5.\30\30\u00f9\u00fa\7\22\2\2\u00fa\u0102\5.\30\27\u00fb")
-        buf.write("\u00fc\7\23\2\2\u00fc\u0102\5.\30\26\u00fd\u0102\5\60")
-        buf.write("\31\2\u00fe\u0102\5\66\34\2\u00ff\u0102\58\35\2\u0100")
-        buf.write("\u0102\5:\36\2\u0101\u00ed\3\2\2\2\u0101\u00f2\3\2\2\2")
-        buf.write("\u0101\u00f3\3\2\2\2\u0101\u00f4\3\2\2\2\u0101\u00f5\3")
-        buf.write("\2\2\2\u0101\u00f6\3\2\2\2\u0101\u00f7\3\2\2\2\u0101\u00f9")
-        buf.write("\3\2\2\2\u0101\u00fb\3\2\2\2\u0101\u00fd\3\2\2\2\u0101")
-        buf.write("\u00fe\3\2\2\2\u0101\u00ff\3\2\2\2\u0101\u0100\3\2\2\2")
-        buf.write("\u0102\u0135\3\2\2\2\u0103\u0104\f\31\2\2\u0104\u0105")
-        buf.write("\7\20\2\2\u0105\u0134\5.\30\31\u0106\u0107\f\25\2\2\u0107")
-        buf.write("\u0108\7\24\2\2\u0108\u0134\5.\30\26\u0109\u010a\f\24")
-        buf.write("\2\2\u010a\u010b\7\25\2\2\u010b\u0134\5.\30\25\u010c\u010d")
-        buf.write("\f\23\2\2\u010d\u010e\7\26\2\2\u010e\u0134\5.\30\24\u010f")
-        buf.write("\u0110\f\22\2\2\u0110\u0111\7\27\2\2\u0111\u0134\5.\30")
-        buf.write("\23\u0112\u0113\f\21\2\2\u0113\u0114\7\30\2\2\u0114\u0134")
-        buf.write("\5.\30\22\u0115\u0116\f\20\2\2\u0116\u0117\7\22\2\2\u0117")
-        buf.write("\u0134\5.\30\21\u0118\u0119\f\17\2\2\u0119\u011a\7\21")
-        buf.write("\2\2\u011a\u0134\5.\30\20\u011b\u011c\f\16\2\2\u011c\u011d")
-        buf.write("\7\31\2\2\u011d\u0134\5.\30\17\u011e\u011f\f\r\2\2\u011f")
-        buf.write("\u0120\7\32\2\2\u0120\u0134\5.\30\16\u0121\u0122\f\f\2")
-        buf.write("\2\u0122\u0123\7\33\2\2\u0123\u0134\5.\30\r\u0124\u0125")
-        buf.write("\f\13\2\2\u0125\u0126\7\34\2\2\u0126\u0134\5.\30\f\u0127")
-        buf.write("\u0128\f\n\2\2\u0128\u0129\7\35\2\2\u0129\u0134\5.\30")
-        buf.write("\13\u012a\u012b\f\t\2\2\u012b\u012c\7\36\2\2\u012c\u0134")
-        buf.write("\5.\30\n\u012d\u012e\f\b\2\2\u012e\u012f\7\37\2\2\u012f")
-        buf.write("\u0134\5.\30\t\u0130\u0131\f\7\2\2\u0131\u0132\7 \2\2")
-        buf.write("\u0132\u0134\5.\30\b\u0133\u0103\3\2\2\2\u0133\u0106\3")
-        buf.write("\2\2\2\u0133\u0109\3\2\2\2\u0133\u010c\3\2\2\2\u0133\u010f")
-        buf.write("\3\2\2\2\u0133\u0112\3\2\2\2\u0133\u0115\3\2\2\2\u0133")
-        buf.write("\u0118\3\2\2\2\u0133\u011b\3\2\2\2\u0133\u011e\3\2\2\2")
-        buf.write("\u0133\u0121\3\2\2\2\u0133\u0124\3\2\2\2\u0133\u0127\3")
-        buf.write("\2\2\2\u0133\u012a\3\2\2\2\u0133\u012d\3\2\2\2\u0133\u0130")
-        buf.write("\3\2\2\2\u0134\u0137\3\2\2\2\u0135\u0133\3\2\2\2\u0135")
-        buf.write("\u0136\3\2\2\2\u0136/\3\2\2\2\u0137\u0135\3\2\2\2\u0138")
-        buf.write("\u013f\7\63\2\2\u0139\u013f\7.\2\2\u013a\u013f\7\62\2")
-        buf.write("\2\u013b\u013f\7/\2\2\u013c\u013f\7\60\2\2\u013d\u013f")
-        buf.write("\7!\2\2\u013e\u0138\3\2\2\2\u013e\u0139\3\2\2\2\u013e")
-        buf.write("\u013a\3\2\2\2\u013e\u013b\3\2\2\2\u013e\u013c\3\2\2\2")
-        buf.write("\u013e\u013d\3\2\2\2\u013f\61\3\2\2\2\u0140\u0141\7\"")
-        buf.write("\2\2\u0141\u0142\7\n\2\2\u0142\u0143\5.\30\2\u0143\u0144")
-        buf.write("\7\13\2\2\u0144\u0145\7\4\2\2\u0145\u0146\5\6\4\2\u0146")
-        buf.write("\u0147\7\5\2\2\u0147\u015b\3\2\2\2\u0148\u0149\7\"\2\2")
-        buf.write("\u0149\u014a\7\n\2\2\u014a\u014b\5.\30\2\u014b\u014c\7")
-        buf.write("\13\2\2\u014c\u014d\7\4\2\2\u014d\u014e\5\6\4\2\u014e")
-        buf.write("\u0152\7\5\2\2\u014f\u0151\7\66\2\2\u0150\u014f\3\2\2")
-        buf.write("\2\u0151\u0154\3\2\2\2\u0152\u0150\3\2\2\2\u0152\u0153")
-        buf.write("\3\2\2\2\u0153\u0155\3\2\2\2\u0154\u0152\3\2\2\2\u0155")
-        buf.write("\u0156\7#\2\2\u0156\u0157\7\4\2\2\u0157\u0158\5\6\4\2")
-        buf.write("\u0158\u0159\7\5\2\2\u0159\u015b\3\2\2\2\u015a\u0140\3")
-        buf.write("\2\2\2\u015a\u0148\3\2\2\2\u015b\63\3\2\2\2\u015c\u015d")
-        buf.write("\7$\2\2\u015d\u015e\7\n\2\2\u015e\u015f\5.\30\2\u015f")
-        buf.write("\u0160\7%\2\2\u0160\u0161\5.\30\2\u0161\u0162\7\13\2\2")
-        buf.write("\u0162\u0163\7\4\2\2\u0163\u0164\5\6\4\2\u0164\u0165\7")
-        buf.write("\5\2\2\u0165\u016f\3\2\2\2\u0166\u0167\7&\2\2\u0167\u0168")
-        buf.write("\7\n\2\2\u0168\u0169\5.\30\2\u0169\u016a\7\13\2\2\u016a")
-        buf.write("\u016b\7\4\2\2\u016b\u016c\5\6\4\2\u016c\u016d\7\5\2\2")
-        buf.write("\u016d\u016f\3\2\2\2\u016e\u015c\3\2\2\2\u016e\u0166\3")
-        buf.write("\2\2\2\u016f\65\3\2\2\2\u0170\u0171\7\'\2\2\u0171\u0172")
-        buf.write("\7\b\2\2\u0172\u0173\7-\2\2\u0173\u0174\7\16\2\2\u0174")
-        buf.write("\u0175\5\60\31\2\u0175\u0176\7\f\2\2\u0176\u0177\5\60")
-        buf.write("\31\2\u0177\u0178\7\17\2\2\u0178\u0179\7\n\2\2\u0179\u017a")
-        buf.write("\5.\30\2\u017a\u017b\7\13\2\2\u017b\67\3\2\2\2\u017c\u017d")
-        buf.write("\7(\2\2\u017d\u017e\7\b\2\2\u017e\u017f\7-\2\2\u017f\u0180")
-        buf.write("\7\16\2\2\u0180\u0181\5\60\31\2\u0181\u0182\7\17\2\2\u0182")
-        buf.write("\u0183\7\n\2\2\u0183\u0184\5.\30\2\u0184\u0185\7\13\2")
-        buf.write("\2\u01859\3\2\2\2\u0186\u0187\7)\2\2\u0187\u0188\7\b\2")
-        buf.write("\2\u0188\u0189\7-\2\2\u0189;\3\2\2\2\u018a\u018b\7*\2")
-        buf.write("\2\u018b\u018c\7\n\2\2\u018c\u018d\5\32\16\2\u018d\u018e")
-        buf.write("\7\13\2\2\u018e\u018f\7\7\2\2\u018f=\3\2\2\2\u0190\u0191")
-        buf.write("\7+\2\2\u0191\u0192\7\n\2\2\u0192\u0193\5\32\16\2\u0193")
-        buf.write("\u0194\7\13\2\2\u0194\u0195\7\7\2\2\u0195?\3\2\2\2\36")
+        buf.write("\3\32\3\32\3\32\7\32\u0150\n\32\f\32\16\32\u0153\13\32")
+        buf.write("\3\32\3\32\3\32\3\32\3\32\5\32\u015a\n\32\3\33\3\33\3")
+        buf.write("\33\3\33\3\33\3\33\3\33\3\33\3\34\3\34\3\34\3\34\3\34")
+        buf.write("\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\35\3\35\3\35\3\35")
+        buf.write("\3\35\3\35\3\35\3\35\3\35\3\35\3\36\3\36\3\36\3\36\3\37")
+        buf.write("\3\37\3\37\3\37\3\37\3\37\3 \3 \3 \3 \3 \3 \3 \2\3.!\2")
+        buf.write("\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64")
+        buf.write("\668:<>\2\2\2\u01aa\2E\3\2\2\2\4R\3\2\2\2\6^\3\2\2\2\b")
+        buf.write("q\3\2\2\2\nu\3\2\2\2\f{\3\2\2\2\16~\3\2\2\2\20\u0082\3")
+        buf.write("\2\2\2\22\u0091\3\2\2\2\24\u009d\3\2\2\2\26\u00a0\3\2")
+        buf.write("\2\2\30\u00a7\3\2\2\2\32\u00b2\3\2\2\2\34\u00ba\3\2\2")
+        buf.write("\2\36\u00c2\3\2\2\2 \u00ca\3\2\2\2\"\u00cd\3\2\2\2$\u00d0")
+        buf.write("\3\2\2\2&\u00d4\3\2\2\2(\u00d8\3\2\2\2*\u00e3\3\2\2\2")
+        buf.write(",\u00e8\3\2\2\2.\u0101\3\2\2\2\60\u013d\3\2\2\2\62\u0159")
+        buf.write("\3\2\2\2\64\u015b\3\2\2\2\66\u0163\3\2\2\28\u016f\3\2")
+        buf.write("\2\2:\u0179\3\2\2\2<\u017d\3\2\2\2>\u0183\3\2\2\2@D\5")
+        buf.write("\20\t\2AD\5\b\5\2BD\7\63\2\2C@\3\2\2\2CA\3\2\2\2CB\3\2")
+        buf.write("\2\2DG\3\2\2\2EC\3\2\2\2EF\3\2\2\2FH\3\2\2\2GE\3\2\2\2")
+        buf.write("HM\5\4\3\2IL\5\20\t\2JL\7\63\2\2KI\3\2\2\2KJ\3\2\2\2L")
+        buf.write("O\3\2\2\2MK\3\2\2\2MN\3\2\2\2NP\3\2\2\2OM\3\2\2\2PQ\7")
+        buf.write("\2\2\3Q\3\3\2\2\2RS\7\3\2\2ST\7\4\2\2TU\5\6\4\2UV\7\5")
+        buf.write("\2\2V\5\3\2\2\2WY\7\63\2\2XW\3\2\2\2Y\\\3\2\2\2ZX\3\2")
+        buf.write("\2\2Z[\3\2\2\2[_\3\2\2\2\\Z\3\2\2\2]_\5\b\5\2^Z\3\2\2")
+        buf.write("\2^]\3\2\2\2_d\3\2\2\2`c\7\63\2\2ac\5\b\5\2b`\3\2\2\2")
+        buf.write("ba\3\2\2\2cf\3\2\2\2db\3\2\2\2de\3\2\2\2e\7\3\2\2\2fd")
+        buf.write("\3\2\2\2gr\5\n\6\2hr\5\62\32\2ir\5\64\33\2jr\5,\27\2k")
+        buf.write("r\5\24\13\2lr\5\f\7\2mr\5<\37\2nr\5> \2or\5\"\22\2pr\5")
+        buf.write("\30\r\2qg\3\2\2\2qh\3\2\2\2qi\3\2\2\2qj\3\2\2\2qk\3\2")
+        buf.write("\2\2ql\3\2\2\2qm\3\2\2\2qn\3\2\2\2qo\3\2\2\2qp\3\2\2\2")
+        buf.write("r\t\3\2\2\2sv\7\60\2\2tv\5*\26\2us\3\2\2\2ut\3\2\2\2v")
+        buf.write("w\3\2\2\2wx\7\6\2\2xy\5.\30\2yz\7\7\2\2z\13\3\2\2\2{|")
+        buf.write("\5\16\b\2|}\7\7\2\2}\r\3\2\2\2~\177\7\60\2\2\177\u0080")
+        buf.write("\7\b\2\2\u0080\u0081\7*\2\2\u0081\17\3\2\2\2\u0082\u0083")
+        buf.write("\7\t\2\2\u0083\u0084\7\60\2\2\u0084\u0085\7\b\2\2\u0085")
+        buf.write("\u0086\7*\2\2\u0086\u0088\7\n\2\2\u0087\u0089\5\22\n\2")
+        buf.write("\u0088\u0087\3\2\2\2\u0088\u0089\3\2\2\2\u0089\u008a\3")
+        buf.write("\2\2\2\u008a\u008b\7\13\2\2\u008b\u008c\7\4\2\2\u008c")
+        buf.write("\u008d\5\6\4\2\u008d\u008e\7\5\2\2\u008e\21\3\2\2\2\u008f")
+        buf.write("\u0092\5 \21\2\u0090\u0092\5\16\b\2\u0091\u008f\3\2\2")
+        buf.write("\2\u0091\u0090\3\2\2\2\u0092\u009a\3\2\2\2\u0093\u0096")
+        buf.write("\7\f\2\2\u0094\u0097\5 \21\2\u0095\u0097\5\16\b\2\u0096")
+        buf.write("\u0094\3\2\2\2\u0096\u0095\3\2\2\2\u0097\u0099\3\2\2\2")
+        buf.write("\u0098\u0093\3\2\2\2\u0099\u009c\3\2\2\2\u009a\u0098\3")
+        buf.write("\2\2\2\u009a\u009b\3\2\2\2\u009b\23\3\2\2\2\u009c\u009a")
+        buf.write("\3\2\2\2\u009d\u009e\5\26\f\2\u009e\u009f\7\7\2\2\u009f")
+        buf.write("\25\3\2\2\2\u00a0\u00a1\7\60\2\2\u00a1\u00a3\7\n\2\2\u00a2")
+        buf.write("\u00a4\5\32\16\2\u00a3\u00a2\3\2\2\2\u00a3\u00a4\3\2\2")
+        buf.write("\2\u00a4\u00a5\3\2\2\2\u00a5\u00a6\7\13\2\2\u00a6\27\3")
+        buf.write("\2\2\2\u00a7\u00a9\7\r\2\2\u00a8\u00aa\5.\30\2\u00a9\u00a8")
+        buf.write("\3\2\2\2\u00a9\u00aa\3\2\2\2\u00aa\u00ab\3\2\2\2\u00ab")
+        buf.write("\u00af\7\7\2\2\u00ac\u00ae\7\63\2\2\u00ad\u00ac\3\2\2")
+        buf.write("\2\u00ae\u00b1\3\2\2\2\u00af\u00ad\3\2\2\2\u00af\u00b0")
+        buf.write("\3\2\2\2\u00b0\31\3\2\2\2\u00b1\u00af\3\2\2\2\u00b2\u00b7")
+        buf.write("\5.\30\2\u00b3\u00b4\7\f\2\2\u00b4\u00b6\5.\30\2\u00b5")
+        buf.write("\u00b3\3\2\2\2\u00b6\u00b9\3\2\2\2\u00b7\u00b5\3\2\2\2")
+        buf.write("\u00b7\u00b8\3\2\2\2\u00b8\33\3\2\2\2\u00b9\u00b7\3\2")
+        buf.write("\2\2\u00ba\u00bf\5\60\31\2\u00bb\u00bc\7\f\2\2\u00bc\u00be")
+        buf.write("\5\60\31\2\u00bd\u00bb\3\2\2\2\u00be\u00c1\3\2\2\2\u00bf")
+        buf.write("\u00bd\3\2\2\2\u00bf\u00c0\3\2\2\2\u00c0\35\3\2\2\2\u00c1")
+        buf.write("\u00bf\3\2\2\2\u00c2\u00c7\7)\2\2\u00c3\u00c4\7\f\2\2")
+        buf.write("\u00c4\u00c6\7)\2\2\u00c5\u00c3\3\2\2\2\u00c6\u00c9\3")
+        buf.write("\2\2\2\u00c7\u00c5\3\2\2\2\u00c7\u00c8\3\2\2\2\u00c8\37")
+        buf.write("\3\2\2\2\u00c9\u00c7\3\2\2\2\u00ca\u00cb\5\16\b\2\u00cb")
+        buf.write("\u00cc\5$\23\2\u00cc!\3\2\2\2\u00cd\u00ce\5 \21\2\u00ce")
+        buf.write("\u00cf\7\7\2\2\u00cf#\3\2\2\2\u00d0\u00d1\7\16\2\2\u00d1")
+        buf.write("\u00d2\5\34\17\2\u00d2\u00d3\7\17\2\2\u00d3%\3\2\2\2\u00d4")
+        buf.write("\u00d5\7\16\2\2\u00d5\u00d6\5\34\17\2\u00d6\u00d7\7\17")
+        buf.write("\2\2\u00d7\'\3\2\2\2\u00d8\u00d9\7\16\2\2\u00d9\u00de")
+        buf.write("\5&\24\2\u00da\u00db\7\f\2\2\u00db\u00dd\5&\24\2\u00dc")
+        buf.write("\u00da\3\2\2\2\u00dd\u00e0\3\2\2\2\u00de\u00dc\3\2\2\2")
+        buf.write("\u00de\u00df\3\2\2\2\u00df\u00e1\3\2\2\2\u00e0\u00de\3")
+        buf.write("\2\2\2\u00e1\u00e2\7\17\2\2\u00e2)\3\2\2\2\u00e3\u00e4")
+        buf.write("\7\60\2\2\u00e4\u00e5\7\16\2\2\u00e5\u00e6\5\32\16\2\u00e6")
+        buf.write("\u00e7\7\17\2\2\u00e7+\3\2\2\2\u00e8\u00e9\7\60\2\2\u00e9")
+        buf.write("\u00ea\7\4\2\2\u00ea\u00eb\5\36\20\2\u00eb\u00ec\7\5\2")
+        buf.write("\2\u00ec-\3\2\2\2\u00ed\u00ee\b\30\1\2\u00ee\u00ef\7\n")
+        buf.write("\2\2\u00ef\u00f0\5.\30\2\u00f0\u00f1\7\13\2\2\u00f1\u0102")
+        buf.write("\3\2\2\2\u00f2\u0102\5*\26\2\u00f3\u0102\5,\27\2\u00f4")
+        buf.write("\u0102\5&\24\2\u00f5\u0102\5(\25\2\u00f6\u0102\5\26\f")
+        buf.write("\2\u00f7\u00f8\7\21\2\2\u00f8\u0102\5.\30\30\u00f9\u00fa")
+        buf.write("\7\22\2\2\u00fa\u0102\5.\30\27\u00fb\u00fc\7\23\2\2\u00fc")
+        buf.write("\u0102\5.\30\26\u00fd\u0102\5\60\31\2\u00fe\u0102\5\66")
+        buf.write("\34\2\u00ff\u0102\58\35\2\u0100\u0102\5:\36\2\u0101\u00ed")
+        buf.write("\3\2\2\2\u0101\u00f2\3\2\2\2\u0101\u00f3\3\2\2\2\u0101")
+        buf.write("\u00f4\3\2\2\2\u0101\u00f5\3\2\2\2\u0101\u00f6\3\2\2\2")
+        buf.write("\u0101\u00f7\3\2\2\2\u0101\u00f9\3\2\2\2\u0101\u00fb\3")
+        buf.write("\2\2\2\u0101\u00fd\3\2\2\2\u0101\u00fe\3\2\2\2\u0101\u00ff")
+        buf.write("\3\2\2\2\u0101\u0100\3\2\2\2\u0102\u0135\3\2\2\2\u0103")
+        buf.write("\u0104\f\31\2\2\u0104\u0105\7\20\2\2\u0105\u0134\5.\30")
+        buf.write("\31\u0106\u0107\f\25\2\2\u0107\u0108\7\24\2\2\u0108\u0134")
+        buf.write("\5.\30\26\u0109\u010a\f\24\2\2\u010a\u010b\7\25\2\2\u010b")
+        buf.write("\u0134\5.\30\25\u010c\u010d\f\23\2\2\u010d\u010e\7\26")
+        buf.write("\2\2\u010e\u0134\5.\30\24\u010f\u0110\f\22\2\2\u0110\u0111")
+        buf.write("\7\27\2\2\u0111\u0134\5.\30\23\u0112\u0113\f\21\2\2\u0113")
+        buf.write("\u0114\7\30\2\2\u0114\u0134\5.\30\22\u0115\u0116\f\20")
+        buf.write("\2\2\u0116\u0117\7\22\2\2\u0117\u0134\5.\30\21\u0118\u0119")
+        buf.write("\f\17\2\2\u0119\u011a\7\21\2\2\u011a\u0134\5.\30\20\u011b")
+        buf.write("\u011c\f\16\2\2\u011c\u011d\7\31\2\2\u011d\u0134\5.\30")
+        buf.write("\17\u011e\u011f\f\r\2\2\u011f\u0120\7\32\2\2\u0120\u0134")
+        buf.write("\5.\30\16\u0121\u0122\f\f\2\2\u0122\u0123\7\33\2\2\u0123")
+        buf.write("\u0134\5.\30\r\u0124\u0125\f\13\2\2\u0125\u0126\7\34\2")
+        buf.write("\2\u0126\u0134\5.\30\f\u0127\u0128\f\n\2\2\u0128\u0129")
+        buf.write("\7\35\2\2\u0129\u0134\5.\30\13\u012a\u012b\f\t\2\2\u012b")
+        buf.write("\u012c\7\36\2\2\u012c\u0134\5.\30\n\u012d\u012e\f\b\2")
+        buf.write("\2\u012e\u012f\7\37\2\2\u012f\u0134\5.\30\t\u0130\u0131")
+        buf.write("\f\7\2\2\u0131\u0132\7 \2\2\u0132\u0134\5.\30\b\u0133")
+        buf.write("\u0103\3\2\2\2\u0133\u0106\3\2\2\2\u0133\u0109\3\2\2\2")
+        buf.write("\u0133\u010c\3\2\2\2\u0133\u010f\3\2\2\2\u0133\u0112\3")
+        buf.write("\2\2\2\u0133\u0115\3\2\2\2\u0133\u0118\3\2\2\2\u0133\u011b")
+        buf.write("\3\2\2\2\u0133\u011e\3\2\2\2\u0133\u0121\3\2\2\2\u0133")
+        buf.write("\u0124\3\2\2\2\u0133\u0127\3\2\2\2\u0133\u012a\3\2\2\2")
+        buf.write("\u0133\u012d\3\2\2\2\u0133\u0130\3\2\2\2\u0134\u0137\3")
+        buf.write("\2\2\2\u0135\u0133\3\2\2\2\u0135\u0136\3\2\2\2\u0136/")
+        buf.write("\3\2\2\2\u0137\u0135\3\2\2\2\u0138\u013e\7\60\2\2\u0139")
+        buf.write("\u013e\7+\2\2\u013a\u013e\7/\2\2\u013b\u013e\7,\2\2\u013c")
+        buf.write("\u013e\7-\2\2\u013d\u0138\3\2\2\2\u013d\u0139\3\2\2\2")
+        buf.write("\u013d\u013a\3\2\2\2\u013d\u013b\3\2\2\2\u013d\u013c\3")
+        buf.write("\2\2\2\u013e\61\3\2\2\2\u013f\u0140\7!\2\2\u0140\u0141")
+        buf.write("\7\n\2\2\u0141\u0142\5.\30\2\u0142\u0143\7\13\2\2\u0143")
+        buf.write("\u0144\7\4\2\2\u0144\u0145\5\6\4\2\u0145\u0146\7\5\2\2")
+        buf.write("\u0146\u015a\3\2\2\2\u0147\u0148\7!\2\2\u0148\u0149\7")
+        buf.write("\n\2\2\u0149\u014a\5.\30\2\u014a\u014b\7\13\2\2\u014b")
+        buf.write("\u014c\7\4\2\2\u014c\u014d\5\6\4\2\u014d\u0151\7\5\2\2")
+        buf.write("\u014e\u0150\7\63\2\2\u014f\u014e\3\2\2\2\u0150\u0153")
+        buf.write("\3\2\2\2\u0151\u014f\3\2\2\2\u0151\u0152\3\2\2\2\u0152")
+        buf.write("\u0154\3\2\2\2\u0153\u0151\3\2\2\2\u0154\u0155\7\"\2\2")
+        buf.write("\u0155\u0156\7\4\2\2\u0156\u0157\5\6\4\2\u0157\u0158\7")
+        buf.write("\5\2\2\u0158\u015a\3\2\2\2\u0159\u013f\3\2\2\2\u0159\u0147")
+        buf.write("\3\2\2\2\u015a\63\3\2\2\2\u015b\u015c\7#\2\2\u015c\u015d")
+        buf.write("\7\n\2\2\u015d\u015e\5.\30\2\u015e\u015f\7\13\2\2\u015f")
+        buf.write("\u0160\7\4\2\2\u0160\u0161\5\6\4\2\u0161\u0162\7\5\2\2")
+        buf.write("\u0162\65\3\2\2\2\u0163\u0164\7$\2\2\u0164\u0165\7\b\2")
+        buf.write("\2\u0165\u0166\7*\2\2\u0166\u0167\7\16\2\2\u0167\u0168")
+        buf.write("\5\60\31\2\u0168\u0169\7\f\2\2\u0169\u016a\5\60\31\2\u016a")
+        buf.write("\u016b\7\17\2\2\u016b\u016c\7\n\2\2\u016c\u016d\5.\30")
+        buf.write("\2\u016d\u016e\7\13\2\2\u016e\67\3\2\2\2\u016f\u0170\7")
+        buf.write("%\2\2\u0170\u0171\7\b\2\2\u0171\u0172\7*\2\2\u0172\u0173")
+        buf.write("\7\16\2\2\u0173\u0174\5\60\31\2\u0174\u0175\7\17\2\2\u0175")
+        buf.write("\u0176\7\n\2\2\u0176\u0177\5.\30\2\u0177\u0178\7\13\2")
+        buf.write("\2\u01789\3\2\2\2\u0179\u017a\7&\2\2\u017a\u017b\7\b\2")
+        buf.write("\2\u017b\u017c\7*\2\2\u017c;\3\2\2\2\u017d\u017e\7\'\2")
+        buf.write("\2\u017e\u017f\7\n\2\2\u017f\u0180\5\32\16\2\u0180\u0181")
+        buf.write("\7\13\2\2\u0181\u0182\7\7\2\2\u0182=\3\2\2\2\u0183\u0184")
+        buf.write("\7(\2\2\u0184\u0185\7\n\2\2\u0185\u0186\5\32\16\2\u0186")
+        buf.write("\u0187\7\13\2\2\u0187\u0188\7\7\2\2\u0188?\3\2\2\2\35")
         buf.write("CEKMZ^bdqu\u0088\u0091\u0096\u009a\u00a3\u00a9\u00af\u00b7")
-        buf.write("\u00bf\u00c7\u00de\u0101\u0133\u0135\u013e\u0152\u015a")
-        buf.write("\u016e")
+        buf.write("\u00bf\u00c7\u00de\u0101\u0133\u0135\u013d\u0151\u0159")
         return buf.getvalue()
 
 
@@ -212,9 +204,9 @@ class DoflirParser ( Parser ):
                      "';'", "'->'", "'define'", "'('", "')'", "','", "'return'", 
                      "'['", "']'", "'^'", "'-'", "'+'", "'not'", "'@'", 
                      "'..'", "'*'", "'/'", "'//'", "'>'", "'>='", "'<'", 
-                     "'<='", "'=='", "'!='", "'and'", "'or'", "'NaN'", "'if'", 
-                     "'else'", "'for'", "'in'", "'while'", "'read_table'", 
-                     "'read_array'", "'read_console'", "'print'", "'println'" ]
+                     "'<='", "'=='", "'!='", "'and'", "'or'", "'if'", "'else'", 
+                     "'while'", "'read_table'", "'read_array'", "'read_console'", 
+                     "'print'", "'println'" ]
 
     symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
@@ -225,10 +217,9 @@ class DoflirParser ( Parser ):
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "FILTER", "TYPE_NAME", "STRING_LITERAL", 
-                      "INTEGER", "FLOAT", "NUMBER", "BOOL", "ID", "BLOCK_COMMENT", 
-                      "LINE_COMMENT", "NL", "WHITESPACE" ]
+                      "<INVALID>", "<INVALID>", "<INVALID>", "FILTER", "TYPE_NAME", 
+                      "STRING_LITERAL", "INTEGER", "FLOAT", "NUMBER", "BOOL", 
+                      "ID", "BLOCK_COMMENT", "LINE_COMMENT", "NL", "WHITESPACE" ]
 
     RULE_program = 0
     RULE_main_def = 1
@@ -310,21 +301,18 @@ class DoflirParser ( Parser ):
     T__35=36
     T__36=37
     T__37=38
-    T__38=39
-    T__39=40
-    T__40=41
-    FILTER=42
-    TYPE_NAME=43
-    STRING_LITERAL=44
-    INTEGER=45
-    FLOAT=46
-    NUMBER=47
-    BOOL=48
-    ID=49
-    BLOCK_COMMENT=50
-    LINE_COMMENT=51
-    NL=52
-    WHITESPACE=53
+    FILTER=39
+    TYPE_NAME=40
+    STRING_LITERAL=41
+    INTEGER=42
+    FLOAT=43
+    NUMBER=44
+    BOOL=45
+    ID=46
+    BLOCK_COMMENT=47
+    LINE_COMMENT=48
+    NL=49
+    WHITESPACE=50
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
@@ -390,7 +378,7 @@ class DoflirParser ( Parser ):
             self.state = 67
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << DoflirParser.T__6) | (1 << DoflirParser.T__10) | (1 << DoflirParser.T__31) | (1 << DoflirParser.T__33) | (1 << DoflirParser.T__35) | (1 << DoflirParser.T__39) | (1 << DoflirParser.T__40) | (1 << DoflirParser.ID) | (1 << DoflirParser.NL))) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << DoflirParser.T__6) | (1 << DoflirParser.T__10) | (1 << DoflirParser.T__30) | (1 << DoflirParser.T__32) | (1 << DoflirParser.T__36) | (1 << DoflirParser.T__37) | (1 << DoflirParser.ID) | (1 << DoflirParser.NL))) != 0):
                 self.state = 65
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
@@ -398,7 +386,7 @@ class DoflirParser ( Parser ):
                     self.state = 62
                     self.fun_def()
                     pass
-                elif token in [DoflirParser.T__10, DoflirParser.T__31, DoflirParser.T__33, DoflirParser.T__35, DoflirParser.T__39, DoflirParser.T__40, DoflirParser.ID]:
+                elif token in [DoflirParser.T__10, DoflirParser.T__30, DoflirParser.T__32, DoflirParser.T__36, DoflirParser.T__37, DoflirParser.ID]:
                     self.state = 63
                     self.statement()
                     pass
@@ -557,7 +545,7 @@ class DoflirParser ( Parser ):
             self.state = 98
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << DoflirParser.T__10) | (1 << DoflirParser.T__31) | (1 << DoflirParser.T__33) | (1 << DoflirParser.T__35) | (1 << DoflirParser.T__39) | (1 << DoflirParser.T__40) | (1 << DoflirParser.ID) | (1 << DoflirParser.NL))) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << DoflirParser.T__10) | (1 << DoflirParser.T__30) | (1 << DoflirParser.T__32) | (1 << DoflirParser.T__36) | (1 << DoflirParser.T__37) | (1 << DoflirParser.ID) | (1 << DoflirParser.NL))) != 0):
                 self.state = 96
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
@@ -565,7 +553,7 @@ class DoflirParser ( Parser ):
                     self.state = 94
                     self.match(DoflirParser.NL)
                     pass
-                elif token in [DoflirParser.T__10, DoflirParser.T__31, DoflirParser.T__33, DoflirParser.T__35, DoflirParser.T__39, DoflirParser.T__40, DoflirParser.ID]:
+                elif token in [DoflirParser.T__10, DoflirParser.T__30, DoflirParser.T__32, DoflirParser.T__36, DoflirParser.T__37, DoflirParser.ID]:
                     self.state = 95
                     self.statement()
                     pass
@@ -1111,7 +1099,7 @@ class DoflirParser ( Parser ):
             self.state = 161
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << DoflirParser.T__7) | (1 << DoflirParser.T__11) | (1 << DoflirParser.T__14) | (1 << DoflirParser.T__15) | (1 << DoflirParser.T__16) | (1 << DoflirParser.T__30) | (1 << DoflirParser.T__36) | (1 << DoflirParser.T__37) | (1 << DoflirParser.T__38) | (1 << DoflirParser.STRING_LITERAL) | (1 << DoflirParser.INTEGER) | (1 << DoflirParser.FLOAT) | (1 << DoflirParser.BOOL) | (1 << DoflirParser.ID))) != 0):
+            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << DoflirParser.T__7) | (1 << DoflirParser.T__11) | (1 << DoflirParser.T__14) | (1 << DoflirParser.T__15) | (1 << DoflirParser.T__16) | (1 << DoflirParser.T__33) | (1 << DoflirParser.T__34) | (1 << DoflirParser.T__35) | (1 << DoflirParser.STRING_LITERAL) | (1 << DoflirParser.INTEGER) | (1 << DoflirParser.FLOAT) | (1 << DoflirParser.BOOL) | (1 << DoflirParser.ID))) != 0):
                 self.state = 160
                 self.expr_list()
 
@@ -1167,7 +1155,7 @@ class DoflirParser ( Parser ):
             self.state = 167
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << DoflirParser.T__7) | (1 << DoflirParser.T__11) | (1 << DoflirParser.T__14) | (1 << DoflirParser.T__15) | (1 << DoflirParser.T__16) | (1 << DoflirParser.T__30) | (1 << DoflirParser.T__36) | (1 << DoflirParser.T__37) | (1 << DoflirParser.T__38) | (1 << DoflirParser.STRING_LITERAL) | (1 << DoflirParser.INTEGER) | (1 << DoflirParser.FLOAT) | (1 << DoflirParser.BOOL) | (1 << DoflirParser.ID))) != 0):
+            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << DoflirParser.T__7) | (1 << DoflirParser.T__11) | (1 << DoflirParser.T__14) | (1 << DoflirParser.T__15) | (1 << DoflirParser.T__16) | (1 << DoflirParser.T__33) | (1 << DoflirParser.T__34) | (1 << DoflirParser.T__35) | (1 << DoflirParser.STRING_LITERAL) | (1 << DoflirParser.INTEGER) | (1 << DoflirParser.FLOAT) | (1 << DoflirParser.BOOL) | (1 << DoflirParser.ID))) != 0):
                 self.state = 166
                 self.expr(0)
 
@@ -2670,20 +2658,6 @@ class DoflirParser ( Parser ):
                 return visitor.visitChildren(self)
 
 
-    class TokNanExprContext(TokenContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a DoflirParser.TokenContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitTokNanExpr" ):
-                return visitor.visitTokNanExpr(self)
-            else:
-                return visitor.visitChildren(self)
-
-
     class TokBoolExprContext(TokenContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a DoflirParser.TokenContext
@@ -2706,7 +2680,7 @@ class DoflirParser ( Parser ):
         localctx = DoflirParser.TokenContext(self, self._ctx, self.state)
         self.enterRule(localctx, 46, self.RULE_token)
         try:
-            self.state = 316
+            self.state = 315
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [DoflirParser.ID]:
@@ -2738,12 +2712,6 @@ class DoflirParser ( Parser ):
                 self.enterOuterAlt(localctx, 5)
                 self.state = 314
                 self.match(DoflirParser.FLOAT)
-                pass
-            elif token in [DoflirParser.T__30]:
-                localctx = DoflirParser.TokNanExprContext(self, localctx)
-                self.enterOuterAlt(localctx, 6)
-                self.state = 315
-                self.match(DoflirParser.T__30)
                 pass
             else:
                 raise NoViableAltException(self)
@@ -2828,62 +2796,62 @@ class DoflirParser ( Parser ):
         self.enterRule(localctx, 48, self.RULE_condition)
         self._la = 0 # Token type
         try:
-            self.state = 344
+            self.state = 343
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,26,self._ctx)
             if la_ == 1:
                 localctx = DoflirParser.IfStmtContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
+                self.state = 317
+                self.match(DoflirParser.T__30)
                 self.state = 318
-                self.match(DoflirParser.T__31)
-                self.state = 319
                 self.match(DoflirParser.T__7)
-                self.state = 320
+                self.state = 319
                 self.expr(0)
-                self.state = 321
+                self.state = 320
                 self.match(DoflirParser.T__8)
-                self.state = 322
+                self.state = 321
                 self.match(DoflirParser.T__1)
-                self.state = 323
+                self.state = 322
                 self.proc_body()
-                self.state = 324
+                self.state = 323
                 self.match(DoflirParser.T__2)
                 pass
 
             elif la_ == 2:
                 localctx = DoflirParser.IfElseStmtContext(self, localctx)
                 self.enterOuterAlt(localctx, 2)
+                self.state = 325
+                self.match(DoflirParser.T__30)
                 self.state = 326
-                self.match(DoflirParser.T__31)
-                self.state = 327
                 self.match(DoflirParser.T__7)
-                self.state = 328
+                self.state = 327
                 self.expr(0)
-                self.state = 329
+                self.state = 328
                 self.match(DoflirParser.T__8)
-                self.state = 330
+                self.state = 329
                 self.match(DoflirParser.T__1)
-                self.state = 331
+                self.state = 330
                 self.proc_body()
-                self.state = 332
+                self.state = 331
                 self.match(DoflirParser.T__2)
-                self.state = 336
+                self.state = 335
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while _la==DoflirParser.NL:
-                    self.state = 333
+                    self.state = 332
                     self.match(DoflirParser.NL)
-                    self.state = 338
+                    self.state = 337
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
 
+                self.state = 338
+                self.match(DoflirParser.T__31)
                 self.state = 339
-                self.match(DoflirParser.T__32)
-                self.state = 340
                 self.match(DoflirParser.T__1)
-                self.state = 341
+                self.state = 340
                 self.proc_body()
-                self.state = 342
+                self.state = 341
                 self.match(DoflirParser.T__2)
                 pass
 
@@ -2913,29 +2881,6 @@ class DoflirParser ( Parser ):
 
 
 
-    class ForStmtContext(IterableContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a DoflirParser.IterableContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def expr(self, i:int=None):
-            if i is None:
-                return self.getTypedRuleContexts(DoflirParser.ExprContext)
-            else:
-                return self.getTypedRuleContext(DoflirParser.ExprContext,i)
-
-        def proc_body(self):
-            return self.getTypedRuleContext(DoflirParser.Proc_bodyContext,0)
-
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitForStmt" ):
-                return visitor.visitForStmt(self)
-            else:
-                return visitor.visitChildren(self)
-
-
     class WhileStmtContext(IterableContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a DoflirParser.IterableContext
@@ -2962,52 +2907,22 @@ class DoflirParser ( Parser ):
         localctx = DoflirParser.IterableContext(self, self._ctx, self.state)
         self.enterRule(localctx, 50, self.RULE_iterable)
         try:
-            self.state = 364
-            self._errHandler.sync(self)
-            token = self._input.LA(1)
-            if token in [DoflirParser.T__33]:
-                localctx = DoflirParser.ForStmtContext(self, localctx)
-                self.enterOuterAlt(localctx, 1)
-                self.state = 346
-                self.match(DoflirParser.T__33)
-                self.state = 347
-                self.match(DoflirParser.T__7)
-                self.state = 348
-                self.expr(0)
-                self.state = 349
-                self.match(DoflirParser.T__34)
-                self.state = 350
-                self.expr(0)
-                self.state = 351
-                self.match(DoflirParser.T__8)
-                self.state = 352
-                self.match(DoflirParser.T__1)
-                self.state = 353
-                self.proc_body()
-                self.state = 354
-                self.match(DoflirParser.T__2)
-                pass
-            elif token in [DoflirParser.T__35]:
-                localctx = DoflirParser.WhileStmtContext(self, localctx)
-                self.enterOuterAlt(localctx, 2)
-                self.state = 356
-                self.match(DoflirParser.T__35)
-                self.state = 357
-                self.match(DoflirParser.T__7)
-                self.state = 358
-                self.expr(0)
-                self.state = 359
-                self.match(DoflirParser.T__8)
-                self.state = 360
-                self.match(DoflirParser.T__1)
-                self.state = 361
-                self.proc_body()
-                self.state = 362
-                self.match(DoflirParser.T__2)
-                pass
-            else:
-                raise NoViableAltException(self)
-
+            localctx = DoflirParser.WhileStmtContext(self, localctx)
+            self.enterOuterAlt(localctx, 1)
+            self.state = 345
+            self.match(DoflirParser.T__32)
+            self.state = 346
+            self.match(DoflirParser.T__7)
+            self.state = 347
+            self.expr(0)
+            self.state = 348
+            self.match(DoflirParser.T__8)
+            self.state = 349
+            self.match(DoflirParser.T__1)
+            self.state = 350
+            self.proc_body()
+            self.state = 351
+            self.match(DoflirParser.T__2)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -3055,27 +2970,27 @@ class DoflirParser ( Parser ):
         self.enterRule(localctx, 52, self.RULE_read_table)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 366
-            self.match(DoflirParser.T__36)
-            self.state = 367
+            self.state = 353
+            self.match(DoflirParser.T__33)
+            self.state = 354
             self.match(DoflirParser.T__5)
-            self.state = 368
+            self.state = 355
             self.match(DoflirParser.TYPE_NAME)
-            self.state = 369
+            self.state = 356
             self.match(DoflirParser.T__11)
-            self.state = 370
+            self.state = 357
             self.token()
-            self.state = 371
+            self.state = 358
             self.match(DoflirParser.T__9)
-            self.state = 372
+            self.state = 359
             self.token()
-            self.state = 373
+            self.state = 360
             self.match(DoflirParser.T__12)
-            self.state = 374
+            self.state = 361
             self.match(DoflirParser.T__7)
-            self.state = 375
+            self.state = 362
             self.expr(0)
-            self.state = 376
+            self.state = 363
             self.match(DoflirParser.T__8)
         except RecognitionException as re:
             localctx.exception = re
@@ -3121,23 +3036,23 @@ class DoflirParser ( Parser ):
         self.enterRule(localctx, 54, self.RULE_read_array)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 378
-            self.match(DoflirParser.T__37)
-            self.state = 379
+            self.state = 365
+            self.match(DoflirParser.T__34)
+            self.state = 366
             self.match(DoflirParser.T__5)
-            self.state = 380
+            self.state = 367
             self.match(DoflirParser.TYPE_NAME)
-            self.state = 381
+            self.state = 368
             self.match(DoflirParser.T__11)
-            self.state = 382
+            self.state = 369
             self.token()
-            self.state = 383
+            self.state = 370
             self.match(DoflirParser.T__12)
-            self.state = 384
+            self.state = 371
             self.match(DoflirParser.T__7)
-            self.state = 385
+            self.state = 372
             self.expr(0)
-            self.state = 386
+            self.state = 373
             self.match(DoflirParser.T__8)
         except RecognitionException as re:
             localctx.exception = re
@@ -3175,11 +3090,11 @@ class DoflirParser ( Parser ):
         self.enterRule(localctx, 56, self.RULE_read_console)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 388
-            self.match(DoflirParser.T__38)
-            self.state = 389
+            self.state = 375
+            self.match(DoflirParser.T__35)
+            self.state = 376
             self.match(DoflirParser.T__5)
-            self.state = 390
+            self.state = 377
             self.match(DoflirParser.TYPE_NAME)
         except RecognitionException as re:
             localctx.exception = re
@@ -3218,15 +3133,15 @@ class DoflirParser ( Parser ):
         self.enterRule(localctx, 58, self.RULE_print_stmt)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 392
-            self.match(DoflirParser.T__39)
-            self.state = 393
+            self.state = 379
+            self.match(DoflirParser.T__36)
+            self.state = 380
             self.match(DoflirParser.T__7)
-            self.state = 394
+            self.state = 381
             self.expr_list()
-            self.state = 395
+            self.state = 382
             self.match(DoflirParser.T__8)
-            self.state = 396
+            self.state = 383
             self.match(DoflirParser.T__4)
         except RecognitionException as re:
             localctx.exception = re
@@ -3265,15 +3180,15 @@ class DoflirParser ( Parser ):
         self.enterRule(localctx, 60, self.RULE_println_stmt)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 398
-            self.match(DoflirParser.T__40)
-            self.state = 399
+            self.state = 385
+            self.match(DoflirParser.T__37)
+            self.state = 386
             self.match(DoflirParser.T__7)
-            self.state = 400
+            self.state = 387
             self.expr_list()
-            self.state = 401
+            self.state = 388
             self.match(DoflirParser.T__8)
-            self.state = 402
+            self.state = 389
             self.match(DoflirParser.T__4)
         except RecognitionException as re:
             localctx.exception = re

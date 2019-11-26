@@ -284,11 +284,6 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by DoflirParser#tokNanExpr.
-    def visitTokNanExpr(self, ctx:DoflirParser.TokNanExprContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by DoflirParser#ifStmt.
     def visitIfStmt(self, ctx:DoflirParser.IfStmtContext):
         return self.visitChildren(ctx)
@@ -296,11 +291,6 @@ class DoflirVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by DoflirParser#ifElseStmt.
     def visitIfElseStmt(self, ctx:DoflirParser.IfElseStmtContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by DoflirParser#forStmt.
-    def visitForStmt(self, ctx:DoflirParser.ForStmtContext):
         return self.visitChildren(ctx)
 
 

@@ -83,7 +83,6 @@ token
     | BOOL                         #tokBoolExpr
     | INTEGER                      #tokIntExpr
     | FLOAT                        #tokFloatExpr
-    | 'NaN'                        #tokNanExpr
 	;
 
 FILTER
@@ -110,8 +109,7 @@ condition
     ;
 
 iterable
-	: 'for' '(' expr 'in' expr ')' '{' proc_body '}'   #forStmt
-    | 'while' '(' expr ')' '{' proc_body '}'  			#whileStmt
+    : 'while' '(' expr ')' '{' proc_body '}'  			#whileStmt
     ;
 
 read_table: 'read_table' '->' TYPE_NAME '['token',' token ']' '(' expr ')' ;
