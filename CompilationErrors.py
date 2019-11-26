@@ -28,7 +28,7 @@ class NoTraceBackException(Exception):
 
 class CompError(NoTraceBackException):
     def __init__(self, ctx, in_filename, err_type, in_code, msg):
-        line_num = ctx.start.line
+        line_num = max(0, ctx.start.line - 1)
         line_txt = in_code[line_num]
         super().__init__(
             in_filename=in_filename,
