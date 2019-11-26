@@ -16,12 +16,16 @@ from Quads import Quad
 from Quads import print_quads
 from collections import deque
 
+import CompilationErrors
 import logging
 
 
 class DoflirCustomVisitor(DoflirVisitor):
 
-    def __init__(self):
+    def __init__(self, in_filename, in_code, debug):
+        self.in_filename = self.clean_filename(in_filename)
+        self.in_code = in_code.split("\n")
+        self.debug = debug
         self.cube = SemanticCube()
         self.global_table = VariablesTable()
         self.fun_dir = FunDir()
@@ -41,6 +45,9 @@ class DoflirCustomVisitor(DoflirVisitor):
     @property
     def current_quad_idx(self):
         return len(self.quads) - 1
+
+    def clean_filename(self, filename):
+        return filename.split("/")[-1]
 
     def new_temp(self, data_type):
         self._temp_num += 1
@@ -63,10 +70,11 @@ class DoflirCustomVisitor(DoflirVisitor):
             for dfn in ctx.fun_def():
                 self.visit(dfn)
         self.visit(ctx.main_def())
-        self.print_stats()
-        print_quads(quads=self.quads, viz_variant="name")
-        # print_quads(quads=self.quads, viz_variant="address")
-        # print_quads(quads=self.quads, viz_variant="type")
+        if self.debug:
+            self.print_stats()
+            print_quads(quads=self.quads, viz_variant="name")
+            print_quads(quads=self.quads, viz_variant="address")
+            print_quads(quads=self.quads, viz_variant="type")
         return self.generate_obj_code()
 
     def generate_obj_code(self):
@@ -348,7 +356,9 @@ class DoflirCustomVisitor(DoflirVisitor):
     def visitDeclaration_stmt(self, ctx: DoflirParser.DeclarationContext):
         var_id = ctx.declaration().ID().getText()
         var_type = ctx.declaration().TYPE_NAME().getText().upper()
-        logging.debug(f"Declaring variable ({var_id}, {var_type})")
+        if self.debug:
+            logging.debug(f"Declaring variable ({var_id}, {var_type})")
+        raise CompilationErrors.CompError(ctx, self.in_filename, self.in_code)
         if self.curr_scope.exists(var_id):
             raise Exception(f"Variable with ID {var_id} already used")
         is_glob = False
@@ -375,7 +385,8 @@ class DoflirCustomVisitor(DoflirVisitor):
             if dim_expr.data_type != VarTypes.INT:
                 raise Exception(f"Vector dimensions must be int {dim_expr.data_type} given instead.")
             vec_dims.append(dim_expr)
-        logging.debug(f"Declaring vector ({vec_id}, {vec_type})")
+        if self.debug:
+            logging.debug(f"Declaring vector ({vec_id}, {vec_type})")
         vec = self.curr_scope.declare_vector(
             name=vec_id, vec_type=VarTypes[vec_type], vec_dims=vec_dims,
             is_glob=is_glob
@@ -714,7 +725,8 @@ class DoflirCustomVisitor(DoflirVisitor):
                     if dim_expr.data_type != VarTypes.INT:
                         raise Exception(f"Vector dimensions must be int {dim_expr.data_type} given instead.")
                     vec_dims.append(dim_expr)
-                logging.debug(f"Declaring vector ({param_id}, {param_type})")
+                if self.debug:
+                    logging.debug(f"Declaring vector ({param_id}, {param_type})")
                 vec = self.curr_scope.declare_vector(
                     name=param_id, vec_type=param_type, vec_dims=vec_dims,
                     is_glob=False
@@ -733,8 +745,8 @@ class DoflirCustomVisitor(DoflirVisitor):
                     res=vec
                 )
                 self.quads.append(allocate_quad)
-
-        logging.debug(f"Defining function ({fun_id}, {return_type})")
+        if self.debug:
+            logging.debug(f"Defining function ({fun_id}, {return_type})")
         self.fun_dir.define_fun(
             name=fun_id,
             ret_type=return_type,
