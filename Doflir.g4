@@ -6,7 +6,18 @@ main_def: 'define main''{' proc_body '}' ;
 
 proc_body: (NL*|statement) (NL|statement)*;
 
-statement: (assignment | condition | iterable | vec_filtering | fun_call_stmt | declaration_stmt | print_stmt | println_stmt | vec_declaration_stmt | flow_call);
+statement
+	: assignment
+	| condition
+	| iterable
+	| vec_filtering
+	| fun_call_stmt
+	| declaration_stmt
+	| print_stmt
+	| println_stmt
+	| vec_declaration_stmt
+	| flow_call
+	;
 
 assignment: (ID|vec_indexing) '=' expr ';' ;
 declaration_stmt: declaration ';' ;
@@ -26,7 +37,7 @@ filter_list: FILTER (',' FILTER)* ;
 
 vec_declaration: declaration vec_list ;
 vec_declaration_stmt: vec_declaration ';' ;
-vec_list: '[' expr_list ']';
+vec_list: '[' tok_list ']';
 
 vec_init_list: '[' tok_list ']';
 mat_init_list: '[' vec_init_list (',' vec_init_list)* ']';
@@ -61,6 +72,9 @@ expr
     | expr 'and' expr              #andExpr     // Logical and.
     | expr  'or' expr              #orExpr      // Logical or.
 	| token                        #tokExpr
+	| read_table	     	       #readTExpr
+	| read_array                   #readAExpr
+	| read_console                 #readCExpr
 	;
 
 token
@@ -98,8 +112,9 @@ iterable
     | 'while' '(' expr ')' '{' proc_body '}'  			#whileStmt
     ;
 
-read_file_stmt: 'read_file' '(' expr ')' ';' ;
-read_console_stmt: 'read_console' '(' expr ')' ';' ;
+read_table: 'read_table' '->' TYPE_NAME '['token',' token ']' '(' expr ')' ;
+read_array: 'read_array' '->' TYPE_NAME '['token']' '(' expr ')' ;
+read_console: 'read_console' '->' TYPE_NAME ;
 print_stmt: 'print' '(' expr_list ')' ';' ;
 println_stmt: 'println' '(' expr_list ')' ';' ;
 

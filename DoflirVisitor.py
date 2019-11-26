@@ -119,6 +119,11 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by DoflirParser#readCExpr.
+    def visitReadCExpr(self, ctx:DoflirParser.ReadCExprContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by DoflirParser#ltEqExpr.
     def visitLtEqExpr(self, ctx:DoflirParser.LtEqExprContext):
         return self.visitChildren(ctx)
@@ -134,28 +139,13 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by DoflirParser#tokExpr.
-    def visitTokExpr(self, ctx:DoflirParser.TokExprContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by DoflirParser#gtExpr.
     def visitGtExpr(self, ctx:DoflirParser.GtExprContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by DoflirParser#orExpr.
-    def visitOrExpr(self, ctx:DoflirParser.OrExprContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by DoflirParser#subExpr.
     def visitSubExpr(self, ctx:DoflirParser.SubExprContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by DoflirParser#multExpr.
-    def visitMultExpr(self, ctx:DoflirParser.MultExprContext):
         return self.visitChildren(ctx)
 
 
@@ -169,6 +159,41 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by DoflirParser#ltExpr.
+    def visitLtExpr(self, ctx:DoflirParser.LtExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#divExpr.
+    def visitDivExpr(self, ctx:DoflirParser.DivExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#readTExpr.
+    def visitReadTExpr(self, ctx:DoflirParser.ReadTExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#tokExpr.
+    def visitTokExpr(self, ctx:DoflirParser.TokExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#readAExpr.
+    def visitReadAExpr(self, ctx:DoflirParser.ReadAExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#orExpr.
+    def visitOrExpr(self, ctx:DoflirParser.OrExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#multExpr.
+    def visitMultExpr(self, ctx:DoflirParser.MultExprContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by DoflirParser#matInitExpr.
     def visitMatInitExpr(self, ctx:DoflirParser.MatInitExprContext):
         return self.visitChildren(ctx)
@@ -176,11 +201,6 @@ class DoflirVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by DoflirParser#posExpr.
     def visitPosExpr(self, ctx:DoflirParser.PosExprContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by DoflirParser#ltExpr.
-    def visitLtExpr(self, ctx:DoflirParser.LtExprContext):
         return self.visitChildren(ctx)
 
 
@@ -211,11 +231,6 @@ class DoflirVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by DoflirParser#unExpr.
     def visitUnExpr(self, ctx:DoflirParser.UnExprContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by DoflirParser#divExpr.
-    def visitDivExpr(self, ctx:DoflirParser.DivExprContext):
         return self.visitChildren(ctx)
 
 
@@ -284,13 +299,18 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by DoflirParser#read_file_stmt.
-    def visitRead_file_stmt(self, ctx:DoflirParser.Read_file_stmtContext):
+    # Visit a parse tree produced by DoflirParser#read_table.
+    def visitRead_table(self, ctx:DoflirParser.Read_tableContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by DoflirParser#read_console_stmt.
-    def visitRead_console_stmt(self, ctx:DoflirParser.Read_console_stmtContext):
+    # Visit a parse tree produced by DoflirParser#read_array.
+    def visitRead_array(self, ctx:DoflirParser.Read_arrayContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#read_console.
+    def visitRead_console(self, ctx:DoflirParser.Read_consoleContext):
         return self.visitChildren(ctx)
 
 
