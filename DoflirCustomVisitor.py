@@ -167,7 +167,7 @@ class DoflirCustomVisitor(DoflirVisitor):
             result_var = vec
         self.operands_stack.append(result_var)
         final_quad = Quad(
-            op=vec_filter,
+            op=vec_filters[-1],
             left=vec,
             right=None,
             res=result_var,

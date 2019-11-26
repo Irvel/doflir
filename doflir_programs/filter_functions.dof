@@ -2,9 +2,23 @@ define main {
     list -> float[10];
     list = [6.12, 10.4, 10.21, 8.32, 11.23, 5.29, 15.32, 7.22, 9.23, 4.82];
     list_sum -> float;
-    list_sum = list{f_sum};
     print("Original list: ", list);
     println("");
-    print("list_sum: ", list_sum);
+    print("list_sum: ", list{f_sum});
     println("");
+
+    print("list_mean: ", list{f_mean});
+    println("");
+
+    print("list_std: ", list{f_std});
+    println("", "");
+    print("Squared list: ", list{f_square});
+    println("", "");
+
+    print("Squared list max: ", list{f_square, f_max});
+    println("", "");
+
+    print("(Squared list max) /  (list avg): ", list{f_square, f_max} / list{f_mean});
+    println("", "");
+
 }

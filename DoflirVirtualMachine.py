@@ -17,6 +17,7 @@ import operator
 import pickle
 
 logger = logging.getLogger("doflir_vm_logger")
+np.set_printoptions(suppress=True)
 
 
 class DoflirVirtualMachine(object):
@@ -286,6 +287,71 @@ class DoflirVirtualMachine(object):
 
     def f_sum(self, quad):
         self.run_filter_op(vec_filter=np.sum, quad=quad)
+
+    def f_mean(self, quad):
+        self.run_filter_op(vec_filter=np.mean, quad=quad)
+
+    def f_var(self, quad):
+        self.run_filter_op(vec_filter=np.var, quad=quad)
+
+    def f_min(self, quad):
+        self.run_filter_op(vec_filter=np.min, quad=quad)
+
+    def f_max(self, quad):
+        self.run_filter_op(vec_filter=np.max, quad=quad)
+
+    def f_std(self, quad):
+        self.run_filter_op(vec_filter=np.std, quad=quad)
+
+    def f_normalize(self, quad):
+        self.run_filter_op(vec_filter=normalize, quad=quad)
+
+    def f_square(self, quad):
+        self.run_filter_op(vec_filter=np.square, quad=quad)
+
+    def f_cube(self, quad):
+        self.run_filter_op(vec_filter=cube, quad=quad)
+
+    def f_strip(self, quad):
+        self.run_filter_op(vec_filter=vec_strip, quad=quad)
+
+    def f_lowercase(self, quad):
+        self.run_filter_op(vec_filter=np.vec_lower, quad=quad)
+
+    def f_uppercase(self, quad):
+        self.run_filter_op(vec_filter=np.vec_upper, quad=quad)
+
+    def f_sort(self, quad):
+        self.run_filter_op(vec_filter=np.sort, quad=quad)
+
+
+def vec_strip(vector):
+    stripped = []
+    for val in vector:
+        stripped.append(str(val).strip())
+    return stripped
+
+
+def vec_lower(vector):
+    lowered = []
+    for val in vector:
+        lowered.append(str(val).lower())
+    return lowered
+
+
+def vec_upper(vector):
+    uppered = []
+    for val in vector:
+        uppered.append(str(val).upper())
+    return uppered
+
+
+def cube(vector):
+    return vector * vector * vector
+
+
+def normalize(vector):
+    return vector / np.linalg.norm(vector)
 
 
 def enum_to_name(enum):
