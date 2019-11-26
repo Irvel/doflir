@@ -850,6 +850,26 @@ class DoflirCustomVisitor(DoflirVisitor):
             )
         )
 
+    def visitWrite_file_stmt(self, ctx: DoflirParser.Write_file_stmtContext):
+        self.visit(ctx.expr(0))
+        write_expr = self.operands_stack.pop()
+        if not write_expr.is_initialized:
+            raise Exception(f"Attempt too use uninitialized variable.{write_expr}")
+        self.visit(ctx.expr(1))
+        filename_expr = self.operands_stack.pop()
+        if not filename_expr.is_initialized:
+            raise Exception(f"Attempt too use uninitialized variable.{filename_expr}")
+        if filename_expr.data_type != VarTypes.STRING:
+            raise Exception("Filename to read from must be string.")
+        self.quads.append(
+            Quad(
+                op=Ops.WRITEF,
+                left=write_expr,
+                right=None,
+                res=filename_expr
+            )
+        )
+
     def visitRead_table(self, ctx: DoflirParser.Read_tableContext):
         self.visit(ctx.expr())
         filename_expr = self.operands_stack.pop()
