@@ -21,24 +21,39 @@ np.set_printoptions(suppress=True)
 
 
 class DoflirVirtualMachine(object):
-    """docstring for DoflirVirtualMachine"""
+    """VM that Interprets Doflir bytecode and executes it."""
     def __init__(self, bytecode):
+        # The list of quadruples in their intermediate representation form.
         self.quads = bytecode.quads
-        # We initialize the variables table with our constants
+        # Store the function directory for keeping track of activation records.
         self.fun_dir = bytecode.fun_dir
+        # The general instruction pointer.
         self.ip = 0
+        # A stack to hold memory contexts that get activated with functions.
         self.context_stack = deque()
+        # Our base global context is aware of all of the constants.
         self.context_stack.append(bytecode.const_table)
+        # A stack of temporal contexts where parameters are placed on before
+        # switching to the context within a procedure. Given that multiple
+        # activation records can be happen before a call to gosub, we need
+        # a stack to keep track of the argument - parameter assignments.
         self.temp_contexts = deque()
+        # A stack of pending parameters that are to be assigned before gosub.
         self.pending_params_stack = deque()
+        # A stack that keeps track of our previous ip before making a jump
+        # with gosub. It allows us to return to that prevous point later.
         self.pending_return_jump = deque()
+        # Stack to keep track of whether the function is pending to return
+        # a value upon completion.
         self.pending_return_val = deque()
+        # Map of Doflir types to numpy types.
         self.np_type_map = {
             VarTypes.INT: np.int,
             VarTypes.FLOAT: np.float,
             VarTypes.BOOL: np.bool,
             VarTypes.STRING: "<U20",
         }
+        # Map of Doflir types to Python types.
         self.lit_type_map = {
             VarTypes.INT: int,
             VarTypes.FLOAT: float,
@@ -48,6 +63,7 @@ class DoflirVirtualMachine(object):
 
     @property
     def current_quad(self):
+        """Returns the current quad where the instruction pointer is in."""
         if self.ip < len(self.quads):
             return self.quads[self.ip]
         else:
@@ -55,26 +71,33 @@ class DoflirVirtualMachine(object):
 
     @property
     def current_context(self):
+        """Returns the context located at the top of the context_stack."""
         return self.context_stack[-1]
 
     @property
     def global_context(self):
+        """Returns the first context in the context_stack."""
         return self.context_stack[0]
 
     @property
     def temp_context(self):
+        """Returns the context located at the top of the temp_stack."""
         return self.temp_contexts[-1]
 
     def run(self):
+        """Main loop for execution."""
         while self.current_quad is not None:
             self.run_quad(self.current_quad)
             self.ip += 1
 
     def get_val(self, operand):
+        """Resolve and fetch the actual value from memory."""
         if isinstance(operand, Constant):
+            # Constants are represented directly.
             return operand.value
         elif isinstance(operand, VecIdx):
             idx_val = tuple([self.get_val(idx) for idx in operand.idx])
+            # Search in both the current local context and the global context.
             if operand.address in self.current_context:
                 return self.current_context[operand.address][idx_val]
             elif operand.address in self.global_context:
@@ -86,6 +109,7 @@ class DoflirVirtualMachine(object):
                 return self.global_context[operand.address]
 
     def set_value(self, value, dst, global_ctx=False, temp_ctx=False):
+        # Set a value in memory.
         if isinstance(dst, VecIdx):
             idx_val = tuple([self.get_val(idx) for idx in dst.idx])
             if global_ctx or dst.address in self.global_context:
@@ -103,18 +127,22 @@ class DoflirVirtualMachine(object):
                 self.current_context[dst.address] = value
 
     def run_quad(self, quad):
+        """Execute a method that matches the quad Operation name."""
         op_method = getattr(self, enum_to_name(quad.op))
         op_method(quad)
 
     def neg(self, quad):
+        """Unary negation operation. -(1) turns into -1."""
         res_val = -(self.get_val(quad.left))
         self.set_value(value=res_val, dst=quad.res)
 
     def pos(self, quad):
+        """Unary positive operation. +(1) turns into +1."""
         res_val = +(self.get_val(quad.left))
         self.set_value(value=res_val, dst=quad.res)
 
     def run_bin_op(self, bin_op, quad):
+        """Run a binary operation with the provided quad and op."""
         left_val, right_val = (self.get_val(quad.left),
                                self.get_val(quad.right))
         res_val = bin_op(left_val, right_val)
