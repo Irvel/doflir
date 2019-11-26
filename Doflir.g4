@@ -100,6 +100,7 @@ FILTER
 	| 'f_lowercase'
 	| 'f_uppercase'
 	| 'f_sort'
+	| 'f_reverse'
 	;
 
 
