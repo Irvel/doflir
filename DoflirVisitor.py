@@ -314,6 +314,16 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by DoflirParser#write_file_stmt.
+    def visitWrite_file_stmt(self, ctx:DoflirParser.Write_file_stmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#plot_stmt.
+    def visitPlot_stmt(self, ctx:DoflirParser.Plot_stmtContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by DoflirParser#print_stmt.
     def visitPrint_stmt(self, ctx:DoflirParser.Print_stmtContext):
         return self.visitChildren(ctx)

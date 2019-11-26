@@ -15,6 +15,8 @@ statement
 	| declaration_stmt
 	| print_stmt
 	| println_stmt
+	| write_file_stmt
+	| plot_stmt
 	| vec_declaration_stmt
 	| flow_call
 	;
@@ -115,6 +117,8 @@ iterable
 read_table: 'read_table' '->' TYPE_NAME '['token',' token ']' '(' expr ')' ;
 read_array: 'read_array' '->' TYPE_NAME '['token']' '(' expr ')' ;
 read_console: 'read_console' '->' TYPE_NAME ;
+write_file_stmt: 'write_file' '(' expr ',' expr ')' ';' ;
+plot_stmt: 'plot' '(' expr ')' ';' ;
 print_stmt: 'print' '(' expr_list ')' ';' ;
 println_stmt: 'println' '(' expr_list ')' ';' ;
 
