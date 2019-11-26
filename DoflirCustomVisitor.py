@@ -390,6 +390,10 @@ class DoflirCustomVisitor(DoflirVisitor):
                 raise E.WrongDimType(
                     ctx, self.in_filename, self.in_code, dim_expr.data_type
                 )
+            if not dim_expr.is_initialized:
+                raise E.UninitializedVar(
+                    ctx, self.in_filename, self.in_code, dim_expr.value
+                )
             vec_dims.append(dim_expr)
         if self.debug:
             logging.debug(f"Declaring vector ({vec_id}, {vec_type})")
