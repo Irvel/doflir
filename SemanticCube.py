@@ -42,6 +42,8 @@ class Ops(Enum):
     READT = "READT"
     READA = "READA"
     READC = "READC"
+    WRITEF = "WRITE"
+    PLOT = "PLOT"
     ALLOC = "ALLOC"
     VER = "VER"
 

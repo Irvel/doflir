@@ -836,6 +836,20 @@ class DoflirCustomVisitor(DoflirVisitor):
             )
             self.quads.append(print_quad)
 
+    def visitPlot_stmt(self, ctx: DoflirParser.Plot_stmtContext):
+        self.visit(ctx.expr())
+        plot_expr = self.operands_stack.pop()
+        if not plot_expr.is_initialized:
+            raise Exception(f"Attempt too use uninitialized variable.{plot_expr}")
+        self.quads.append(
+            Quad(
+                op=Ops.PLOT,
+                left=None,
+                right=None,
+                res=plot_expr
+            )
+        )
+
     def visitRead_table(self, ctx: DoflirParser.Read_tableContext):
         self.visit(ctx.expr())
         filename_expr = self.operands_stack.pop()
