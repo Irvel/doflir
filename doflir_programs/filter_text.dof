@@ -1,0 +1,34 @@
+
+define do_word_cleaning -> void () {
+    words -> string[10];
+    words = [
+        "test ",
+        " bYe  ",
+        "Car",
+        "DOOR",
+        "AIRPLANE",
+        "     dog",
+        "cAt",
+        "lIOn",
+        "NOOO",
+        "    COMPILER        "
+    ];
+    clean_words -> string[10];
+    println("Words before cleaning: ", words);
+    println("");
+
+    clean_words = words{f_strip, f_lowercase};
+    println("Words after cleaning: ", clean_words);
+    println("");
+
+    clean_words = words{f_strip, f_lowercase, f_sort};
+    println("Sorted clean words: ", clean_words, "");
+
+    println("Reversed Sorted clean words: ", clean_words{f_reverse}, "");
+
+    println("Uppercase words: ", clean_words{f_uppercase}, "");
+}
+
+define main {
+    do_word_cleaning();
+}
