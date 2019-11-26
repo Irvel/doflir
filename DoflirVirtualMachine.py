@@ -10,7 +10,6 @@ from VariablesTable import VecIdx
 from VariablesTable import VarTypes
 
 import argparse
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import logging
@@ -204,8 +203,6 @@ class DoflirVirtualMachine(object):
         data = self.get_val(quad.left)
         filename = self.get_val(quad.res)
         np.savetxt(filename, data, delimiter=" ", fmt="%s")
-
-
 
     def readc(self, quad):
         in_raw = input()
