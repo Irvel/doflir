@@ -43,12 +43,12 @@ vec_init_list: '[' tok_list ']';
 mat_init_list: '[' vec_init_list (',' vec_init_list)* ']';
 
 vec_indexing: ID '[' expr_list ']' ;
-vec_filtering: ID '{' tok_list '}' ';';
+vec_filtering: ID '{' filter_list '}' ;
 
 expr
 	: '('expr')'                   #parenExpr
-	| vec_indexing                 #unExpr
-	| vec_filtering                #unExpr
+	| vec_indexing                 #vecIdxExpr
+	| vec_filtering                #vecFiltExpr
 	| vec_init_list                #vecInitExpr
 	| mat_init_list                #matInitExpr
 	| fun_call                     #unExpr
@@ -89,12 +89,13 @@ token
 FILTER
 	: 'f_sum'
 	| 'f_mean'
+	| 'f_var'
 	| 'f_min'
 	| 'f_max'
 	| 'f_std'
 	| 'f_normalize'
 	| 'f_square'
-	| 'f_split'
+	| 'f_cube'
 	| 'f_strip'
 	| 'f_lowercase'
 	| 'f_uppercase'

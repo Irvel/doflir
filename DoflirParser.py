@@ -9,7 +9,7 @@ import sys
 def serializedATN():
     with StringIO() as buf:
         buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\67")
-        buf.write("\u0198\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
+        buf.write("\u0197\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
         buf.write("\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4\23\t\23")
         buf.write("\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31")
@@ -30,34 +30,34 @@ def serializedATN():
         buf.write("\u00c9\13\20\3\21\3\21\3\21\3\22\3\22\3\22\3\23\3\23\3")
         buf.write("\23\3\23\3\24\3\24\3\24\3\24\3\25\3\25\3\25\3\25\7\25")
         buf.write("\u00dd\n\25\f\25\16\25\u00e0\13\25\3\25\3\25\3\26\3\26")
-        buf.write("\3\26\3\26\3\26\3\27\3\27\3\27\3\27\3\27\3\27\3\30\3\30")
+        buf.write("\3\26\3\26\3\26\3\27\3\27\3\27\3\27\3\27\3\30\3\30\3\30")
         buf.write("\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30")
-        buf.write("\3\30\3\30\3\30\3\30\3\30\3\30\3\30\5\30\u0103\n\30\3")
+        buf.write("\3\30\3\30\3\30\3\30\3\30\3\30\5\30\u0102\n\30\3\30\3")
         buf.write("\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30")
         buf.write("\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30")
         buf.write("\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30")
         buf.write("\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30\3\30")
-        buf.write("\3\30\3\30\3\30\3\30\7\30\u0135\n\30\f\30\16\30\u0138")
-        buf.write("\13\30\3\31\3\31\3\31\3\31\3\31\3\31\5\31\u0140\n\31\3")
+        buf.write("\3\30\3\30\3\30\7\30\u0134\n\30\f\30\16\30\u0137\13\30")
+        buf.write("\3\31\3\31\3\31\3\31\3\31\3\31\5\31\u013f\n\31\3\32\3")
         buf.write("\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32")
-        buf.write("\3\32\3\32\3\32\3\32\3\32\7\32\u0152\n\32\f\32\16\32\u0155")
-        buf.write("\13\32\3\32\3\32\3\32\3\32\3\32\5\32\u015c\n\32\3\33\3")
+        buf.write("\3\32\3\32\3\32\3\32\7\32\u0151\n\32\f\32\16\32\u0154")
+        buf.write("\13\32\3\32\3\32\3\32\3\32\3\32\5\32\u015b\n\32\3\33\3")
         buf.write("\33\3\33\3\33\3\33\3\33\3\33\3\33\3\33\3\33\3\33\3\33")
-        buf.write("\3\33\3\33\3\33\3\33\3\33\3\33\5\33\u0170\n\33\3\34\3")
+        buf.write("\3\33\3\33\3\33\3\33\3\33\3\33\5\33\u016f\n\33\3\34\3")
         buf.write("\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34")
         buf.write("\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\36")
         buf.write("\3\36\3\36\3\36\3\37\3\37\3\37\3\37\3\37\3\37\3 \3 \3")
         buf.write(" \3 \3 \3 \3 \2\3.!\2\4\6\b\n\f\16\20\22\24\26\30\32\34")
-        buf.write("\36 \"$&(*,.\60\62\64\668:<>\2\2\2\u01ba\2E\3\2\2\2\4")
+        buf.write("\36 \"$&(*,.\60\62\64\668:<>\2\2\2\u01b9\2E\3\2\2\2\4")
         buf.write("R\3\2\2\2\6^\3\2\2\2\bq\3\2\2\2\nu\3\2\2\2\f{\3\2\2\2")
         buf.write("\16~\3\2\2\2\20\u0082\3\2\2\2\22\u0091\3\2\2\2\24\u009d")
         buf.write("\3\2\2\2\26\u00a0\3\2\2\2\30\u00a7\3\2\2\2\32\u00b2\3")
         buf.write("\2\2\2\34\u00ba\3\2\2\2\36\u00c2\3\2\2\2 \u00ca\3\2\2")
         buf.write("\2\"\u00cd\3\2\2\2$\u00d0\3\2\2\2&\u00d4\3\2\2\2(\u00d8")
-        buf.write("\3\2\2\2*\u00e3\3\2\2\2,\u00e8\3\2\2\2.\u0102\3\2\2\2")
-        buf.write("\60\u013f\3\2\2\2\62\u015b\3\2\2\2\64\u016f\3\2\2\2\66")
-        buf.write("\u0171\3\2\2\28\u017d\3\2\2\2:\u0187\3\2\2\2<\u018b\3")
-        buf.write("\2\2\2>\u0191\3\2\2\2@D\5\20\t\2AD\5\b\5\2BD\7\66\2\2")
+        buf.write("\3\2\2\2*\u00e3\3\2\2\2,\u00e8\3\2\2\2.\u0101\3\2\2\2")
+        buf.write("\60\u013e\3\2\2\2\62\u015a\3\2\2\2\64\u016e\3\2\2\2\66")
+        buf.write("\u0170\3\2\2\28\u017c\3\2\2\2:\u0186\3\2\2\2<\u018a\3")
+        buf.write("\2\2\2>\u0190\3\2\2\2@D\5\20\t\2AD\5\b\5\2BD\7\66\2\2")
         buf.write("C@\3\2\2\2CA\3\2\2\2CB\3\2\2\2DG\3\2\2\2EC\3\2\2\2EF\3")
         buf.write("\2\2\2FH\3\2\2\2GE\3\2\2\2HM\5\4\3\2IL\5\20\t\2JL\7\66")
         buf.write("\2\2KI\3\2\2\2KJ\3\2\2\2LO\3\2\2\2MK\3\2\2\2MN\3\2\2\2")
@@ -115,86 +115,86 @@ def serializedATN():
         buf.write("\2\2\2\u00e0\u00de\3\2\2\2\u00e1\u00e2\7\17\2\2\u00e2")
         buf.write(")\3\2\2\2\u00e3\u00e4\7\63\2\2\u00e4\u00e5\7\16\2\2\u00e5")
         buf.write("\u00e6\5\32\16\2\u00e6\u00e7\7\17\2\2\u00e7+\3\2\2\2\u00e8")
-        buf.write("\u00e9\7\63\2\2\u00e9\u00ea\7\4\2\2\u00ea\u00eb\5\34\17")
-        buf.write("\2\u00eb\u00ec\7\5\2\2\u00ec\u00ed\7\7\2\2\u00ed-\3\2")
-        buf.write("\2\2\u00ee\u00ef\b\30\1\2\u00ef\u00f0\7\n\2\2\u00f0\u00f1")
-        buf.write("\5.\30\2\u00f1\u00f2\7\13\2\2\u00f2\u0103\3\2\2\2\u00f3")
-        buf.write("\u0103\5*\26\2\u00f4\u0103\5,\27\2\u00f5\u0103\5&\24\2")
-        buf.write("\u00f6\u0103\5(\25\2\u00f7\u0103\5\26\f\2\u00f8\u00f9")
-        buf.write("\7\21\2\2\u00f9\u0103\5.\30\30\u00fa\u00fb\7\22\2\2\u00fb")
-        buf.write("\u0103\5.\30\27\u00fc\u00fd\7\23\2\2\u00fd\u0103\5.\30")
-        buf.write("\26\u00fe\u0103\5\60\31\2\u00ff\u0103\5\66\34\2\u0100")
-        buf.write("\u0103\58\35\2\u0101\u0103\5:\36\2\u0102\u00ee\3\2\2\2")
-        buf.write("\u0102\u00f3\3\2\2\2\u0102\u00f4\3\2\2\2\u0102\u00f5\3")
-        buf.write("\2\2\2\u0102\u00f6\3\2\2\2\u0102\u00f7\3\2\2\2\u0102\u00f8")
-        buf.write("\3\2\2\2\u0102\u00fa\3\2\2\2\u0102\u00fc\3\2\2\2\u0102")
-        buf.write("\u00fe\3\2\2\2\u0102\u00ff\3\2\2\2\u0102\u0100\3\2\2\2")
-        buf.write("\u0102\u0101\3\2\2\2\u0103\u0136\3\2\2\2\u0104\u0105\f")
-        buf.write("\31\2\2\u0105\u0106\7\20\2\2\u0106\u0135\5.\30\31\u0107")
-        buf.write("\u0108\f\25\2\2\u0108\u0109\7\24\2\2\u0109\u0135\5.\30")
-        buf.write("\26\u010a\u010b\f\24\2\2\u010b\u010c\7\25\2\2\u010c\u0135")
-        buf.write("\5.\30\25\u010d\u010e\f\23\2\2\u010e\u010f\7\26\2\2\u010f")
-        buf.write("\u0135\5.\30\24\u0110\u0111\f\22\2\2\u0111\u0112\7\27")
-        buf.write("\2\2\u0112\u0135\5.\30\23\u0113\u0114\f\21\2\2\u0114\u0115")
-        buf.write("\7\30\2\2\u0115\u0135\5.\30\22\u0116\u0117\f\20\2\2\u0117")
-        buf.write("\u0118\7\22\2\2\u0118\u0135\5.\30\21\u0119\u011a\f\17")
-        buf.write("\2\2\u011a\u011b\7\21\2\2\u011b\u0135\5.\30\20\u011c\u011d")
-        buf.write("\f\16\2\2\u011d\u011e\7\31\2\2\u011e\u0135\5.\30\17\u011f")
-        buf.write("\u0120\f\r\2\2\u0120\u0121\7\32\2\2\u0121\u0135\5.\30")
-        buf.write("\16\u0122\u0123\f\f\2\2\u0123\u0124\7\33\2\2\u0124\u0135")
-        buf.write("\5.\30\r\u0125\u0126\f\13\2\2\u0126\u0127\7\34\2\2\u0127")
-        buf.write("\u0135\5.\30\f\u0128\u0129\f\n\2\2\u0129\u012a\7\35\2")
-        buf.write("\2\u012a\u0135\5.\30\13\u012b\u012c\f\t\2\2\u012c\u012d")
-        buf.write("\7\36\2\2\u012d\u0135\5.\30\n\u012e\u012f\f\b\2\2\u012f")
-        buf.write("\u0130\7\37\2\2\u0130\u0135\5.\30\t\u0131\u0132\f\7\2")
-        buf.write("\2\u0132\u0133\7 \2\2\u0133\u0135\5.\30\b\u0134\u0104")
-        buf.write("\3\2\2\2\u0134\u0107\3\2\2\2\u0134\u010a\3\2\2\2\u0134")
-        buf.write("\u010d\3\2\2\2\u0134\u0110\3\2\2\2\u0134\u0113\3\2\2\2")
-        buf.write("\u0134\u0116\3\2\2\2\u0134\u0119\3\2\2\2\u0134\u011c\3")
-        buf.write("\2\2\2\u0134\u011f\3\2\2\2\u0134\u0122\3\2\2\2\u0134\u0125")
-        buf.write("\3\2\2\2\u0134\u0128\3\2\2\2\u0134\u012b\3\2\2\2\u0134")
-        buf.write("\u012e\3\2\2\2\u0134\u0131\3\2\2\2\u0135\u0138\3\2\2\2")
-        buf.write("\u0136\u0134\3\2\2\2\u0136\u0137\3\2\2\2\u0137/\3\2\2")
-        buf.write("\2\u0138\u0136\3\2\2\2\u0139\u0140\7\63\2\2\u013a\u0140")
-        buf.write("\7.\2\2\u013b\u0140\7\62\2\2\u013c\u0140\7/\2\2\u013d")
-        buf.write("\u0140\7\60\2\2\u013e\u0140\7!\2\2\u013f\u0139\3\2\2\2")
-        buf.write("\u013f\u013a\3\2\2\2\u013f\u013b\3\2\2\2\u013f\u013c\3")
-        buf.write("\2\2\2\u013f\u013d\3\2\2\2\u013f\u013e\3\2\2\2\u0140\61")
-        buf.write("\3\2\2\2\u0141\u0142\7\"\2\2\u0142\u0143\7\n\2\2\u0143")
-        buf.write("\u0144\5.\30\2\u0144\u0145\7\13\2\2\u0145\u0146\7\4\2")
-        buf.write("\2\u0146\u0147\5\6\4\2\u0147\u0148\7\5\2\2\u0148\u015c")
-        buf.write("\3\2\2\2\u0149\u014a\7\"\2\2\u014a\u014b\7\n\2\2\u014b")
-        buf.write("\u014c\5.\30\2\u014c\u014d\7\13\2\2\u014d\u014e\7\4\2")
-        buf.write("\2\u014e\u014f\5\6\4\2\u014f\u0153\7\5\2\2\u0150\u0152")
-        buf.write("\7\66\2\2\u0151\u0150\3\2\2\2\u0152\u0155\3\2\2\2\u0153")
-        buf.write("\u0151\3\2\2\2\u0153\u0154\3\2\2\2\u0154\u0156\3\2\2\2")
-        buf.write("\u0155\u0153\3\2\2\2\u0156\u0157\7#\2\2\u0157\u0158\7")
-        buf.write("\4\2\2\u0158\u0159\5\6\4\2\u0159\u015a\7\5\2\2\u015a\u015c")
-        buf.write("\3\2\2\2\u015b\u0141\3\2\2\2\u015b\u0149\3\2\2\2\u015c")
-        buf.write("\63\3\2\2\2\u015d\u015e\7$\2\2\u015e\u015f\7\n\2\2\u015f")
-        buf.write("\u0160\5.\30\2\u0160\u0161\7%\2\2\u0161\u0162\5.\30\2")
-        buf.write("\u0162\u0163\7\13\2\2\u0163\u0164\7\4\2\2\u0164\u0165")
-        buf.write("\5\6\4\2\u0165\u0166\7\5\2\2\u0166\u0170\3\2\2\2\u0167")
-        buf.write("\u0168\7&\2\2\u0168\u0169\7\n\2\2\u0169\u016a\5.\30\2")
-        buf.write("\u016a\u016b\7\13\2\2\u016b\u016c\7\4\2\2\u016c\u016d")
-        buf.write("\5\6\4\2\u016d\u016e\7\5\2\2\u016e\u0170\3\2\2\2\u016f")
-        buf.write("\u015d\3\2\2\2\u016f\u0167\3\2\2\2\u0170\65\3\2\2\2\u0171")
-        buf.write("\u0172\7\'\2\2\u0172\u0173\7\b\2\2\u0173\u0174\7-\2\2")
-        buf.write("\u0174\u0175\7\16\2\2\u0175\u0176\5\60\31\2\u0176\u0177")
-        buf.write("\7\f\2\2\u0177\u0178\5\60\31\2\u0178\u0179\7\17\2\2\u0179")
-        buf.write("\u017a\7\n\2\2\u017a\u017b\5.\30\2\u017b\u017c\7\13\2")
-        buf.write("\2\u017c\67\3\2\2\2\u017d\u017e\7(\2\2\u017e\u017f\7\b")
-        buf.write("\2\2\u017f\u0180\7-\2\2\u0180\u0181\7\16\2\2\u0181\u0182")
-        buf.write("\5\60\31\2\u0182\u0183\7\17\2\2\u0183\u0184\7\n\2\2\u0184")
-        buf.write("\u0185\5.\30\2\u0185\u0186\7\13\2\2\u01869\3\2\2\2\u0187")
-        buf.write("\u0188\7)\2\2\u0188\u0189\7\b\2\2\u0189\u018a\7-\2\2\u018a")
-        buf.write(";\3\2\2\2\u018b\u018c\7*\2\2\u018c\u018d\7\n\2\2\u018d")
-        buf.write("\u018e\5\32\16\2\u018e\u018f\7\13\2\2\u018f\u0190\7\7")
-        buf.write("\2\2\u0190=\3\2\2\2\u0191\u0192\7+\2\2\u0192\u0193\7\n")
-        buf.write("\2\2\u0193\u0194\5\32\16\2\u0194\u0195\7\13\2\2\u0195")
-        buf.write("\u0196\7\7\2\2\u0196?\3\2\2\2\36CEKMZ^bdqu\u0088\u0091")
-        buf.write("\u0096\u009a\u00a3\u00a9\u00af\u00b7\u00bf\u00c7\u00de")
-        buf.write("\u0102\u0134\u0136\u013f\u0153\u015b\u016f")
+        buf.write("\u00e9\7\63\2\2\u00e9\u00ea\7\4\2\2\u00ea\u00eb\5\36\20")
+        buf.write("\2\u00eb\u00ec\7\5\2\2\u00ec-\3\2\2\2\u00ed\u00ee\b\30")
+        buf.write("\1\2\u00ee\u00ef\7\n\2\2\u00ef\u00f0\5.\30\2\u00f0\u00f1")
+        buf.write("\7\13\2\2\u00f1\u0102\3\2\2\2\u00f2\u0102\5*\26\2\u00f3")
+        buf.write("\u0102\5,\27\2\u00f4\u0102\5&\24\2\u00f5\u0102\5(\25\2")
+        buf.write("\u00f6\u0102\5\26\f\2\u00f7\u00f8\7\21\2\2\u00f8\u0102")
+        buf.write("\5.\30\30\u00f9\u00fa\7\22\2\2\u00fa\u0102\5.\30\27\u00fb")
+        buf.write("\u00fc\7\23\2\2\u00fc\u0102\5.\30\26\u00fd\u0102\5\60")
+        buf.write("\31\2\u00fe\u0102\5\66\34\2\u00ff\u0102\58\35\2\u0100")
+        buf.write("\u0102\5:\36\2\u0101\u00ed\3\2\2\2\u0101\u00f2\3\2\2\2")
+        buf.write("\u0101\u00f3\3\2\2\2\u0101\u00f4\3\2\2\2\u0101\u00f5\3")
+        buf.write("\2\2\2\u0101\u00f6\3\2\2\2\u0101\u00f7\3\2\2\2\u0101\u00f9")
+        buf.write("\3\2\2\2\u0101\u00fb\3\2\2\2\u0101\u00fd\3\2\2\2\u0101")
+        buf.write("\u00fe\3\2\2\2\u0101\u00ff\3\2\2\2\u0101\u0100\3\2\2\2")
+        buf.write("\u0102\u0135\3\2\2\2\u0103\u0104\f\31\2\2\u0104\u0105")
+        buf.write("\7\20\2\2\u0105\u0134\5.\30\31\u0106\u0107\f\25\2\2\u0107")
+        buf.write("\u0108\7\24\2\2\u0108\u0134\5.\30\26\u0109\u010a\f\24")
+        buf.write("\2\2\u010a\u010b\7\25\2\2\u010b\u0134\5.\30\25\u010c\u010d")
+        buf.write("\f\23\2\2\u010d\u010e\7\26\2\2\u010e\u0134\5.\30\24\u010f")
+        buf.write("\u0110\f\22\2\2\u0110\u0111\7\27\2\2\u0111\u0134\5.\30")
+        buf.write("\23\u0112\u0113\f\21\2\2\u0113\u0114\7\30\2\2\u0114\u0134")
+        buf.write("\5.\30\22\u0115\u0116\f\20\2\2\u0116\u0117\7\22\2\2\u0117")
+        buf.write("\u0134\5.\30\21\u0118\u0119\f\17\2\2\u0119\u011a\7\21")
+        buf.write("\2\2\u011a\u0134\5.\30\20\u011b\u011c\f\16\2\2\u011c\u011d")
+        buf.write("\7\31\2\2\u011d\u0134\5.\30\17\u011e\u011f\f\r\2\2\u011f")
+        buf.write("\u0120\7\32\2\2\u0120\u0134\5.\30\16\u0121\u0122\f\f\2")
+        buf.write("\2\u0122\u0123\7\33\2\2\u0123\u0134\5.\30\r\u0124\u0125")
+        buf.write("\f\13\2\2\u0125\u0126\7\34\2\2\u0126\u0134\5.\30\f\u0127")
+        buf.write("\u0128\f\n\2\2\u0128\u0129\7\35\2\2\u0129\u0134\5.\30")
+        buf.write("\13\u012a\u012b\f\t\2\2\u012b\u012c\7\36\2\2\u012c\u0134")
+        buf.write("\5.\30\n\u012d\u012e\f\b\2\2\u012e\u012f\7\37\2\2\u012f")
+        buf.write("\u0134\5.\30\t\u0130\u0131\f\7\2\2\u0131\u0132\7 \2\2")
+        buf.write("\u0132\u0134\5.\30\b\u0133\u0103\3\2\2\2\u0133\u0106\3")
+        buf.write("\2\2\2\u0133\u0109\3\2\2\2\u0133\u010c\3\2\2\2\u0133\u010f")
+        buf.write("\3\2\2\2\u0133\u0112\3\2\2\2\u0133\u0115\3\2\2\2\u0133")
+        buf.write("\u0118\3\2\2\2\u0133\u011b\3\2\2\2\u0133\u011e\3\2\2\2")
+        buf.write("\u0133\u0121\3\2\2\2\u0133\u0124\3\2\2\2\u0133\u0127\3")
+        buf.write("\2\2\2\u0133\u012a\3\2\2\2\u0133\u012d\3\2\2\2\u0133\u0130")
+        buf.write("\3\2\2\2\u0134\u0137\3\2\2\2\u0135\u0133\3\2\2\2\u0135")
+        buf.write("\u0136\3\2\2\2\u0136/\3\2\2\2\u0137\u0135\3\2\2\2\u0138")
+        buf.write("\u013f\7\63\2\2\u0139\u013f\7.\2\2\u013a\u013f\7\62\2")
+        buf.write("\2\u013b\u013f\7/\2\2\u013c\u013f\7\60\2\2\u013d\u013f")
+        buf.write("\7!\2\2\u013e\u0138\3\2\2\2\u013e\u0139\3\2\2\2\u013e")
+        buf.write("\u013a\3\2\2\2\u013e\u013b\3\2\2\2\u013e\u013c\3\2\2\2")
+        buf.write("\u013e\u013d\3\2\2\2\u013f\61\3\2\2\2\u0140\u0141\7\"")
+        buf.write("\2\2\u0141\u0142\7\n\2\2\u0142\u0143\5.\30\2\u0143\u0144")
+        buf.write("\7\13\2\2\u0144\u0145\7\4\2\2\u0145\u0146\5\6\4\2\u0146")
+        buf.write("\u0147\7\5\2\2\u0147\u015b\3\2\2\2\u0148\u0149\7\"\2\2")
+        buf.write("\u0149\u014a\7\n\2\2\u014a\u014b\5.\30\2\u014b\u014c\7")
+        buf.write("\13\2\2\u014c\u014d\7\4\2\2\u014d\u014e\5\6\4\2\u014e")
+        buf.write("\u0152\7\5\2\2\u014f\u0151\7\66\2\2\u0150\u014f\3\2\2")
+        buf.write("\2\u0151\u0154\3\2\2\2\u0152\u0150\3\2\2\2\u0152\u0153")
+        buf.write("\3\2\2\2\u0153\u0155\3\2\2\2\u0154\u0152\3\2\2\2\u0155")
+        buf.write("\u0156\7#\2\2\u0156\u0157\7\4\2\2\u0157\u0158\5\6\4\2")
+        buf.write("\u0158\u0159\7\5\2\2\u0159\u015b\3\2\2\2\u015a\u0140\3")
+        buf.write("\2\2\2\u015a\u0148\3\2\2\2\u015b\63\3\2\2\2\u015c\u015d")
+        buf.write("\7$\2\2\u015d\u015e\7\n\2\2\u015e\u015f\5.\30\2\u015f")
+        buf.write("\u0160\7%\2\2\u0160\u0161\5.\30\2\u0161\u0162\7\13\2\2")
+        buf.write("\u0162\u0163\7\4\2\2\u0163\u0164\5\6\4\2\u0164\u0165\7")
+        buf.write("\5\2\2\u0165\u016f\3\2\2\2\u0166\u0167\7&\2\2\u0167\u0168")
+        buf.write("\7\n\2\2\u0168\u0169\5.\30\2\u0169\u016a\7\13\2\2\u016a")
+        buf.write("\u016b\7\4\2\2\u016b\u016c\5\6\4\2\u016c\u016d\7\5\2\2")
+        buf.write("\u016d\u016f\3\2\2\2\u016e\u015c\3\2\2\2\u016e\u0166\3")
+        buf.write("\2\2\2\u016f\65\3\2\2\2\u0170\u0171\7\'\2\2\u0171\u0172")
+        buf.write("\7\b\2\2\u0172\u0173\7-\2\2\u0173\u0174\7\16\2\2\u0174")
+        buf.write("\u0175\5\60\31\2\u0175\u0176\7\f\2\2\u0176\u0177\5\60")
+        buf.write("\31\2\u0177\u0178\7\17\2\2\u0178\u0179\7\n\2\2\u0179\u017a")
+        buf.write("\5.\30\2\u017a\u017b\7\13\2\2\u017b\67\3\2\2\2\u017c\u017d")
+        buf.write("\7(\2\2\u017d\u017e\7\b\2\2\u017e\u017f\7-\2\2\u017f\u0180")
+        buf.write("\7\16\2\2\u0180\u0181\5\60\31\2\u0181\u0182\7\17\2\2\u0182")
+        buf.write("\u0183\7\n\2\2\u0183\u0184\5.\30\2\u0184\u0185\7\13\2")
+        buf.write("\2\u01859\3\2\2\2\u0186\u0187\7)\2\2\u0187\u0188\7\b\2")
+        buf.write("\2\u0188\u0189\7-\2\2\u0189;\3\2\2\2\u018a\u018b\7*\2")
+        buf.write("\2\u018b\u018c\7\n\2\2\u018c\u018d\5\32\16\2\u018d\u018e")
+        buf.write("\7\13\2\2\u018e\u018f\7\7\2\2\u018f=\3\2\2\2\u0190\u0191")
+        buf.write("\7+\2\2\u0191\u0192\7\n\2\2\u0192\u0193\5\32\16\2\u0193")
+        buf.write("\u0194\7\13\2\2\u0194\u0195\7\7\2\2\u0195?\3\2\2\2\36")
+        buf.write("CEKMZ^bdqu\u0088\u0091\u0096\u009a\u00a3\u00a9\u00af\u00b7")
+        buf.write("\u00bf\u00c7\u00de\u0101\u0133\u0135\u013e\u0152\u015a")
+        buf.write("\u016e")
         return buf.getvalue()
 
 
@@ -1646,8 +1646,8 @@ class DoflirParser ( Parser ):
         def ID(self):
             return self.getToken(DoflirParser.ID, 0)
 
-        def tok_list(self):
-            return self.getTypedRuleContext(DoflirParser.Tok_listContext,0)
+        def filter_list(self):
+            return self.getTypedRuleContext(DoflirParser.Filter_listContext,0)
 
 
         def getRuleIndex(self):
@@ -1673,11 +1673,9 @@ class DoflirParser ( Parser ):
             self.state = 231
             self.match(DoflirParser.T__1)
             self.state = 232
-            self.tok_list()
+            self.filter_list()
             self.state = 233
             self.match(DoflirParser.T__2)
-            self.state = 234
-            self.match(DoflirParser.T__4)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -1947,6 +1945,23 @@ class DoflirParser ( Parser ):
                 return visitor.visitChildren(self)
 
 
+    class VecIdxExprContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a DoflirParser.ExprContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def vec_indexing(self):
+            return self.getTypedRuleContext(DoflirParser.Vec_indexingContext,0)
+
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitVecIdxExpr" ):
+                return visitor.visitVecIdxExpr(self)
+            else:
+                return visitor.visitChildren(self)
+
+
     class OrExprContext(ExprContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a DoflirParser.ExprContext
@@ -2121,12 +2136,6 @@ class DoflirParser ( Parser ):
             super().__init__(parser)
             self.copyFrom(ctx)
 
-        def vec_indexing(self):
-            return self.getTypedRuleContext(DoflirParser.Vec_indexingContext,0)
-
-        def vec_filtering(self):
-            return self.getTypedRuleContext(DoflirParser.Vec_filteringContext,0)
-
         def fun_call(self):
             return self.getTypedRuleContext(DoflirParser.Fun_callContext,0)
 
@@ -2181,6 +2190,23 @@ class DoflirParser ( Parser ):
                 return visitor.visitChildren(self)
 
 
+    class VecFiltExprContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a DoflirParser.ExprContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def vec_filtering(self):
+            return self.getTypedRuleContext(DoflirParser.Vec_filteringContext,0)
+
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitVecFiltExpr" ):
+                return visitor.visitVecFiltExpr(self)
+            else:
+                return visitor.visitChildren(self)
+
+
     class AndExprContext(ExprContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a DoflirParser.ExprContext
@@ -2211,7 +2237,7 @@ class DoflirParser ( Parser ):
         self.enterRecursionRule(localctx, 44, self.RULE_expr, _p)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 256
+            self.state = 255
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,21,self._ctx)
             if la_ == 1:
@@ -2219,27 +2245,27 @@ class DoflirParser ( Parser ):
                 self._ctx = localctx
                 _prevctx = localctx
 
-                self.state = 237
+                self.state = 236
                 self.match(DoflirParser.T__7)
-                self.state = 238
+                self.state = 237
                 self.expr(0)
-                self.state = 239
+                self.state = 238
                 self.match(DoflirParser.T__8)
                 pass
 
             elif la_ == 2:
-                localctx = DoflirParser.UnExprContext(self, localctx)
+                localctx = DoflirParser.VecIdxExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 241
+                self.state = 240
                 self.vec_indexing()
                 pass
 
             elif la_ == 3:
-                localctx = DoflirParser.UnExprContext(self, localctx)
+                localctx = DoflirParser.VecFiltExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 242
+                self.state = 241
                 self.vec_filtering()
                 pass
 
@@ -2247,7 +2273,7 @@ class DoflirParser ( Parser ):
                 localctx = DoflirParser.VecInitExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 243
+                self.state = 242
                 self.vec_init_list()
                 pass
 
@@ -2255,7 +2281,7 @@ class DoflirParser ( Parser ):
                 localctx = DoflirParser.MatInitExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 244
+                self.state = 243
                 self.mat_init_list()
                 pass
 
@@ -2263,7 +2289,7 @@ class DoflirParser ( Parser ):
                 localctx = DoflirParser.UnExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 245
+                self.state = 244
                 self.fun_call()
                 pass
 
@@ -2271,9 +2297,9 @@ class DoflirParser ( Parser ):
                 localctx = DoflirParser.NegExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 246
+                self.state = 245
                 self.match(DoflirParser.T__14)
-                self.state = 247
+                self.state = 246
                 self.expr(22)
                 pass
 
@@ -2281,9 +2307,9 @@ class DoflirParser ( Parser ):
                 localctx = DoflirParser.PosExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 248
+                self.state = 247
                 self.match(DoflirParser.T__15)
-                self.state = 249
+                self.state = 248
                 self.expr(21)
                 pass
 
@@ -2291,9 +2317,9 @@ class DoflirParser ( Parser ):
                 localctx = DoflirParser.UnExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 250
+                self.state = 249
                 self.match(DoflirParser.T__16)
-                self.state = 251
+                self.state = 250
                 self.expr(20)
                 pass
 
@@ -2301,7 +2327,7 @@ class DoflirParser ( Parser ):
                 localctx = DoflirParser.TokExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 252
+                self.state = 251
                 self.token()
                 pass
 
@@ -2309,7 +2335,7 @@ class DoflirParser ( Parser ):
                 localctx = DoflirParser.ReadTExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 253
+                self.state = 252
                 self.read_table()
                 pass
 
@@ -2317,7 +2343,7 @@ class DoflirParser ( Parser ):
                 localctx = DoflirParser.ReadAExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 254
+                self.state = 253
                 self.read_array()
                 pass
 
@@ -2325,13 +2351,13 @@ class DoflirParser ( Parser ):
                 localctx = DoflirParser.ReadCExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 255
+                self.state = 254
                 self.read_console()
                 pass
 
 
             self._ctx.stop = self._input.LT(-1)
-            self.state = 308
+            self.state = 307
             self._errHandler.sync(self)
             _alt = self._interp.adaptivePredict(self._input,23,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
@@ -2339,219 +2365,219 @@ class DoflirParser ( Parser ):
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
-                    self.state = 306
+                    self.state = 305
                     self._errHandler.sync(self)
                     la_ = self._interp.adaptivePredict(self._input,22,self._ctx)
                     if la_ == 1:
                         localctx = DoflirParser.PowExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 258
+                        self.state = 257
                         if not self.precpred(self._ctx, 23):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 23)")
-                        self.state = 259
+                        self.state = 258
                         self.match(DoflirParser.T__13)
-                        self.state = 260
+                        self.state = 259
                         self.expr(23)
                         pass
 
                     elif la_ == 2:
                         localctx = DoflirParser.MatMultExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 261
+                        self.state = 260
                         if not self.precpred(self._ctx, 19):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 19)")
-                        self.state = 262
+                        self.state = 261
                         self.match(DoflirParser.T__17)
-                        self.state = 263
+                        self.state = 262
                         self.expr(20)
                         pass
 
                     elif la_ == 3:
                         localctx = DoflirParser.DotExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 264
+                        self.state = 263
                         if not self.precpred(self._ctx, 18):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 18)")
-                        self.state = 265
+                        self.state = 264
                         self.match(DoflirParser.T__18)
-                        self.state = 266
+                        self.state = 265
                         self.expr(19)
                         pass
 
                     elif la_ == 4:
                         localctx = DoflirParser.MultExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 267
+                        self.state = 266
                         if not self.precpred(self._ctx, 17):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 17)")
-                        self.state = 268
+                        self.state = 267
                         self.match(DoflirParser.T__19)
-                        self.state = 269
+                        self.state = 268
                         self.expr(18)
                         pass
 
                     elif la_ == 5:
                         localctx = DoflirParser.DivExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 270
+                        self.state = 269
                         if not self.precpred(self._ctx, 16):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 16)")
-                        self.state = 271
+                        self.state = 270
                         self.match(DoflirParser.T__20)
-                        self.state = 272
+                        self.state = 271
                         self.expr(17)
                         pass
 
                     elif la_ == 6:
                         localctx = DoflirParser.IntDivExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 273
+                        self.state = 272
                         if not self.precpred(self._ctx, 15):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 15)")
-                        self.state = 274
+                        self.state = 273
                         self.match(DoflirParser.T__21)
-                        self.state = 275
+                        self.state = 274
                         self.expr(16)
                         pass
 
                     elif la_ == 7:
                         localctx = DoflirParser.AddExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 276
+                        self.state = 275
                         if not self.precpred(self._ctx, 14):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 14)")
-                        self.state = 277
+                        self.state = 276
                         self.match(DoflirParser.T__15)
-                        self.state = 278
+                        self.state = 277
                         self.expr(15)
                         pass
 
                     elif la_ == 8:
                         localctx = DoflirParser.SubExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 279
+                        self.state = 278
                         if not self.precpred(self._ctx, 13):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 13)")
-                        self.state = 280
+                        self.state = 279
                         self.match(DoflirParser.T__14)
-                        self.state = 281
+                        self.state = 280
                         self.expr(14)
                         pass
 
                     elif la_ == 9:
                         localctx = DoflirParser.GtExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 282
+                        self.state = 281
                         if not self.precpred(self._ctx, 12):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 12)")
-                        self.state = 283
+                        self.state = 282
                         self.match(DoflirParser.T__22)
-                        self.state = 284
+                        self.state = 283
                         self.expr(13)
                         pass
 
                     elif la_ == 10:
                         localctx = DoflirParser.GtEqExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 285
+                        self.state = 284
                         if not self.precpred(self._ctx, 11):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 11)")
-                        self.state = 286
+                        self.state = 285
                         self.match(DoflirParser.T__23)
-                        self.state = 287
+                        self.state = 286
                         self.expr(12)
                         pass
 
                     elif la_ == 11:
                         localctx = DoflirParser.LtExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 288
+                        self.state = 287
                         if not self.precpred(self._ctx, 10):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 10)")
-                        self.state = 289
+                        self.state = 288
                         self.match(DoflirParser.T__24)
-                        self.state = 290
+                        self.state = 289
                         self.expr(11)
                         pass
 
                     elif la_ == 12:
                         localctx = DoflirParser.LtEqExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 291
+                        self.state = 290
                         if not self.precpred(self._ctx, 9):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 9)")
-                        self.state = 292
+                        self.state = 291
                         self.match(DoflirParser.T__25)
-                        self.state = 293
+                        self.state = 292
                         self.expr(10)
                         pass
 
                     elif la_ == 13:
                         localctx = DoflirParser.EqExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 294
+                        self.state = 293
                         if not self.precpred(self._ctx, 8):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 8)")
-                        self.state = 295
+                        self.state = 294
                         self.match(DoflirParser.T__26)
-                        self.state = 296
+                        self.state = 295
                         self.expr(9)
                         pass
 
                     elif la_ == 14:
                         localctx = DoflirParser.NotEqExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 297
+                        self.state = 296
                         if not self.precpred(self._ctx, 7):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 7)")
-                        self.state = 298
+                        self.state = 297
                         self.match(DoflirParser.T__27)
-                        self.state = 299
+                        self.state = 298
                         self.expr(8)
                         pass
 
                     elif la_ == 15:
                         localctx = DoflirParser.AndExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 300
+                        self.state = 299
                         if not self.precpred(self._ctx, 6):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 6)")
-                        self.state = 301
+                        self.state = 300
                         self.match(DoflirParser.T__28)
-                        self.state = 302
+                        self.state = 301
                         self.expr(7)
                         pass
 
                     elif la_ == 16:
                         localctx = DoflirParser.OrExprContext(self, DoflirParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 303
+                        self.state = 302
                         if not self.precpred(self._ctx, 5):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 5)")
-                        self.state = 304
+                        self.state = 303
                         self.match(DoflirParser.T__29)
-                        self.state = 305
+                        self.state = 304
                         self.expr(6)
                         pass
 
              
-                self.state = 310
+                self.state = 309
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,23,self._ctx)
 
@@ -2680,43 +2706,43 @@ class DoflirParser ( Parser ):
         localctx = DoflirParser.TokenContext(self, self._ctx, self.state)
         self.enterRule(localctx, 46, self.RULE_token)
         try:
-            self.state = 317
+            self.state = 316
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [DoflirParser.ID]:
                 localctx = DoflirParser.TokIdExprContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
-                self.state = 311
+                self.state = 310
                 self.match(DoflirParser.ID)
                 pass
             elif token in [DoflirParser.STRING_LITERAL]:
                 localctx = DoflirParser.TokStrExprContext(self, localctx)
                 self.enterOuterAlt(localctx, 2)
-                self.state = 312
+                self.state = 311
                 self.match(DoflirParser.STRING_LITERAL)
                 pass
             elif token in [DoflirParser.BOOL]:
                 localctx = DoflirParser.TokBoolExprContext(self, localctx)
                 self.enterOuterAlt(localctx, 3)
-                self.state = 313
+                self.state = 312
                 self.match(DoflirParser.BOOL)
                 pass
             elif token in [DoflirParser.INTEGER]:
                 localctx = DoflirParser.TokIntExprContext(self, localctx)
                 self.enterOuterAlt(localctx, 4)
-                self.state = 314
+                self.state = 313
                 self.match(DoflirParser.INTEGER)
                 pass
             elif token in [DoflirParser.FLOAT]:
                 localctx = DoflirParser.TokFloatExprContext(self, localctx)
                 self.enterOuterAlt(localctx, 5)
-                self.state = 315
+                self.state = 314
                 self.match(DoflirParser.FLOAT)
                 pass
             elif token in [DoflirParser.T__30]:
                 localctx = DoflirParser.TokNanExprContext(self, localctx)
                 self.enterOuterAlt(localctx, 6)
-                self.state = 316
+                self.state = 315
                 self.match(DoflirParser.T__30)
                 pass
             else:
@@ -2802,62 +2828,62 @@ class DoflirParser ( Parser ):
         self.enterRule(localctx, 48, self.RULE_condition)
         self._la = 0 # Token type
         try:
-            self.state = 345
+            self.state = 344
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,26,self._ctx)
             if la_ == 1:
                 localctx = DoflirParser.IfStmtContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
-                self.state = 319
+                self.state = 318
                 self.match(DoflirParser.T__31)
-                self.state = 320
+                self.state = 319
                 self.match(DoflirParser.T__7)
-                self.state = 321
+                self.state = 320
                 self.expr(0)
-                self.state = 322
+                self.state = 321
                 self.match(DoflirParser.T__8)
-                self.state = 323
+                self.state = 322
                 self.match(DoflirParser.T__1)
-                self.state = 324
+                self.state = 323
                 self.proc_body()
-                self.state = 325
+                self.state = 324
                 self.match(DoflirParser.T__2)
                 pass
 
             elif la_ == 2:
                 localctx = DoflirParser.IfElseStmtContext(self, localctx)
                 self.enterOuterAlt(localctx, 2)
-                self.state = 327
+                self.state = 326
                 self.match(DoflirParser.T__31)
-                self.state = 328
+                self.state = 327
                 self.match(DoflirParser.T__7)
-                self.state = 329
+                self.state = 328
                 self.expr(0)
-                self.state = 330
+                self.state = 329
                 self.match(DoflirParser.T__8)
-                self.state = 331
+                self.state = 330
                 self.match(DoflirParser.T__1)
-                self.state = 332
+                self.state = 331
                 self.proc_body()
-                self.state = 333
+                self.state = 332
                 self.match(DoflirParser.T__2)
-                self.state = 337
+                self.state = 336
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while _la==DoflirParser.NL:
-                    self.state = 334
+                    self.state = 333
                     self.match(DoflirParser.NL)
-                    self.state = 339
+                    self.state = 338
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
 
-                self.state = 340
+                self.state = 339
                 self.match(DoflirParser.T__32)
-                self.state = 341
+                self.state = 340
                 self.match(DoflirParser.T__1)
-                self.state = 342
+                self.state = 341
                 self.proc_body()
-                self.state = 343
+                self.state = 342
                 self.match(DoflirParser.T__2)
                 pass
 
@@ -2936,47 +2962,47 @@ class DoflirParser ( Parser ):
         localctx = DoflirParser.IterableContext(self, self._ctx, self.state)
         self.enterRule(localctx, 50, self.RULE_iterable)
         try:
-            self.state = 365
+            self.state = 364
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [DoflirParser.T__33]:
                 localctx = DoflirParser.ForStmtContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
-                self.state = 347
+                self.state = 346
                 self.match(DoflirParser.T__33)
-                self.state = 348
+                self.state = 347
                 self.match(DoflirParser.T__7)
+                self.state = 348
+                self.expr(0)
                 self.state = 349
-                self.expr(0)
-                self.state = 350
                 self.match(DoflirParser.T__34)
-                self.state = 351
+                self.state = 350
                 self.expr(0)
-                self.state = 352
+                self.state = 351
                 self.match(DoflirParser.T__8)
-                self.state = 353
+                self.state = 352
                 self.match(DoflirParser.T__1)
-                self.state = 354
+                self.state = 353
                 self.proc_body()
-                self.state = 355
+                self.state = 354
                 self.match(DoflirParser.T__2)
                 pass
             elif token in [DoflirParser.T__35]:
                 localctx = DoflirParser.WhileStmtContext(self, localctx)
                 self.enterOuterAlt(localctx, 2)
-                self.state = 357
+                self.state = 356
                 self.match(DoflirParser.T__35)
-                self.state = 358
+                self.state = 357
                 self.match(DoflirParser.T__7)
-                self.state = 359
+                self.state = 358
                 self.expr(0)
-                self.state = 360
+                self.state = 359
                 self.match(DoflirParser.T__8)
-                self.state = 361
+                self.state = 360
                 self.match(DoflirParser.T__1)
-                self.state = 362
+                self.state = 361
                 self.proc_body()
-                self.state = 363
+                self.state = 362
                 self.match(DoflirParser.T__2)
                 pass
             else:
@@ -3029,27 +3055,27 @@ class DoflirParser ( Parser ):
         self.enterRule(localctx, 52, self.RULE_read_table)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 367
+            self.state = 366
             self.match(DoflirParser.T__36)
-            self.state = 368
+            self.state = 367
             self.match(DoflirParser.T__5)
-            self.state = 369
+            self.state = 368
             self.match(DoflirParser.TYPE_NAME)
-            self.state = 370
+            self.state = 369
             self.match(DoflirParser.T__11)
+            self.state = 370
+            self.token()
             self.state = 371
-            self.token()
-            self.state = 372
             self.match(DoflirParser.T__9)
-            self.state = 373
+            self.state = 372
             self.token()
-            self.state = 374
+            self.state = 373
             self.match(DoflirParser.T__12)
-            self.state = 375
+            self.state = 374
             self.match(DoflirParser.T__7)
-            self.state = 376
+            self.state = 375
             self.expr(0)
-            self.state = 377
+            self.state = 376
             self.match(DoflirParser.T__8)
         except RecognitionException as re:
             localctx.exception = re
@@ -3095,23 +3121,23 @@ class DoflirParser ( Parser ):
         self.enterRule(localctx, 54, self.RULE_read_array)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 379
+            self.state = 378
             self.match(DoflirParser.T__37)
-            self.state = 380
+            self.state = 379
             self.match(DoflirParser.T__5)
-            self.state = 381
+            self.state = 380
             self.match(DoflirParser.TYPE_NAME)
-            self.state = 382
+            self.state = 381
             self.match(DoflirParser.T__11)
-            self.state = 383
+            self.state = 382
             self.token()
-            self.state = 384
+            self.state = 383
             self.match(DoflirParser.T__12)
-            self.state = 385
+            self.state = 384
             self.match(DoflirParser.T__7)
-            self.state = 386
+            self.state = 385
             self.expr(0)
-            self.state = 387
+            self.state = 386
             self.match(DoflirParser.T__8)
         except RecognitionException as re:
             localctx.exception = re
@@ -3149,11 +3175,11 @@ class DoflirParser ( Parser ):
         self.enterRule(localctx, 56, self.RULE_read_console)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 389
+            self.state = 388
             self.match(DoflirParser.T__38)
-            self.state = 390
+            self.state = 389
             self.match(DoflirParser.T__5)
-            self.state = 391
+            self.state = 390
             self.match(DoflirParser.TYPE_NAME)
         except RecognitionException as re:
             localctx.exception = re
@@ -3192,15 +3218,15 @@ class DoflirParser ( Parser ):
         self.enterRule(localctx, 58, self.RULE_print_stmt)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 393
+            self.state = 392
             self.match(DoflirParser.T__39)
-            self.state = 394
+            self.state = 393
             self.match(DoflirParser.T__7)
-            self.state = 395
+            self.state = 394
             self.expr_list()
-            self.state = 396
+            self.state = 395
             self.match(DoflirParser.T__8)
-            self.state = 397
+            self.state = 396
             self.match(DoflirParser.T__4)
         except RecognitionException as re:
             localctx.exception = re
@@ -3239,15 +3265,15 @@ class DoflirParser ( Parser ):
         self.enterRule(localctx, 60, self.RULE_println_stmt)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 399
+            self.state = 398
             self.match(DoflirParser.T__40)
-            self.state = 400
+            self.state = 399
             self.match(DoflirParser.T__7)
-            self.state = 401
+            self.state = 400
             self.expr_list()
-            self.state = 402
+            self.state = 401
             self.match(DoflirParser.T__8)
-            self.state = 403
+            self.state = 402
             self.match(DoflirParser.T__4)
         except RecognitionException as re:
             localctx.exception = re

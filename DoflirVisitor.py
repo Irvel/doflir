@@ -184,6 +184,11 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by DoflirParser#vecIdxExpr.
+    def visitVecIdxExpr(self, ctx:DoflirParser.VecIdxExprContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by DoflirParser#orExpr.
     def visitOrExpr(self, ctx:DoflirParser.OrExprContext):
         return self.visitChildren(ctx)
@@ -241,6 +246,11 @@ class DoflirVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by DoflirParser#matMultExpr.
     def visitMatMultExpr(self, ctx:DoflirParser.MatMultExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by DoflirParser#vecFiltExpr.
+    def visitVecFiltExpr(self, ctx:DoflirParser.VecFiltExprContext):
         return self.visitChildren(ctx)
 
 
