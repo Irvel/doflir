@@ -29,7 +29,7 @@ class DoflirVirtualMachine(object):
         self.ip = 0
         self.context_stack = deque()
         self.context_stack.append(bytecode.const_table)
-        self.temp_context = None
+        self.temp_contexts = deque()
         self.pending_params_stack = deque()
         self.pending_return_jump = deque()
         self.pending_return_val = deque()
@@ -60,6 +60,10 @@ class DoflirVirtualMachine(object):
     @property
     def global_context(self):
         return self.context_stack[0]
+
+    @property
+    def temp_context(self):
+        return self.temp_contexts[-1]
 
     def run(self):
         while self.current_quad is not None:
@@ -226,7 +230,7 @@ class DoflirVirtualMachine(object):
         self.readt(quad)
 
     def era(self, quad):
-        self.temp_context = {}
+        self.temp_contexts.append({})
         logger.debug(f"{self.ip:<3} ERA To    {quad.left.name}  ")
 
         function = self.fun_dir.search(quad.left.name)
@@ -246,7 +250,7 @@ class DoflirVirtualMachine(object):
 
     def gosub(self, quad):
         self.context_stack.append(self.temp_context)
-        self.temp_context = None
+        self.temp_contexts.pop()
         self.pending_return_jump.append(self.ip)
         self._goto(quad_idx=quad.left.quad_idx)
 
