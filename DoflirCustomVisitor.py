@@ -16,7 +16,7 @@ from Quads import Quad
 from Quads import print_quads
 from collections import deque
 
-import CompilationErrors
+import CompilationErrors as E
 import logging
 
 
@@ -114,19 +114,21 @@ class DoflirCustomVisitor(DoflirVisitor):
         vec_id = ctx.ID().getText()
         vec = self.curr_scope.search(vec_id) or self.global_table.search(vec_id)
         if not vec:
-            raise Exception(
-                f"Attempted to use undeclared vector {vec_id}"
-            )
-        if len(vec.vec_dims) != len(ctx.expr_list().expr()):
-            raise Exception(
-                f"Provided more indices than declared in {vec_id}"
+            raise E.UndeclaredVec(ctx, self.in_filename, self.in_code,
+                                  vec_id)
+        indexes = ctx.expr_list().expr()
+        if len(vec.vec_dims) != len(indexes):
+            raise E.DifferentNumIndexes(
+                ctx, self.in_filename, self.in_code, vec_id, indexes
             )
         vec_idx = []
-        for idx_num, idx_expr in enumerate(ctx.expr_list().expr()):
+        for idx_num, idx_expr in enumerate(indexes):
             self.visit(idx_expr)
             idx_res = self.operands_stack.pop()
             if idx_res.data_type != VarTypes.INT:
-                raise Exception(f"Vector index must be int {idx_res.data_type} given instead.")
+                raise E.WrongIndexType(
+                    ctx, self.in_filename, self.in_code, idx_res.data_type
+                )
             vec_idx.append(idx_res)
             ver_quad = Quad(
                 op=Ops.VER,
@@ -144,9 +146,8 @@ class DoflirCustomVisitor(DoflirVisitor):
         vec_id = ctx.ID().getText()
         vec = self.curr_scope.search(vec_id) or self.global_table.search(vec_id)
         if not vec:
-            raise Exception(
-                f"Attempted to use undeclared vector {vec_id}"
-            )
+            raise E.UndeclaredVec(ctx, self.in_filename, self.in_code,
+                                  vec_id)
         is_reduced = False
         vec_filters = []
         for idx, vec_filter_ctx in enumerate(ctx.filter_list().FILTER()):
@@ -154,8 +155,8 @@ class DoflirCustomVisitor(DoflirVisitor):
             if self.cube.is_reduced(vec_filter=vec_filter):
                 is_reduced = True
                 if idx < len(ctx.filter_list().FILTER()) - 1:
-                    raise Exception(
-                        f"{vec_filter.value} Reduces the vector to a number before other filters."
+                    raise E.FilterReducesBefore(
+                        ctx, self.in_filename, self.in_code, vec_filter.value
                     )
             vec_filters.append(vec_filter)
 
@@ -236,7 +237,9 @@ class DoflirCustomVisitor(DoflirVisitor):
                              address=tmp_vec.address,
                              data_type=tmp_vec.data_type)
             if init_val.data_type != dst_idx.data_type:
-                raise Exception("Vector values must be of homogeneous type.")
+                raise E.VectorNotHomogeneous(
+                    ctx, self.in_filename, self.in_code
+                )
             assign_quad = Quad(
                 op=Ops.ASSIGN,
                 left=init_val,
@@ -261,8 +264,9 @@ class DoflirCustomVisitor(DoflirVisitor):
             if col_size_num is None:
                 col_size_num = len(vec_init_list)
             elif col_size_num != len(vec_init_list):
-                raise Exception(
-                    "All matrix columns must be of the same size")
+                raise E.MatrixColSizeMismatch(
+                    ctx, self.in_filename, self.in_code
+                )
             mat_init_list.append(vec_init_list)
 
         row_size = self.curr_scope.make_const(
@@ -295,7 +299,9 @@ class DoflirCustomVisitor(DoflirVisitor):
                     data_type=tmp_vec.data_type
                 )
                 if init_val.data_type != dst_idx.data_type:
-                    raise Exception("Matrix values must be of homogeneous type.")
+                    raise E.MatrixNotHomogeneous(
+                        ctx, self.in_filename, self.in_code
+                    )
                 assign_quad = Quad(
                     op=Ops.ASSIGN,
                     left=init_val,
@@ -312,9 +318,8 @@ class DoflirCustomVisitor(DoflirVisitor):
         var_id = ctx.ID().getText()
         var = self.curr_scope.search(var_id) or self.global_table.search(var_id)
         if not var:
-            raise Exception(
-                f"Attempted to use undeclared variable {var_id}"
-            )
+            raise E.UndeclaredVar(ctx, self.in_filename, self.in_code,
+                                  var_id)
         self.operands_stack.append(var)
 
     def visitTokIntExpr(self, ctx: DoflirParser.TokIntExprContext):
@@ -358,9 +363,8 @@ class DoflirCustomVisitor(DoflirVisitor):
         var_type = ctx.declaration().TYPE_NAME().getText().upper()
         if self.debug:
             logging.debug(f"Declaring variable ({var_id}, {var_type})")
-        raise CompilationErrors.CompError(ctx, self.in_filename, self.in_code)
         if self.curr_scope.exists(var_id):
-            raise Exception(f"Variable with ID {var_id} already used")
+            raise E.AlreadyUsedID(ctx, self.in_filename, self.in_code, var_id)
         is_glob = False
         if len(self.scope_stack) == 1:
             is_glob = True
@@ -373,7 +377,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         vec_id = ctx.vec_declaration().declaration().ID().getText()
         vec_type = ctx.vec_declaration().declaration().TYPE_NAME().getText().upper()
         if self.curr_scope.exists(vec_id):
-            raise Exception(f"Vector with ID {vec_id} already used")
+            raise E.AlreadyUsedVec(ctx, self.in_filename, self.in_code, vec_id)
         is_glob = False
         if len(self.scope_stack) == 1:
             is_glob = True
@@ -383,7 +387,9 @@ class DoflirCustomVisitor(DoflirVisitor):
             self.visit(dim)
             dim_expr = self.operands_stack.pop()
             if dim_expr.data_type != VarTypes.INT:
-                raise Exception(f"Vector dimensions must be int {dim_expr.data_type} given instead.")
+                raise E.WrongDimType(
+                    ctx, self.in_filename, self.in_code, dim_expr.data_type
+                )
             vec_dims.append(dim_expr)
         if self.debug:
             logging.debug(f"Declaring vector ({vec_id}, {vec_type})")
@@ -408,7 +414,8 @@ class DoflirCustomVisitor(DoflirVisitor):
                 self.global_table.search(identifier)
             )
             if not variable:
-                raise Exception(f"Attempted to use undeclared variable {identifier}")
+                raise E.UndeclaredVar(ctx, self.in_filename, self.in_code,
+                                      identifier)
             self.operands_stack.append(variable)
 
         elif ctx.vec_indexing():
@@ -418,7 +425,8 @@ class DoflirCustomVisitor(DoflirVisitor):
                 self.global_table.search(identifier)
             )
             if not vec:
-                raise Exception(f"Attempted to use undeclared vector {identifier}")
+                raise E.UndeclaredVec(ctx, self.in_filename, self.in_code,
+                                      identifier)
             self.visit(ctx.vec_indexing())
 
         self.operators_stack.append(Ops.ASSIGN)
@@ -427,17 +435,12 @@ class DoflirCustomVisitor(DoflirVisitor):
             op_1 = self.operands_stack.pop()
             op_2 = self.operands_stack.pop()
             if op_1.data_type != op_2.data_type:
-                raise Exception(
-                    f'The type between '
-                    f'"{op_1.value} {op_1.data_type}"'
-                    f' and "{op_2.value} {op_2.data_type}" must be the same'
-                )
+                raise E.TypeMismatchVar(ctx, self.in_filename, self.in_code,
+                                        op_1, op_2)
             if op_1.vec_dims or op_2.vec_dims:
                 if not self.check_size_dims(op_1.vec_dims, op_2.vec_dims):
-                    raise Exception(
-                        f'Number of dimensions must be the same between '
-                        f' "{op_1}" and "{op_2}"'
-                    )
+                    raise E.NumDimsMismatch(ctx, self.in_filename,
+                                            self.in_code, op_1, op_2)
             op_2.is_initialized = True
             assign_quad = Quad(
                 op=Ops.ASSIGN,
@@ -469,7 +472,7 @@ class DoflirCustomVisitor(DoflirVisitor):
             return False
         return True
 
-    def generate_bin_quad(self):
+    def generate_bin_quad(self, ctx):
         operator = self.operators_stack.pop()
         op_2 = self.operands_stack.pop()
         op_1 = self.operands_stack.pop()
@@ -479,28 +482,29 @@ class DoflirCustomVisitor(DoflirVisitor):
             operator=operator
         )
         if not result_type:
-            raise Exception(
-                f"Invalid operation: {op_1.data_type} {operator} {op_2.data_type} "
-                "is not a valid operation."
-            )
+            raise E.InvalidOperation(ctx, self.in_filename, self.in_code, op_1,
+                                     op_2, operator)
         if not op_1.is_initialized:
-            raise Exception(f"Attempt too use uninitialized variable.{op_1}")
+            raise E.UninitializedVar(
+                ctx, self.in_filename, self.in_code, op_1.value
+            )
         if not op_2.is_initialized:
-            raise Exception(f"Attempt too use uninitialized variable.{op_2}")
+            raise E.UninitializedVar(
+                ctx, self.in_filename, self.in_code, op_2.value
+            )
 
         both_are_vec = op_1.vec_dims and op_2.vec_dims
         if both_are_vec or not both_are_vec:
             if both_are_vec:
                 if operator == Ops.MAT_MULT:
                     if len(op_1.vec_dims) != 2 or len(op_2.vec_dims) != 2:
-                        raise Exception(
-                            f'Cannot perform matrix mult on non-matrices'
+                        raise E.MatMultNonMatrix(
+                            ctx, self.in_filename, self.in_code, op_1, op_2
                         )
                     if not self.check_mat_mult_dims(op_1.vec_dims,
                                                     op_2.vec_dims):
-                        raise Exception(
-                            f'Number of cols and rows mismatch for mat mult.'
-                            f'{op_1.vec_dims} vs {op_2.vec_dims}'
+                        raise E.MatMultNumDimsMismatch(
+                            ctx, self.in_filename, self.in_code, op_1, op_2
                         )
                     # Resulting dim of mat mult (n x m) @ (f x v) is (n x v)
                     result_tmp = self.curr_scope.make_temp(
@@ -509,18 +513,17 @@ class DoflirCustomVisitor(DoflirVisitor):
                     )
                 else:
                     if not self.check_size_dims(op_2.vec_dims, op_2.vec_dims):
-                        raise Exception(
-                            f'Number of dimensions must be the same between '
-                            f' "{op_1}" and "{op_2}"'
+                        raise E.NumDimsMismatch(
+                            ctx, self.in_filename, self.in_code, op_1, op_2
                         )
                     if not self.check_dims_match(op_2.vec_dims, op_2.vec_dims):
-                        raise Exception(
-                            f'Dimension size must match between '
-                            f'"{op_1.value}{op_1.vec_dims}"'
-                            f' and {op_2.value}{op_2.vec_dims}'
+                        raise E.DimSizeMismatch(
+                            ctx, self.in_filename, self.in_code, op_1, op_2
                         )
-                    result_tmp = self.curr_scope.make_temp(temp_type=result_type,
-                                                           vec_dims=op_1.vec_dims)
+                    result_tmp = self.curr_scope.make_temp(
+                        temp_type=result_type,
+                        vec_dims=op_1.vec_dims
+                    )
             else:
                 result_tmp = self.curr_scope.make_temp(temp_type=result_type)
             new_quad = Quad(
@@ -532,17 +535,21 @@ class DoflirCustomVisitor(DoflirVisitor):
             self.quads.append(new_quad)
             self.operands_stack.append(result_tmp)
         else:
-            raise Exception("Operands need to be both vector or non vector")
+            raise E.VecNonVecMismatch(
+                ctx, self.in_filename, self.in_code, op_1, op_2
+            )
 
-    def try_op(self, op):
+    def try_op(self, op, ctx):
         if self.operators_stack and self.operators_stack[-1] == op:
-            self.generate_bin_quad()
+            self.generate_bin_quad(ctx)
 
     def visitUnOpExpr(self, ctx, operator):
         self.visit(ctx.expr())
         operand = self.operands_stack.pop()
         if not operand.is_initialized:
-            raise Exception(f"Attempt too use uninitialized variable.{operand}")
+            raise E.UninitializedVar(
+                ctx, self.in_filename, self.in_code, operand.value
+            )
 
         result_tmp = self.curr_scope.make_temp(temp_type=operand.data_type)
         new_quad = Quad(
@@ -562,10 +569,10 @@ class DoflirCustomVisitor(DoflirVisitor):
 
     def visitBinOpExpr(self, ctx, operator):
         self.visit(ctx.expr(0))
-        self.try_op(op=operator)
+        self.try_op(op=operator, ctx=ctx)
         self.operators_stack.append(operator)
         self.visit(ctx.expr(1))
-        self.try_op(op=operator)
+        self.try_op(op=operator, ctx=ctx)
 
     def visitMatMultExpr(self, ctx: DoflirParser.MatMultExprContext):
         self.visitBinOpExpr(ctx=ctx, operator=Ops.MAT_MULT)
@@ -616,7 +623,9 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.visit(ctx.expr())
         expr_res = self.operands_stack.pop()
         if expr_res.data_type is not VarTypes.BOOL:
-            raise Exception("Type mismatch with {expr_res} of type {expr_res_type}")
+            raise E.TypeMismatch(
+                ctx, self.in_filename, self.in_code, expr_res, VarTypes.BOOL
+            )
         gotof_quad = Quad(
             op=Ops.GOTOF,
             left=expr_res,
@@ -671,10 +680,11 @@ class DoflirCustomVisitor(DoflirVisitor):
             type_str=ctx.TYPE_NAME().getText()
         )
 
-        if self.global_table.exists(var_name=fun_id):
-            raise Exception("Cannot define function with variable of the same name")
-        if self.fun_dir.exists(fun_name=fun_id):
-            raise Exception("Cannot define two functions the same name")
+        if (self.global_table.exists(var_name=fun_id) or
+                self.fun_dir.exists(fun_name=fun_id)):
+            raise E.AlreadyUsedID(
+                ctx, self.in_filename, self.in_code, fun_id
+            )
         self.scope_stack.append(VariablesTable())
         params = None
         if ctx.parameters():
@@ -683,9 +693,13 @@ class DoflirCustomVisitor(DoflirVisitor):
                 param_id = param.ID().getText()
                 param_type_str = param.TYPE_NAME().getText()
                 if self.global_table.exists(param_id):
-                    raise Exception(f"Parameter with ID {param_id} already globally used")
+                    raise E.AlreadyUsedID(
+                        ctx, self.in_filename, self.in_code, param_id
+                    )
                 if self.fun_dir.exists(param_id) or fun_id == param_id:
-                    raise Exception(f"Parameter with ID {param_id} is same name of function")
+                    raise E.AlreadyUsedID(
+                        ctx, self.in_filename, self.in_code, param_id
+                    )
                 param_type = self.cube.type_to_enum(type_str=param_type_str)
                 param_address = self.curr_scope.new_address(
                     v_type=param_type,
@@ -709,9 +723,13 @@ class DoflirCustomVisitor(DoflirVisitor):
                 param_id = param.declaration().ID().getText()
                 param_type_str = param.declaration().TYPE_NAME().getText()
                 if self.global_table.exists(param_id):
-                    raise Exception(f"Parameter with ID {param_id} already globally used")
+                    raise E.AlreadyUsedID(
+                        ctx, self.in_filename, self.in_code, param_id
+                    )
                 if self.fun_dir.exists(param_id) or fun_id == param_id:
-                    raise Exception(f"Parameter with ID {param_id} is same name of function")
+                    raise E.AlreadyUsedID(
+                        ctx, self.in_filename, self.in_code, param_id
+                    )
                 param_type = self.cube.type_to_enum(type_str=param_type_str)
                 param_address = self.curr_scope.new_address(
                     v_type=param_type,
@@ -723,7 +741,10 @@ class DoflirCustomVisitor(DoflirVisitor):
                     self.visit(dim)
                     dim_expr = self.operands_stack.pop()
                     if dim_expr.data_type != VarTypes.INT:
-                        raise Exception(f"Vector dimensions must be int {dim_expr.data_type} given instead.")
+                        raise E.WrongDimType(
+                            ctx, self.in_filename, self.in_code,
+                            dim_expr.data_type
+                        )
                     vec_dims.append(dim_expr)
                 if self.debug:
                     logging.debug(f"Declaring vector ({param_id}, {param_type})")
@@ -771,7 +792,13 @@ class DoflirCustomVisitor(DoflirVisitor):
             self.visit(ctx.expr())
             ret_val = self.operands_stack.pop()
             if return_type != ret_val.data_type:
-                raise Exception(f"Returning a different type than what was defined.")
+                raise E.ReturnTypeMismatch(
+                    ctx,
+                    self.in_filename,
+                    self.in_code,
+                    return_type,
+                    ret_val.data_type
+                )
         ret_quad = Quad(Ops.RETURN_, None, None, ret_val)
         self.quads.append(ret_quad)
 
@@ -779,7 +806,9 @@ class DoflirCustomVisitor(DoflirVisitor):
         fun_id = ctx.ID().getText()
         target_fun = self.fun_dir.search(fun_name=fun_id)
         if not target_fun:
-            raise Exception(f"\"{fun_id}\" Has not been defined.")
+            raise E.UndeclaredFun(
+                ctx, self.in_filename, self.in_code, fun_id
+            )
         era_quad = Quad(
             op=Ops.ERA,
             left=target_fun,
@@ -791,7 +820,14 @@ class DoflirCustomVisitor(DoflirVisitor):
         if ctx.expr_list():
             num_args = len(ctx.expr_list().expr())
             if not target_fun.num_params == num_args:
-                raise Exception(f"\"{fun_id}\" different num of parameters provided {target_fun.num_params} vs {num_args}")
+                raise E.ParamArgNumMismatch(
+                    ctx=ctx,
+                    in_filename=self.in_filename,
+                    in_code=self.in_code,
+                    fun_id=fun_id,
+                    num_params=target_fun.num_params,
+                    num_args=num_args
+                )
             if not num_args == 0:
                 par_num = 1
                 for expr, param in zip(ctx.expr_list().expr(), target_fun.params):
@@ -837,7 +873,9 @@ class DoflirCustomVisitor(DoflirVisitor):
             self.visit(expr)
             print_expr = self.operands_stack.pop()
             if not print_expr.is_initialized:
-                raise Exception(f"Attempt too use uninitialized variable.{print_expr}")
+                raise E.UninitializedVar(
+                    ctx, self.in_filename, self.in_code, print_expr.value
+                )
             print_quad = Quad(
                 op=Ops.PRINT,
                 left=None,
@@ -851,7 +889,9 @@ class DoflirCustomVisitor(DoflirVisitor):
             self.visit(expr)
             print_expr = self.operands_stack.pop()
             if not print_expr.is_initialized:
-                raise Exception(f"Attempt too use uninitialized variable.{print_expr}")
+                raise E.UninitializedVar(
+                    ctx, self.in_filename, self.in_code, print_expr.value
+                )
             print_quad = Quad(
                 op=Ops.PRINTLN,
                 left=None,
@@ -864,7 +904,9 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.visit(ctx.expr())
         plot_expr = self.operands_stack.pop()
         if not plot_expr.is_initialized:
-            raise Exception(f"Attempt too use uninitialized variable.{plot_expr}")
+            raise E.UninitializedVar(
+                ctx, self.in_filename, self.in_code, plot_expr.value
+            )
         self.quads.append(
             Quad(
                 op=Ops.PLOT,
@@ -878,13 +920,19 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.visit(ctx.expr(0))
         write_expr = self.operands_stack.pop()
         if not write_expr.is_initialized:
-            raise Exception(f"Attempt too use uninitialized variable.{write_expr}")
+            raise E.UninitializedVar(
+                ctx, self.in_filename, self.in_code, write_expr.value
+            )
         self.visit(ctx.expr(1))
         filename_expr = self.operands_stack.pop()
         if not filename_expr.is_initialized:
-            raise Exception(f"Attempt too use uninitialized variable.{filename_expr}")
+            raise E.UninitializedVar(
+                ctx, self.in_filename, self.in_code, filename_expr.value
+            )
         if filename_expr.data_type != VarTypes.STRING:
-            raise Exception("Filename to read from must be string.")
+            raise E.FilenameNotString(
+                ctx, self.in_filename, self.in_code, filename_expr.data_type
+            )
         self.quads.append(
             Quad(
                 op=Ops.WRITEF,
@@ -903,7 +951,9 @@ class DoflirCustomVisitor(DoflirVisitor):
         cols_expr = self.operands_stack.pop()
         table_type = VarTypes[ctx.TYPE_NAME().getText().upper()]
         if filename_expr.data_type != VarTypes.STRING:
-            raise Exception("Filename to read from must be string.")
+            raise E.FilenameNotString(
+                ctx, self.in_filename, self.in_code, filename_expr.data_type
+            )
         tmp_vec = self.allocate_temp_vec(
             data_type=table_type,
             vec_dims=[rows_expr, cols_expr]
@@ -924,7 +974,9 @@ class DoflirCustomVisitor(DoflirVisitor):
         len_expr = self.operands_stack.pop()
         arr_type = VarTypes[ctx.TYPE_NAME().getText().upper()]
         if filename_expr.data_type != VarTypes.STRING:
-            raise Exception("Filename to read from must be string.")
+            raise E.FilenameNotString(
+                ctx, self.in_filename, self.in_code, filename_expr.data_type
+            )
         tmp_vec = self.allocate_temp_vec(
             data_type=arr_type,
             vec_dims=[len_expr]
