@@ -107,11 +107,11 @@ class DoflirVirtualMachine(object):
                                self.get_val(quad.right))
         res_val = bin_op(left_val, right_val)
         logger.debug(
-            f"{self.ip:<3} Do  {left_val:<3} ({bin_op.__name__:3})  "
-            f"{right_val:<5} → {res_val}"
+            f"{self.ip:<3} Do  {str(left_val):<3} ({bin_op.__name__:3})  "
+            f"{str(right_val):<5} → {str(res_val)}"
         )
         logger.debug(
-            f"{self.ip:<3} Put {res_val:<3} into  ({quad.res})"
+            f"{self.ip:<3} Put {str(res_val):<3} into  ({str(quad.res)})"
         )
         self.set_value(value=res_val, dst=quad.res)
 
@@ -120,6 +120,9 @@ class DoflirVirtualMachine(object):
 
     def minus(self, quad):
         self.run_bin_op(bin_op=operator.sub, quad=quad)
+
+    def mat_mult(self, quad):
+        self.run_bin_op(bin_op=np.matmul, quad=quad)
 
     def mult(self, quad):
         self.run_bin_op(bin_op=operator.mul, quad=quad)
@@ -170,11 +173,13 @@ class DoflirVirtualMachine(object):
             self.goto(quad)
 
     def assign(self, quad):
+        assign_val = self.get_val(quad.left)
+        val_str = str(assign_val).replace("\n", "")
         logger.debug(
-            f"{self.ip:<3} Assign   {self.get_val(quad.left):<3} to "
+            f"{self.ip:<3} Assign   {val_str:<3} to "
             f"  ({quad.res.address})"
         )
-        self.set_value(value=self.get_val(quad.left), dst=quad.res)
+        self.set_value(value=assign_val, dst=quad.res)
 
     def print(self, quad):
         print(self.get_val(quad.res), end="")

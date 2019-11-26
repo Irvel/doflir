@@ -110,7 +110,7 @@ class VariablesTable(object):
         return name
 
     def make_temp(self, temp_type, is_glob=False, is_tmp=True,
-                  is_const=False):
+                  is_const=False, vec_dims=None):
         name = self.make_temp_name(temp_type)
         temp = Temporal(
             name=name,
@@ -120,10 +120,18 @@ class VariablesTable(object):
                     is_glob=is_glob,
                     is_tmp=is_tmp,
                     is_const=is_const
-                )
+                ),
+            vec_dims=vec_dims,
             )
         return temp
-        # self._add_var(variable=var)
+
+    def make_const(self, value, const_type, vec_dims=None):
+        const = Constant(
+            value=value,
+            data_type=const_type,
+            address=self.new_address(v_type=VarTypes.INT, is_const=True)
+        )
+        return const
 
     def new_address(self, v_type, is_glob=False, is_tmp=False, is_const=False):
         new_address = None
@@ -272,6 +280,7 @@ class VecIdx(object):
         self.address = address
         self.data_type = data_type
         self.is_initialized = True  # Vectors are init by default to 0
+        self.vec_dims = None        # This is not a vector
 
     @property
     def name(self):
@@ -317,17 +326,21 @@ class Constant(Variable):
     def value(self):
         return self._value
 
+    def __repr__(self):
+        return str(self._value)
+
 
 class Temporal(Variable):
     """docstring for Temporal"""
-    def __init__(self, name, data_type, address):
-        super().__init__(name, data_type, address)
+    def __init__(self, name, data_type, address, vec_dims=None):
+        super().__init__(name, data_type, address, vec_dims)
         self.is_initialized = True
 
 
 class QuadJump(object):
     def __init__(self, quad_idx):
         self.quad_idx = quad_idx
+        self.vec_dims = None
 
     @property
     def value(self):
@@ -337,6 +350,7 @@ class QuadJump(object):
 class Param(object):
     def __init__(self, param_num):
         self.param_num = param_num
+        self.vec_dims = None
 
     @property
     def value(self):

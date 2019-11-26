@@ -54,16 +54,28 @@ class Quad:
         op = self.op.value
         left = ""
         if self.left:
-            left = f"{self.left.name}"
+            if self.left.vec_dims:
+                dims = f"(d:{str(self.left.vec_dims)})"
+            else:
+                dims = ""
+            left = f"{self.left.value} {dims}"
         right = ""
         if self.right:
-            right = f"{self.right.name}"
+            if self.right.vec_dims:
+                dims = f"(d:{str(self.right.vec_dims)})"
+            else:
+                dims = ""
+            right = f"{self.right.value} {dims}"
         res = ""
         if self.res:
-            res = f"{self.res.value}"
+            if self.res.vec_dims:
+                dims = f"(d:{str(self.res.vec_dims)})"
+            else:
+                dims = ""
+            res = f"{self.res.value} {dims}"
         return (
-            f"({op:7} {left:>13} "
-            f"{right:>14} {res:>14})"
+            f"({op:7} {left:>14} "
+            f"{right:>15} {res:>22})"
         )
 
     @property

@@ -137,6 +137,115 @@ class DoflirCustomVisitor(DoflirVisitor):
     def visitVec_filtering(self, ctx: DoflirParser.Vec_filteringContext):
         return self.visitChildren(ctx)
 
+    def allocate_temp_vec(self, data_type, vec_dims):
+        tmp_vec = self.curr_scope.make_temp(
+            temp_type=data_type,
+            vec_dims=vec_dims,
+        )
+        allocate_quad_tmp_vec = Quad(
+            op=Ops.ALLOC,
+            left=None,
+            right=None,
+            res=tmp_vec
+        )
+        self.quads.append(allocate_quad_tmp_vec)
+        return tmp_vec
+
+    def visitVecInitExpr(self, ctx: DoflirParser.VecInitExprContext):
+        # Determine shape of the given vector with the depth level
+        # Are there further nested levels?
+        # print(ctx.depth(), ctx.getRuleIndex(), ctx.getSourceInterval())
+        vec_init_list = []
+        for tok in ctx.vec_init_list().tok_list().token():
+            self.visit(tok)
+            vec_init_list.append(self.operands_stack.pop())
+        dim_size = self.curr_scope.make_const(
+            value=len(vec_init_list),
+            const_type=VarTypes.INT,
+        )
+        tmp_vec = self.allocate_temp_vec(
+            data_type=vec_init_list[0].data_type,
+            vec_dims=[dim_size]
+        )
+
+        for vec_idx, init_val in enumerate(vec_init_list):
+            vec_idx_const = self.curr_scope.make_const(
+                value=vec_idx,
+                const_type=VarTypes.INT,
+            )
+            dst_idx = VecIdx(vec_id=tmp_vec.name, idx=[vec_idx_const],
+                             address=tmp_vec.address,
+                             data_type=tmp_vec.data_type)
+            if init_val.data_type != dst_idx.data_type:
+                raise Exception("Vector values must be of homogeneous type.")
+            assign_quad = Quad(
+                op=Ops.ASSIGN,
+                left=init_val,
+                right=None,
+                res=dst_idx
+            )
+            self.quads.append(assign_quad)
+
+        self.operands_stack.append(tmp_vec)
+        # Parse expression values
+        # Allocate a temp vector that will hold the parsed values
+        # Put the allocated vector as a pending operand
+
+    def visitMatInitExpr(self, ctx: DoflirParser.MatInitExprContext):
+        col_size_num = None
+        mat_init_list = []
+        for vec_list in ctx.mat_init_list().vec_init_list():
+            vec_init_list = []
+            for tok in vec_list.tok_list().token():
+                self.visit(tok)
+                vec_init_list.append(self.operands_stack.pop())
+            if col_size_num is None:
+                col_size_num = len(vec_init_list)
+            elif col_size_num != len(vec_init_list):
+                raise Exception(
+                    "All matrix columns must be of the same size")
+            mat_init_list.append(vec_init_list)
+
+        row_size = self.curr_scope.make_const(
+            value=len(mat_init_list),
+            const_type=VarTypes.INT,
+        )
+        col_size = self.curr_scope.make_const(
+            value=col_size_num,
+            const_type=VarTypes.INT,
+        )
+        tmp_vec = self.allocate_temp_vec(
+            data_type=mat_init_list[0][0].data_type,
+            vec_dims=[row_size, col_size]
+        )
+
+        for row_idx, row in enumerate(mat_init_list):
+            row_idx_const = self.curr_scope.make_const(
+                value=row_idx,
+                const_type=VarTypes.INT,
+            )
+            for col_idx, init_val in enumerate(row):
+                col_idx_const = self.curr_scope.make_const(
+                    value=col_idx,
+                    const_type=VarTypes.INT,
+                )
+                dst_idx = VecIdx(
+                    vec_id=tmp_vec.name,
+                    idx=[row_idx_const, col_idx_const],
+                    address=tmp_vec.address,
+                    data_type=tmp_vec.data_type
+                )
+                if init_val.data_type != dst_idx.data_type:
+                    raise Exception("Matrix values must be of homogeneous type.")
+                assign_quad = Quad(
+                    op=Ops.ASSIGN,
+                    left=init_val,
+                    right=None,
+                    res=dst_idx
+                )
+                self.quads.append(assign_quad)
+        self.operands_stack.append(tmp_vec)
+
     def visitParameters(self, ctx: DoflirParser.ParametersContext):
         return self.visitChildren(ctx)
 
@@ -228,9 +337,6 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
         self.quads.append(allocate_quad)
 
-    def visitVec_list(self, ctx: DoflirParser.Vec_listContext):
-        return self.visitChildren(ctx)
-
     def visitAssignment(self, ctx: DoflirParser.AssignmentContext):
         if ctx.ID():
             # We need to do this again cause ID here is not an expr
@@ -259,6 +365,18 @@ class DoflirCustomVisitor(DoflirVisitor):
             op_1 = self.operands_stack.pop()
             op_2 = self.operands_stack.pop()
             assert op_1.data_type == op_2.data_type
+            if op_1.vec_dims or op_2.vec_dims:
+                if not self.check_size_dims(op_1.vec_dims, op_2.vec_dims):
+                    raise Exception(
+                        f'Number of dimensions must be the same between '
+                        f' "{op_1}" and "{op_2}"'
+                    )
+                if not self.check_dims_match(op_1.vec_dims, op_2.vec_dims):
+                    raise Exception(
+                        f'Dimension size must match between '
+                        f'"{op_1.value}{op_1.vec_dims}"'
+                        f' and {op_2.value}{op_2.vec_dims}'
+                    )
             op_2.is_initialized = True
             assign_quad = Quad(
                 op=Ops.ASSIGN,
@@ -267,6 +385,28 @@ class DoflirCustomVisitor(DoflirVisitor):
                 res=op_2
             )
             self.quads.append(assign_quad)
+
+    def check_mat_mult_dims(self, dims_1, dims_2):
+        # Two matrices can be multiplied only when the number of columns in
+        # the first equals the number of rows in the second
+        col_1 = dims_1[1].value
+        row_2 = dims_2[0].value
+        return col_1 == row_2
+
+    def check_size_dims(self, dims_1, dims_2):
+        if dims_1 and dims_2:
+            return len(dims_1) == len(dims_2)
+        else:
+            return False
+
+    def check_dims_match(self, dims_1, dims_2):
+        if self.check_size_dims(dims_1, dims_2):
+            for dim_1, dim_2 in zip(dims_1, dims_2):
+                if dim_1.value != dim_2.value:
+                    return False
+        else:
+            return False
+        return True
 
     def generate_bin_quad(self):
         operator = self.operators_stack.pop()
@@ -287,15 +427,52 @@ class DoflirCustomVisitor(DoflirVisitor):
         if not op_2.is_initialized:
             raise Exception(f"Attempt too use uninitialized variable.{op_2}")
 
-        result_tmp = self.curr_scope.make_temp(temp_type=result_type)
-        new_quad = Quad(
-            op=operator,
-            left=op_1,
-            right=op_2,
-            res=result_tmp
-        )
-        self.quads.append(new_quad)
-        self.operands_stack.append(result_tmp)
+        both_are_vec = op_1.vec_dims and op_2.vec_dims
+        if both_are_vec or not both_are_vec:
+            if both_are_vec:
+                print(operator, op_1.vec_dims, op_2.vec_dims)
+                if operator == Ops.MAT_MULT:
+                    if len(op_1.vec_dims) != 2 or len(op_2.vec_dims) != 2:
+                        raise Exception(
+                            f'Cannot perform matrix mult on non-matrices'
+                        )
+                    if not self.check_mat_mult_dims(op_1.vec_dims,
+                                                    op_2.vec_dims):
+                        raise Exception(
+                            f'Number of cols and rows mismatch for mat mult.'
+                            f'{op_1.vec_dims} vs {op_2.vec_dims}'
+                        )
+                    # Resulting dim of mat mult (n x m) @ (f x v) is (n x v)
+                    result_tmp = self.curr_scope.make_temp(
+                        temp_type=result_type,
+                        vec_dims=[op_1.vec_dims[0], op_2.vec_dims[1]],
+                    )
+                else:
+                    if not self.check_size_dims(op_2.vec_dims, op_2.vec_dims):
+                        raise Exception(
+                            f'Number of dimensions must be the same between '
+                            f' "{op_1}" and "{op_2}"'
+                        )
+                    if not self.check_dims_match(op_2.vec_dims, op_2.vec_dims):
+                        raise Exception(
+                            f'Dimension size must match between '
+                            f'"{op_1.value}{op_1.vec_dims}"'
+                            f' and {op_2.value}{op_2.vec_dims}'
+                        )
+                    result_tmp = self.curr_scope.make_temp(temp_type=result_type,
+                                                           vec_dims=op_1.vec_dims)
+            else:
+                result_tmp = self.curr_scope.make_temp(temp_type=result_type)
+            new_quad = Quad(
+                op=operator,
+                left=op_1,
+                right=op_2,
+                res=result_tmp
+            )
+            self.quads.append(new_quad)
+            self.operands_stack.append(result_tmp)
+        else:
+            raise Exception("Operands need to be both vector or non vector")
 
     def try_op(self, op):
         if self.operators_stack and self.operators_stack[-1] == op:
@@ -329,6 +506,9 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.operators_stack.append(operator)
         self.visit(ctx.expr(1))
         self.try_op(op=operator)
+
+    def visitMatMultExpr(self, ctx: DoflirParser.MatMultExprContext):
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.MAT_MULT)
 
     def visitMultExpr(self, ctx: DoflirParser.MultExprContext):
         self.visitBinOpExpr(ctx=ctx, operator=Ops.MULT)
@@ -614,3 +794,5 @@ class DoflirCustomVisitor(DoflirVisitor):
                 res=print_expr
             )
             self.quads.append(print_quad)
+
+

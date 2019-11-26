@@ -20,11 +20,17 @@ fun_call_stmt: fun_call ';' ;
 fun_call: ID '(' expr_list? ')' ;  // Function call.
 flow_call: 'return' (expr)? ';' NL*;
 
-expr_list: (expr | (expr (',' expr)*)) ;
+expr_list: expr (',' expr)* ;
+tok_list: token (',' token)* ;
+
 
 vec_declaration: declaration vec_list ;
 vec_declaration_stmt: vec_declaration ';' ;
 vec_list: '[' expr_list ']';
+
+vec_init_list: '[' tok_list ']';
+mat_init_list: '[' vec_init_list (',' vec_init_list)* ']';
+
 vec_indexing: ID '[' expr_list ']' ;
 vec_filtering: (ID|vec_indexing) '{' expr_list '}' ';';
 
@@ -32,35 +38,39 @@ expr
 	: '('expr')'                   #parenExpr
 	| vec_indexing                 #unExpr
 	| vec_filtering                #unExpr
+	| vec_init_list                #vecInitExpr
+	| mat_init_list                #matInitExpr
 	| fun_call                     #unExpr
-	| <assoc=right> expr '^' expr  #powExpr    // Exponentiation.
-	| '-' expr                     #negExpr    // Negative unary symbol.
-	| '+' expr                     #posExpr    // Positive unary simbol.
-    | 'not' expr                   #unExpr     // Negation.
-	| expr  '@'  expr              #matExpr    // Matrix multiplication.
-	| expr '..'  expr              #dotExpr    // Dot product.
-	| expr  '*'  expr              #multExpr   // Multiplication.
-	| expr  '/'  expr              #divExpr    // Float division.
-	| expr '//'  expr              #intDivExpr // Integer division.
-    | expr  '+'  expr              #addExpr    // Addition.
-    | expr  '-'  expr              #subExpr    // Subtraction.
-    | expr  '>'  expr              #gtExpr     // Logical greater than.
-    | expr '>='  expr              #gtEqExpr   // Logical or equal greater than.
-    | expr  '<'  expr              #ltExpr     // Logical less than.
-    | expr '<='  expr              #ltEqExpr   // Logical less or equal than.
-    | expr '=='  expr              #eqExpr     // Logical equal.
-    | expr '!='  expr              #notEqExpr  // Logical not equal.
-    | expr 'and' expr              #andExpr    // Logical and.
-    | expr  'or' expr              #orExpr     // Logical or.
-	| tok_id=ID                    #tokIdExpr
-    | tok_str=STRING_LITERAL       #tokStrExpr
-    | tok_bool=BOOL                #tokBoolExpr
-    | tok_int=INTEGER              #tokIntExpr
-    | tok_float=FLOAT              #tokFloatExpr
-    | tok_nan='NaN'                #tokNanExpr
+	| <assoc=right> expr '^' expr  #powExpr     // Exponentiation.
+	| '-' expr                     #negExpr     // Negative unary symbol.
+	| '+' expr                     #posExpr     // Positive unary simbol.
+    | 'not' expr                   #unExpr      // Negation.
+	| expr  '@'  expr              #matMultExpr // Matrix multiplication.
+	| expr '..'  expr              #dotExpr     // Dot product.
+	| expr  '*'  expr              #multExpr    // Multiplication.
+	| expr  '/'  expr              #divExpr     // Float division.
+	| expr '//'  expr              #intDivExpr  // Integer division.
+    | expr  '+'  expr              #addExpr     // Addition.
+    | expr  '-'  expr              #subExpr     // Subtraction.
+    | expr  '>'  expr              #gtExpr      // Logical greater than.
+    | expr '>='  expr              #gtEqExpr    // Logical or equal greater than.
+    | expr  '<'  expr              #ltExpr      // Logical less than.
+    | expr '<='  expr              #ltEqExpr    // Logical less or equal than.
+    | expr '=='  expr              #eqExpr      // Logical equal.
+    | expr '!='  expr              #notEqExpr   // Logical not equal.
+    | expr 'and' expr              #andExpr     // Logical and.
+    | expr  'or' expr              #orExpr      // Logical or.
+	| token                        #tokExpr
 	;
 
-
+token
+	: ID                           #tokIdExpr
+    | STRING_LITERAL               #tokStrExpr
+    | BOOL                         #tokBoolExpr
+    | INTEGER                      #tokIntExpr
+    | FLOAT                        #tokFloatExpr
+    | 'NaN'                        #tokNanExpr
+	;
 
 
 condition

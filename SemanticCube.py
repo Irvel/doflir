@@ -53,6 +53,7 @@ class SemanticCube(object):
     def _setup_op_categories(self):
         self._NUM_OPS = [
             Ops.PLUS, Ops.MINUS, Ops.MULT, Ops.DIV, Ops.INT_DIV, Ops.POW,
+            Ops.MAT_MULT, Ops.DOT,
         ]
 
         self._VEC_OPS = [
