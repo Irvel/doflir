@@ -60,6 +60,7 @@ class VecFilters(Enum):
     F_LOWERCASE = "f_lowercase"
     F_UPPERCASE = "f_uppercase"
     F_SORT = "f_sort"
+    F_REVERSE = "f_reverse"
 
 
 class SemanticCube(object):
@@ -85,6 +86,7 @@ class SemanticCube(object):
             VecFilters.F_LOWERCASE: False,
             VecFilters.F_UPPERCASE: False,
             VecFilters.F_SORT: False,
+            VecFilters.F_REVERSE: False,
         }
 
     def _setup_op_categories(self):

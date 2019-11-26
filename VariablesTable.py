@@ -246,6 +246,7 @@ class Function(object):
         self.params = params
         self.address = address
         self.quad_idx = quad_idx
+        self.vec_dims = None        # This is not a vector
 
     @property
     def num_params(self):
