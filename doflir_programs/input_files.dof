@@ -10,6 +10,8 @@ define main {
     println("Value #330 is: ", array[330]);
     println("Value #111 is: ", array[111]);
     println("Value #25  is: ", array[25]);
+    println("Plot of array is: ");
+    plot(array);
     println("");
     println("");
 

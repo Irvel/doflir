@@ -27,6 +27,9 @@ define do_word_cleaning -> void () {
     println("Reversed Sorted clean words: ", clean_words{f_reverse}, "");
 
     println("Uppercase words: ", clean_words{f_uppercase}, "");
+
+    println("", "Saving cleaned words to clean_words.csv!");
+    write_file(clean_words, "doflir_programs/clean_words.csv");
 }
 
 define main {
