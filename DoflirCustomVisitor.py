@@ -318,7 +318,7 @@ class DoflirCustomVisitor(DoflirVisitor):
             is_glob = True
 
         vec_dims = []
-        for dim in ctx.vec_declaration().vec_list().expr_list().expr():
+        for dim in ctx.vec_declaration().vec_list().tok_list().token():
             self.visit(dim)
             dim_expr = self.operands_stack.pop()
             if dim_expr.data_type != VarTypes.INT:
@@ -364,18 +364,17 @@ class DoflirCustomVisitor(DoflirVisitor):
         if self.operators_stack and self.operators_stack[-1] == Ops.ASSIGN:
             op_1 = self.operands_stack.pop()
             op_2 = self.operands_stack.pop()
-            assert op_1.data_type == op_2.data_type
+            if op_1.data_type != op_2.data_type:
+                raise Exception(
+                    f'The type between '
+                    f'"{op_1.value} {op_1.data_type}"'
+                    f' and "{op_2.value} {op_2.data_type}" must be the same'
+                )
             if op_1.vec_dims or op_2.vec_dims:
                 if not self.check_size_dims(op_1.vec_dims, op_2.vec_dims):
                     raise Exception(
                         f'Number of dimensions must be the same between '
                         f' "{op_1}" and "{op_2}"'
-                    )
-                if not self.check_dims_match(op_1.vec_dims, op_2.vec_dims):
-                    raise Exception(
-                        f'Dimension size must match between '
-                        f'"{op_1.value}{op_1.vec_dims}"'
-                        f' and {op_2.value}{op_2.vec_dims}'
                     )
             op_2.is_initialized = True
             assign_quad = Quad(
@@ -430,7 +429,6 @@ class DoflirCustomVisitor(DoflirVisitor):
         both_are_vec = op_1.vec_dims and op_2.vec_dims
         if both_are_vec or not both_are_vec:
             if both_are_vec:
-                print(operator, op_1.vec_dims, op_2.vec_dims)
                 if operator == Ops.MAT_MULT:
                     if len(op_1.vec_dims) != 2 or len(op_2.vec_dims) != 2:
                         raise Exception(
@@ -659,7 +657,7 @@ class DoflirCustomVisitor(DoflirVisitor):
                 )
 
                 vec_dims = []
-                for dim in param.vec_list().expr_list().expr():
+                for dim in param.vec_list().tok_list().token():
                     self.visit(dim)
                     dim_expr = self.operands_stack.pop()
                     if dim_expr.data_type != VarTypes.INT:
@@ -775,6 +773,8 @@ class DoflirCustomVisitor(DoflirVisitor):
         for expr in ctx.expr_list().expr():
             self.visit(expr)
             print_expr = self.operands_stack.pop()
+            if not print_expr.is_initialized:
+                raise Exception(f"Attempt too use uninitialized variable.{print_expr}")
             print_quad = Quad(
                 op=Ops.PRINT,
                 left=None,
@@ -787,6 +787,8 @@ class DoflirCustomVisitor(DoflirVisitor):
         for expr in ctx.expr_list().expr():
             self.visit(expr)
             print_expr = self.operands_stack.pop()
+            if not print_expr.is_initialized:
+                raise Exception(f"Attempt too use uninitialized variable.{print_expr}")
             print_quad = Quad(
                 op=Ops.PRINTLN,
                 left=None,
@@ -795,4 +797,60 @@ class DoflirCustomVisitor(DoflirVisitor):
             )
             self.quads.append(print_quad)
 
+    def visitRead_table(self, ctx: DoflirParser.Read_tableContext):
+        self.visit(ctx.expr())
+        filename_expr = self.operands_stack.pop()
+        self.visit(ctx.token(0))
+        rows_expr = self.operands_stack.pop()
+        self.visit(ctx.token(1))
+        cols_expr = self.operands_stack.pop()
+        table_type = VarTypes[ctx.TYPE_NAME().getText().upper()]
+        if filename_expr.data_type != VarTypes.STRING:
+            raise Exception("Filename to read from must be string.")
+        tmp_vec = self.allocate_temp_vec(
+            data_type=table_type,
+            vec_dims=[rows_expr, cols_expr]
+        )
+        read_table_quad = Quad(
+            op=Ops.READT,
+            left=filename_expr,
+            right=None,
+            res=tmp_vec
+        )
+        self.quads.append(read_table_quad)
+        self.operands_stack.append(tmp_vec)
 
+    def visitRead_array(self, ctx: DoflirParser.Read_arrayContext):
+        self.visit(ctx.expr())
+        filename_expr = self.operands_stack.pop()
+        self.visit(ctx.token())
+        len_expr = self.operands_stack.pop()
+        arr_type = VarTypes[ctx.TYPE_NAME().getText().upper()]
+        if filename_expr.data_type != VarTypes.STRING:
+            raise Exception("Filename to read from must be string.")
+        tmp_vec = self.allocate_temp_vec(
+            data_type=arr_type,
+            vec_dims=[len_expr]
+        )
+        read_array_quad = Quad(
+            op=Ops.READA,
+            left=filename_expr,
+            right=None,
+            res=tmp_vec
+        )
+        self.quads.append(read_array_quad)
+        self.operands_stack.append(tmp_vec)
+
+    def visitRead_console(self, ctx: DoflirParser.Read_consoleContext):
+        input_type = VarTypes[ctx.TYPE_NAME().getText().upper()]
+        input_tmp = self.curr_scope.make_temp(temp_type=input_type)
+        read_console_quad = Quad(
+            op=Ops.READC,
+            left=None,
+            right=None,
+            res=input_tmp
+        )
+        self.quads.append(read_console_quad)
+        self.operands_stack.append(input_tmp)
+
+        return self.visitChildren(ctx)

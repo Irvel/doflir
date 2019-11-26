@@ -39,6 +39,9 @@ class Ops(Enum):
     ENDPROC = "ENDPROC"
     PRINT = "PRINT"
     PRINTLN = "PRINTLN"
+    READT = "READT"
+    READA = "READA"
+    READC = "READC"
     ALLOC = "ALLOC"
     VER = "VER"
 

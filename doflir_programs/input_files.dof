@@ -1,0 +1,28 @@
+define main {
+    list_size -> int;
+    list_size = 1187;
+    array -> float[list_size];
+    list_filename -> string;
+    list_filename = "doflir_programs/heights_list.csv";
+    print("Reading list:  ");
+    println(list_filename);
+    array = read_array -> float [list_size] (list_filename);
+    println("Value #330 is: ", array[330]);
+    println("Value #111 is: ", array[111]);
+    println("Value #25  is: ", array[25]);
+    println("");
+    println("");
+
+    table_filename -> string;
+    table_filename = "doflir_programs/user_profiles.csv";
+    print("Reading table:  ");
+    println(table_filename);
+
+    rows_size -> int;
+    cols_size -> int;
+    rows_size = 5;
+    cols_size = 7;
+    table -> string[rows_size, cols_size];
+    table = read_table -> string [rows_size, cols_size] (table_filename);
+    println("Value 2, 3 is: ", table[2,3]);
+}

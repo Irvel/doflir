@@ -10,6 +10,7 @@ from VariablesTable import VecIdx
 from VariablesTable import VarTypes
 
 import argparse
+import csv
 import numpy as np
 import logging
 import operator
@@ -36,6 +37,12 @@ class DoflirVirtualMachine(object):
             VarTypes.FLOAT: np.float,
             VarTypes.BOOL: np.bool,
             VarTypes.STRING: "<U20",
+        }
+        self.lit_type_map = {
+            VarTypes.INT: int,
+            VarTypes.FLOAT: float,
+            VarTypes.BOOL: bool,
+            VarTypes.STRING: str,
         }
 
     @property
@@ -186,6 +193,27 @@ class DoflirVirtualMachine(object):
 
     def println(self, quad):
         print(self.get_val(quad.res))
+
+    def readc(self, quad):
+        in_raw = input()
+        target_type = self.lit_type_map[quad.res.data_type]
+        assign_val = None
+        try:
+            assign_val = target_type(in_raw)
+        except Exception:
+            raise Exception("Provided different type to the expected one")
+        self.set_value(value=assign_val, dst=quad.res)
+
+    def readt(self, quad):
+        target_type = self.np_type_map[quad.res.data_type]
+        table = np.genfromtxt(
+            self.get_val(quad.left),
+            dtype=target_type, delimiter=","
+        )
+        self.set_value(value=table, dst=quad.res)
+
+    def reada(self, quad):
+        self.readt(quad)
 
     def era(self, quad):
         self.temp_context = {}

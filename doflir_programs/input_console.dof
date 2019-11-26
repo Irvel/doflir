@@ -1,0 +1,7 @@
+define main {
+    num -> int;
+    print("Please input a number: ");
+    num = read_console -> int;
+    println("");
+    println("The number you entered * 2 is: ", num * 2);
+}
