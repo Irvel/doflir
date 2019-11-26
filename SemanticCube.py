@@ -46,12 +46,46 @@ class Ops(Enum):
     VER = "VER"
 
 
+class VecFilters(Enum):
+    F_SUM = "f_sum"
+    F_MEAN = "f_mean"
+    F_VAR = "f_var"
+    F_MIN = "f_min"
+    F_MAX = "f_max"
+    F_STD = "f_std"
+    F_NORMALIZE = "f_normalize"
+    F_SQUARE = "f_square"
+    F_CUBE = "f_cube"
+    F_STRIP = "f_strip"
+    F_LOWERCASE = "f_lowercase"
+    F_UPPERCASE = "f_uppercase"
+    F_SORT = "f_sort"
+
+
 class SemanticCube(object):
 
     def __init__(self):
         self._setup_op_categories()
         self._setup_cube()
         self._setup_enums_map()
+        self._setup_filter_reduce()
+
+    def _setup_filter_reduce(self):
+        self._filter_reduce = {
+            VecFilters.F_SUM: True,
+            VecFilters.F_MEAN: True,
+            VecFilters.F_MIN: True,
+            VecFilters.F_MAX: True,
+            VecFilters.F_STD: True,
+            VecFilters.F_VAR: True,
+            VecFilters.F_NORMALIZE: False,
+            VecFilters.F_SQUARE: False,
+            VecFilters.F_CUBE: False,
+            VecFilters.F_STRIP: False,
+            VecFilters.F_LOWERCASE: False,
+            VecFilters.F_UPPERCASE: False,
+            VecFilters.F_SORT: False,
+        }
 
     def _setup_op_categories(self):
         self._NUM_OPS = [
@@ -76,6 +110,10 @@ class SemanticCube(object):
         self._var_types_map = {}
         for var_type in VarTypes:
             self._var_types_map[var_type.value] = var_type
+
+        self._vec_filters_map = {}
+        for vec_filter in VecFilters:
+            self._vec_filters_map[vec_filter.value] = vec_filter
 
     def _setup_cube(self):
         semantic_cube = {}
@@ -136,6 +174,9 @@ class SemanticCube(object):
 
         self._cube = semantic_cube
 
+    def is_reduced(self, vec_filter):
+        return self._filter_reduce[vec_filter]
+
     def result_type(self, op_1_type, op_2_type, operator):
         target = (op_1_type, op_2_type, operator)
         if target in self._cube:
@@ -158,3 +199,6 @@ class SemanticCube(object):
 
     def op_to_enum(self, op_str):
         return self._ops_map[op_str]
+
+    def filter_to_enum(self, filter_str):
+        return self._vec_filters_map[filter_str]

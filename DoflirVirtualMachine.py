@@ -276,6 +276,17 @@ class DoflirVirtualMachine(object):
             raise Exception("Out of bounds access.")
         logger.debug(f"{self.ip:<3} VER     {val_to_ver} < {upper_lim}  ")
 
+    def run_filter_op(self, vec_filter, quad):
+        vector = self.get_val(quad.left)
+        res_val = vec_filter(vector)
+        logger.debug(
+            f"{self.ip:<3} Filter  vec with {vec_filter.__name__:<3} "
+        )
+        self.set_value(value=res_val, dst=quad.res)
+
+    def f_sum(self, quad):
+        self.run_filter_op(vec_filter=np.sum, quad=quad)
+
 
 def enum_to_name(enum):
     return enum.name.lower()

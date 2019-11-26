@@ -105,12 +105,10 @@ class DoflirCustomVisitor(DoflirVisitor):
     def visitVec_indexing(self, ctx: DoflirParser.Vec_indexingContext):
         vec_id = ctx.ID().getText()
         vec = self.curr_scope.search(vec_id) or self.global_table.search(vec_id)
-        print(vec.vec_dims)
         if not vec:
             raise Exception(
                 f"Attempted to use undeclared vector {vec_id}"
             )
-        print(ctx.expr_list().expr())
         if len(vec.vec_dims) != len(ctx.expr_list().expr()):
             raise Exception(
                 f"Provided more indices than declared in {vec_id}"
@@ -135,6 +133,47 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
 
     def visitVec_filtering(self, ctx: DoflirParser.Vec_filteringContext):
+        vec_id = ctx.ID().getText()
+        vec = self.curr_scope.search(vec_id) or self.global_table.search(vec_id)
+        if not vec:
+            raise Exception(
+                f"Attempted to use undeclared vector {vec_id}"
+            )
+        is_reduced = False
+        vec_filters = []
+        for idx, vec_filter_ctx in enumerate(ctx.filter_list().FILTER()):
+            vec_filter = self.cube.filter_to_enum(vec_filter_ctx.getText())
+            if self.cube.is_reduced(vec_filter=vec_filter):
+                is_reduced = True
+                if idx < len(ctx.filter_list().FILTER()) - 1:
+                    raise Exception(
+                        f"{vec_filter.value} Reduces the vector to a number before other filters."
+                    )
+            vec_filters.append(vec_filter)
+
+        for vec_filter in vec_filters[:-1]:
+            self.quads.append(
+                Quad(
+                    op=vec_filter,
+                    left=vec,
+                    right=None,
+                    res=vec
+                )
+            )
+        result_var = None
+        if is_reduced:
+            result_var = self.curr_scope.make_temp(temp_type=vec.data_type)
+        else:
+            result_var = vec
+        self.operands_stack.append(result_var)
+        final_quad = Quad(
+            op=vec_filter,
+            left=vec,
+            right=None,
+            res=result_var,
+        )
+        self.quads.append(final_quad)
+
         return self.visitChildren(ctx)
 
     def allocate_temp_vec(self, data_type, vec_dims):
