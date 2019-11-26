@@ -139,13 +139,3 @@ def print_quads(quads, viz_variant="name"):
             print(f"{idx:>2}", quad.address_repr)
         elif viz_variant == "type":
             print(f"{idx:>2}", quad.type_repr)
-
-class Quads:
-
-    def __init__(self):
-        self.operator_stack = []
-        self.operand_stack = []
-        self.jump_stack = []
-        self.type_stack = []
-        self.quad_stack = []
-        self._temp_register_num = 1
