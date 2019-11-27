@@ -106,12 +106,12 @@ FILTER
 
 
 condition
-	: 'if' '(' expr ')' '{' proc_body '}'   #ifStmt
-    | 'if' '(' expr ')' '{' proc_body '}' (NL)* 'else' '{' proc_body '}' #ifElseStmt
+	: 'if' '(' expr ')' '{' proc_body '}'                                 #ifStmt
+    | 'if' '(' expr ')' '{' proc_body '}' (NL)* 'else' '{' proc_body '}'  #ifElseStmt
     ;
 
 iterable
-    : 'while' '(' expr ')' '{' proc_body '}'  			#whileStmt
+    : 'while' '(' expr ')' '{' proc_body '}'  			                  #whileStmt
     ;
 
 read_table: 'read_table' '->' TYPE_NAME '['token',' token ']' '(' expr ')' ;
