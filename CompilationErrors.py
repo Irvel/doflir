@@ -3,18 +3,22 @@ from termcolor import colored
 
 
 def bold(txt):
+    """Format the text to look bold on the terminal."""
     return colored(str(txt), attrs=["bold"])
 
 
 def red_bold(txt):
+    """Format the text to look red bold on the terminal."""
     return colored(str(txt), "red", attrs=["bold"])
 
 
 def cyan(txt):
+    """Format the text to look cyan on the terminal."""
     return colored(str(txt), "cyan")
 
 
 class NoTraceBackException(Exception):
+    """Disable traceback printing error in Python and use ours instead."""
     def __init__(self, in_filename, line_num, line_txt, err_type, msg):
         err_type = f"{err_type}: "
         err_type = red_bold(err_type)
@@ -27,6 +31,7 @@ class NoTraceBackException(Exception):
 
 
 class CompError(NoTraceBackException):
+    """Base compiler error."""
     def __init__(self, ctx, in_filename, err_type, in_code, msg):
         line_num = max(0, ctx.start.line - 1)
         line_txt = in_code[line_num]
@@ -40,6 +45,7 @@ class CompError(NoTraceBackException):
 
 
 class AlreadyUsedID(CompError):
+    """AlreadyUsedID compilation error."""
     def __init__(self, ctx, in_filename, in_code, var_id):
         msg = (f"ID ‘{cyan(var_id)}’ is already in use")
         super().__init__(
@@ -52,6 +58,7 @@ class AlreadyUsedID(CompError):
 
 
 class UndeclaredVar(CompError):
+    """UndeclaredVar compilation error."""
     def __init__(self, ctx, in_filename, in_code, var_id):
         msg = (f"Attempted to use undeclared variable ‘{cyan(var_id)}’")
         super().__init__(
@@ -64,6 +71,7 @@ class UndeclaredVar(CompError):
 
 
 class UndeclaredFun(CompError):
+    """UndeclaredFun compilation error."""
     def __init__(self, ctx, in_filename, in_code, fun_id):
         msg = (f"Attempted to use undefined function ‘{cyan(fun_id)}’")
         super().__init__(
@@ -76,6 +84,7 @@ class UndeclaredFun(CompError):
 
 
 class UninitializedVar(CompError):
+    """UninitializedVar compilation error."""
     def __init__(self, ctx, in_filename, in_code, var_id):
         msg = (f"Attempted to use uninitialized variable ‘{cyan(var_id)}’")
         super().__init__(
@@ -88,6 +97,7 @@ class UninitializedVar(CompError):
 
 
 class UndeclaredVec(CompError):
+    """UndeclaredVec compilation error."""
     def __init__(self, ctx, in_filename, in_code, vec_id):
         msg = (f"Attempted to use undeclared vector ‘{cyan(vec_id)}’")
         super().__init__(
@@ -100,6 +110,7 @@ class UndeclaredVec(CompError):
 
 
 class AlreadyUsedVec(CompError):
+    """AlreadyUsedVec compilation error."""
     def __init__(self, ctx, in_filename, in_code, vec_id):
         msg = (f"Vec with ID ‘{cyan(vec_id)}’ already used")
         super().__init__(
@@ -112,6 +123,7 @@ class AlreadyUsedVec(CompError):
 
 
 class FilterReducesBefore(CompError):
+    """FilterReducesBefore compilation error."""
     def __init__(self, ctx, in_filename, in_code, vec_filter):
         msg = (
             f"Filter {bold(vec_filter)} reduces the vector to a number "
@@ -127,6 +139,7 @@ class FilterReducesBefore(CompError):
 
 
 class VectorNotHomogeneous(CompError):
+    """VectorNotHomogeneous compilation error."""
     def __init__(self, ctx, in_filename, in_code):
         msg = ("Vector values must be of homogeneous type")
         super().__init__(
@@ -139,6 +152,7 @@ class VectorNotHomogeneous(CompError):
 
 
 class MatrixNotHomogeneous(CompError):
+    """MatrixNotHomogeneous compilation error."""
     def __init__(self, ctx, in_filename, in_code):
         msg = ("Matrix values must be of homogeneous type")
         super().__init__(
@@ -151,6 +165,7 @@ class MatrixNotHomogeneous(CompError):
 
 
 class MatrixColSizeMismatch(CompError):
+    """MatrixColSizeMismatch compilation error."""
     def __init__(self, ctx, in_filename, in_code):
         msg = ("All matrix columns must be of the same size")
         super().__init__(
@@ -163,6 +178,7 @@ class MatrixColSizeMismatch(CompError):
 
 
 class DifferentNumIndexes(CompError):
+    """DifferentNumIndexes compilation error."""
     def __init__(self, ctx, in_filename, in_code, vec_id, indexes_provided):
         msg = (
             f"Provided a different number of indexes "
@@ -179,6 +195,7 @@ class DifferentNumIndexes(CompError):
 
 
 class WrongDimType(CompError):
+    """WrongDimType compilation error."""
     def __init__(self, ctx, in_filename, in_code, data_type):
         msg = (
             f"Vector dimensions must be int, ‘{cyan(data_type)}’ given instead"
@@ -193,6 +210,7 @@ class WrongDimType(CompError):
 
 
 class WrongIndexType(CompError):
+    """WrongIndexType compilation error."""
     def __init__(self, ctx, in_filename, in_code, data_type):
         msg = (
             f"Vector index must be int, ‘{cyan(data_type)}’ given instead"
@@ -207,6 +225,7 @@ class WrongIndexType(CompError):
 
 
 class ReturnTypeMismatch(CompError):
+    """ReturnTypeMismatch compilation error."""
     def __init__(self, ctx, in_filename, in_code, def_type, ret_type):
         msg = (
             f"Returning a different type than what was defined"
@@ -222,6 +241,7 @@ class ReturnTypeMismatch(CompError):
 
 
 class TypeMismatchVar(CompError):
+    """TypeMismatchVar compilation error."""
     def __init__(self, ctx, in_filename, in_code, op_1, op_2):
         msg = (
             f"The type between "
@@ -238,6 +258,7 @@ class TypeMismatchVar(CompError):
 
 
 class TypeMismatch(CompError):
+    """TypeMismatch compilation error."""
     def __init__(self, ctx, in_filename, in_code, op_1, ex_type):
         msg = (
             f"‘{bold(op_1.value)}’ {cyan(op_1.data_type)}’ "
@@ -253,6 +274,7 @@ class TypeMismatch(CompError):
 
 
 class NumDimsMismatch(CompError):
+    """NumDimsMismatch compilation error."""
     def __init__(self, ctx, in_filename, in_code, op_1, op_2):
         msg = (
             f"Number of dimensions must be the same between "
@@ -269,6 +291,7 @@ class NumDimsMismatch(CompError):
 
 
 class DimSizeMismatch(CompError):
+    """DimSizeMismatch compilation error."""
     def __init__(self, ctx, in_filename, in_code, op_1, op_2):
         msg = (
             f"Dimension size must match between "
@@ -285,6 +308,7 @@ class DimSizeMismatch(CompError):
 
 
 class VecNonVecMismatch(CompError):
+    """VecNonVecMismatch compilation error."""
     def __init__(self, ctx, in_filename, in_code, op_1, op_2):
         msg = (
             f"Operands need to be both vector or non vector "
@@ -301,6 +325,7 @@ class VecNonVecMismatch(CompError):
 
 
 class MatMultNumDimsMismatch(CompError):
+    """MatMultNumDimsMismatch compilation error."""
     def __init__(self, ctx, in_filename, in_code, op_1, op_2):
         msg = (
             f"Number of cols and rows mismatch for matrix multiplication "
@@ -316,6 +341,7 @@ class MatMultNumDimsMismatch(CompError):
 
 
 class MatMultNonMatrix(CompError):
+    """MatMultNonMatrix compilation error."""
     def __init__(self, ctx, in_filename, in_code, op_1, op_2):
         msg = (
             f"Cannot perform matrix mult on non-matrices "
@@ -331,6 +357,7 @@ class MatMultNonMatrix(CompError):
 
 
 class InvalidOperation(CompError):
+    """InvalidOperation compilation error."""
     def __init__(self, ctx, in_filename, in_code, op_1, op_2, operator):
         msg = (
             f"Invalid operation: {cyan(op_1.data_type)} "
@@ -347,6 +374,7 @@ class InvalidOperation(CompError):
 
 
 class FilenameNotString(CompError):
+    """FilenameNotString compilation error."""
     def __init__(self, ctx, in_filename, in_code, filename):
         msg = (
             f"Filename to read from must be string. ‘{cyan(filename)}’ given "
@@ -362,6 +390,7 @@ class FilenameNotString(CompError):
 
 
 class ParamArgNumMismatch(CompError):
+    """ParamArgNumMismatch compilation error."""
     def __init__(self, ctx, in_filename, in_code, fun_id,
                  num_params, num_args):
         msg = (
