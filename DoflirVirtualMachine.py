@@ -1,11 +1,5 @@
 from collections import deque
-from SemanticCube import Ops
-from VariablesTable import Variable
-from VariablesTable import Params
-from VariablesTable import QuadJump
 from VariablesTable import Constant
-from VariablesTable import Param
-from VariablesTable import Pointer
 from VariablesTable import VecIdx
 from VariablesTable import VarTypes
 
