@@ -19,19 +19,19 @@ class Quad:
         op = self.op.value
         left = ""
         if self.left:
-            left = f"{self.left.value}({self.left.address})"
+            left = f"({self.left.address})"
         right = ""
         if self.right:
-            right = f"{self.right.value}({self.right.address})"
+            right = f"({self.right.address})"
         res = ""
         if self.res:
             if isinstance(self.res, Variable) or isinstance(self.res, Temporal):
-                res = f"{self.res.value}({self.res.address})"
+                res = f"({self.res.address})"
             else:
                 res = f"{self.res.value}"
         return (
             f"({op:7} {left:>13} "
-            f"{right:>14} {res:>14})"
+            f"{right:>10} {res:>10})"
         )
 
     @property

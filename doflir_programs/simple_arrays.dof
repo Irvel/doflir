@@ -3,7 +3,8 @@ test -> float;
 define main {
 	test2 -> float [1, 2, 4];
 	test2[0, 0+1, 0] = 1.2;
+	# Arrays are zero-initialized automatically but not variables.
 	test2[0, 0, 2] = test2[0, 0, 0] * 2.2;
-	print("test2 access");
-	print(test2[0,0,1]);
+	println("test2 access");
+	println(test2[0,0,1]);
 }

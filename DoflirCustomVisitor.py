@@ -960,6 +960,14 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.visit(ctx.token(1))
         cols_expr = self.operands_stack.pop()
         table_type = VarTypes[ctx.TYPE_NAME().getText().upper()]
+        if rows_expr.data_type != VarTypes.INT:
+            raise E.WrongDimType(
+                ctx, self.in_filename, self.in_code, rows_expr.data_type
+            )
+        if cols_expr.data_type != VarTypes.INT:
+            raise E.WrongDimType(
+                ctx, self.in_filename, self.in_code, cols_expr.data_type
+            )
         if filename_expr.data_type != VarTypes.STRING:
             raise E.FilenameNotString(
                 ctx, self.in_filename, self.in_code, filename_expr.data_type

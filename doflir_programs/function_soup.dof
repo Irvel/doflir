@@ -1,16 +1,21 @@
+# This is a global variable that gets parsed before main
 test -> float;
 test = 2.2;
 
 define two -> float () {
+	println("Entering two");
 	return 8.0;
 }
 
 define one -> float (pi -> float, tau -> float) {
+	print("Entering one with pi: ", pi, " and tau: ", tau);
+	println("");
 	return 2.0 * pi + tau;
 }
 
 define three -> float (esp -> float, cop -> float) {
-	cop = 1.344 + 2 * esp + cop;
+	println("Entering three");
+	cop = 1.344 + 2 * esp + (cop - (two() ^ 2));
 	other -> float;
 	other = ((test + cop) * 1.2 + 2.34) / (1.2 + one(1.2, 2.8) + two()) * 2.1;
 	return 2.0 * esp + cop * other;
@@ -18,14 +23,18 @@ define three -> float (esp -> float, cop -> float) {
 
 define main {
 	test2 -> float;
-	print("test");
+	println("Before the first call of one");
 	test = one(two(), two());
 	test2 = three(two(), 9.21);
 	test3 -> float;
 	test3 = four(two(), 0.491) * test2;
+	println("Final result: ", test3);
 }
 
+# Functions can also be declared after the main function without issues!
 define four -> float (esp -> float, cop -> float) {
+	print("Entering four with esp: ", esp, " and cop: ", cop);
+	println("");
 	cop = 9.3 - 2.9 * esp + cop;
 	other -> float;
 	other = ((test - cop)) / (1.2 + one(1.2, 2.8) * two()) / 3.12;
