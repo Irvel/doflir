@@ -155,66 +155,86 @@ class DoflirVirtualMachine(object):
         self.set_value(value=res_val, dst=quad.res)
 
     def plus(self, quad):
+        """Addition operation between two operands."""
         self.run_bin_op(bin_op=operator.add, quad=quad)
 
     def minus(self, quad):
+        """Subtraction operation between two operands."""
         self.run_bin_op(bin_op=operator.sub, quad=quad)
 
     def mat_mult(self, quad):
+        """Matrix multiplication between two matrixes."""
         self.run_bin_op(bin_op=np.matmul, quad=quad)
 
     def dot(self, quad):
+        """Dot product between two matrixes."""
         self.run_bin_op(bin_op=np.dot, quad=quad)
 
     def mult(self, quad):
+        """Multiplication operation between two operands."""
         self.run_bin_op(bin_op=operator.mul, quad=quad)
 
     def div(self, quad):
+        """Float division operation between two operands."""
         self.run_bin_op(bin_op=operator.truediv, quad=quad)
 
     def int_div(self, quad):
+        """Integer division operation between two operands."""
         self.run_bin_op(bin_op=operator.floordiv, quad=quad)
 
     def pow(self, quad):
+        """Power operation between two operands."""
         self.run_bin_op(bin_op=operator.pow, quad=quad)
 
     def and_(self, quad):
+        """Logical and relop between two operands."""
         self.run_bin_op(bin_op=operator.and_, quad=quad)
 
     def or_(self, quad):
+        """Logical or relop between two operands."""
         self.run_bin_op(bin_op=operator.or_, quad=quad)
 
     def gt(self, quad):
+        """Logical greater than relop between two operands."""
         self.run_bin_op(bin_op=operator.gt, quad=quad)
 
     def gt_eq(self, quad):
+        """Logical greater than or equal relop between two operands."""
         self.run_bin_op(bin_op=operator.ge, quad=quad)
 
     def lt(self, quad):
+        """Logical less than relop between two operands."""
         self.run_bin_op(bin_op=operator.lt, quad=quad)
 
     def lt_eq(self, quad):
+        """Logical less than or equal relop between two operands."""
         self.run_bin_op(bin_op=operator.le, quad=quad)
 
     def eq(self, quad):
+        """Logical equal relop between two operands."""
         self.run_bin_op(bin_op=operator.eq, quad=quad)
 
     def not_eq(self, quad):
+        """Logical not equal relop between two operands."""
         self.run_bin_op(bin_op=operator.ne, quad=quad)
 
     def _goto(self, quad_idx):
+        """Set the instruction pointer to an arbitrary instruction."""
         logger.debug(f"{self.ip:<3} Jmp  to quad ({quad_idx})  ")
         # IP is always incremented after running a quad, so we sub 1
         self.ip = quad_idx - 1
 
     def goto(self, quad):
+        """Handler for the goto function call."""
         self._goto(quad_idx=quad.res.value)
 
     def gotof(self, quad):
+        """Set the instruction pointer to an arbitrary instruction if false."""
         if not self.get_val(quad.left):
             self.goto(quad)
 
     def assign(self, quad):
+        """Set the value of one operand as the value of another operand """
         assign_val = self.get_val(quad.left)
         val_str = str(assign_val).replace("\n", "")
         logger.debug(
@@ -224,21 +244,26 @@ class DoflirVirtualMachine(object):
         self.set_value(value=assign_val, dst=quad.res)
 
     def print(self, quad):
+        """Display operand to console."""
         print(self.get_val(quad.res), end="")
 
     def println(self, quad):
+        """Display opearnd to console and append a newline."""
         print(self.get_val(quad.res))
 
     def plot(self, quad):
+        """Graphically plot the operand."""
         plt.plot(self.get_val(quad.res))
         plt.show()
 
     def writef(self, quad):
+        """Write to file."""
         data = self.get_val(quad.left)
         filename = self.get_val(quad.res)
         np.savetxt(filename, data, delimiter=" ", fmt="%s")
 
     def readc(self, quad):
+        """Read input value from console."""
         in_raw = input()
         target_type = self.lit_type_map[quad.res.data_type]
         assign_val = None
@@ -249,6 +274,7 @@ class DoflirVirtualMachine(object):
         self.set_value(value=assign_val, dst=quad.res)
 
     def readt(self, quad):
+        """Read input table from a file."""
         target_type = self.np_type_map[quad.res.data_type]
         table = np.genfromtxt(
             self.get_val(quad.left),
@@ -257,9 +283,11 @@ class DoflirVirtualMachine(object):
         self.set_value(value=table, dst=quad.res)
 
     def reada(self, quad):
+        """Read input array from a file."""
         self.readt(quad)
 
     def era(self, quad):
+        """Expand the activation table from the function in the operand."""
         self.temp_contexts.append({})
         logger.debug(f"{self.ip:<3} ERA To    {quad.left.name}  ")
 
@@ -271,6 +299,7 @@ class DoflirVirtualMachine(object):
             self.pending_return_val.append(function)
 
     def param(self, quad):
+        """Pass an argument towards a parameter of a function."""
         param_target = self.pending_params_stack.pop()
         logger.debug(f"{self.ip:<3} Set param {param_target.param_id}"
                      f"({param_target.address})({self.get_val(quad.left)})  ")
@@ -279,12 +308,14 @@ class DoflirVirtualMachine(object):
                        temp_ctx=True)
 
     def gosub(self, quad):
+        """Activate the context of a function and switch the ip to it."""
         self.context_stack.append(self.temp_context)
         self.temp_contexts.pop()
         self.pending_return_jump.append(self.ip)
         self._goto(quad_idx=quad.left.quad_idx)
 
     def return_(self, quad):
+        """Assign return value for a function."""
         logger.debug(
             f"{self.ip:<3} Return {self.get_val(quad.res):<3})"
         )
@@ -295,6 +326,7 @@ class DoflirVirtualMachine(object):
         )
 
     def endproc(self, quad):
+        """Finish execution of a procedure and move back the ip."""
         self.context_stack.pop()
         if self.pending_return_val:
             self.pending_return_val.pop()
@@ -303,6 +335,7 @@ class DoflirVirtualMachine(object):
         logger.debug(f"{old_ip:<3} Set ip to    ({self.ip})  ")
 
     def alloc(self, quad):
+        """Inflate a vector in memory."""
         spec = quad.res
         vec_shape = [self.get_val(d) for d in spec.vec_dims]
         vec_type = self.np_type_map[spec.data_type]
@@ -314,6 +347,7 @@ class DoflirVirtualMachine(object):
         )
 
     def ver(self, quad):
+        """Check that the operand dimensions are within the vector bounds."""
         val_to_ver, upper_lim = (self.get_val(quad.left),
                                  self.get_val(quad.res))
         if val_to_ver < 0 or val_to_ver >= upper_lim:
@@ -321,6 +355,7 @@ class DoflirVirtualMachine(object):
         logger.debug(f"{self.ip:<3} VER     {val_to_ver} < {upper_lim}  ")
 
     def run_filter_op(self, vec_filter, quad):
+        """Run a unary filter operation on the operand vector."""
         vector = self.get_val(quad.left)
         res_val = vec_filter(vector)
         logger.debug(
@@ -329,49 +364,64 @@ class DoflirVirtualMachine(object):
         self.set_value(value=res_val, dst=quad.res)
 
     def f_sum(self, quad):
+        """Sum all of the elements of a vector into a single value."""
         self.run_filter_op(vec_filter=np.sum, quad=quad)
 
     def f_mean(self, quad):
+        """Compute the average of the elements in a vector"""
         self.run_filter_op(vec_filter=np.mean, quad=quad)
 
     def f_var(self, quad):
+        """Compute the variance of the elements in a vector"""
         self.run_filter_op(vec_filter=np.var, quad=quad)
 
     def f_min(self, quad):
+        """Find the minimum of the elements in a vector"""
         self.run_filter_op(vec_filter=np.min, quad=quad)
 
     def f_max(self, quad):
+        """Find the maximum of the elements in a vector"""
         self.run_filter_op(vec_filter=np.max, quad=quad)
 
     def f_std(self, quad):
+        """Compute the sandard dev of the elements in a vector"""
         self.run_filter_op(vec_filter=np.std, quad=quad)
 
     def f_normalize(self, quad):
+        """Compute the normalized vector version of the elements in a vector"""
         self.run_filter_op(vec_filter=normalize, quad=quad)
 
     def f_square(self, quad):
+        """Compute the squared vector version of the elements in a vector"""
         self.run_filter_op(vec_filter=np.square, quad=quad)
 
     def f_cube(self, quad):
+        """Compute the cubed vector version of the elements in a vector"""
         self.run_filter_op(vec_filter=cube, quad=quad)
 
     def f_strip(self, quad):
+        """Remove trailing whitespace from elements in vector."""
         self.run_filter_op(vec_filter=vec_strip, quad=quad)
 
     def f_lowercase(self, quad):
+        """Convert all characters to lowercase."""
         self.run_filter_op(vec_filter=vec_lower, quad=quad)
 
     def f_uppercase(self, quad):
+        """Convert all characters to uppercase"""
         self.run_filter_op(vec_filter=vec_upper, quad=quad)
 
     def f_sort(self, quad):
+        """Sort the elements of a vector."""
         self.run_filter_op(vec_filter=np.sort, quad=quad)
 
     def f_reverse(self, quad):
+        """Reverse the elements of a vector."""
         self.run_filter_op(vec_filter=vec_reverse, quad=quad)
 
 
 def vec_strip(vector):
+    """Remove trailing whitespace from elements in vector."""
     stripped = []
     for val in vector:
         stripped.append(str(val).strip())
@@ -379,6 +429,7 @@ def vec_strip(vector):
 
 
 def vec_lower(vector):
+    """Convert all characters to lowercase."""
     lowered = []
     for val in vector:
         lowered.append(str(val).lower())
@@ -386,6 +437,7 @@ def vec_lower(vector):
 
 
 def vec_upper(vector):
+    """Convert all characters to uppercase"""
     uppered = []
     for val in vector:
         uppered.append(str(val).upper())
@@ -393,22 +445,27 @@ def vec_upper(vector):
 
 
 def vec_reverse(vector):
+    """Reverse the elements of a vector."""
     return vector[::-1]
 
 
 def cube(vector):
+    """Compute the cubed vector version of the elements in a vector"""
     return vector * vector * vector
 
 
 def normalize(vector):
+    """Compute the normalized vector version of the elements in a vector"""
     return vector / np.linalg.norm(vector)
 
 
 def enum_to_name(enum):
+    """Convert an enum into a function-like name."""
     return enum.name.lower()
 
 
 def setup_logging(debug):
+    """Configure level and format of log messages"""
     if debug:
         logger.setLevel(logging.DEBUG)
     FORMAT = "%(levelname)s: %(message)s"
@@ -418,6 +475,7 @@ def setup_logging(debug):
 
 
 def main():
+    """Configure options parsed at the begginnig of the program."""
     parser = argparse.ArgumentParser(description="Doflir VM")
     parser.add_argument("in_file",
                         type=str, help="Filename of Doflir obj to run")
@@ -431,6 +489,7 @@ def main():
 
 
 def read_bytecode(filename):
+    """Read the intermediate representation produced by DoflirCompiler."""
     with open(filename, "rb") as f:
         bytecode = pickle.load(f)
     return bytecode
