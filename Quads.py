@@ -1,4 +1,3 @@
-from VariablesTable import Pointer
 from VariablesTable import Variable
 from VariablesTable import Param
 from VariablesTable import QuadJump
@@ -8,6 +7,7 @@ from VariablesTable import Function
 
 
 class Quad:
+    """Hold a quadruple in the intermediate representation."""
     def __init__(self, op, left, right, res):
         self.op = op
         self.left = left
@@ -16,6 +16,7 @@ class Quad:
 
     @property
     def address_repr(self):
+        """Provide a human-friendly repr of the address of this quad."""
         op = self.op.value
         left = ""
         if self.left:
@@ -25,7 +26,8 @@ class Quad:
             right = f"({self.right.address})"
         res = ""
         if self.res:
-            if isinstance(self.res, Variable) or isinstance(self.res, Temporal):
+            if isinstance(self.res, Variable) or isinstance(self.res,
+                                                            Temporal):
                 res = f"({self.res.address})"
             else:
                 res = f"{self.res.value}"
@@ -36,6 +38,7 @@ class Quad:
 
     @property
     def name_repr(self):
+        """Provide a human-friendly repr of the name of this quad."""
         op = self.op.value
         left = ""
         if self.left:
@@ -65,6 +68,7 @@ class Quad:
 
     @property
     def type_repr(self):
+        """Provide a human-friendly repr of the types used in this quad."""
         op = self.op.value
         operands = [self.left, self.right, self.res]
         op_reprs = []
@@ -77,8 +81,6 @@ class Quad:
                     op_repr = "C"
                 elif isinstance(operand, QuadJump):
                     op_repr = "J"
-                elif isinstance(operand, Pointer):
-                    op_repr = "*"
                 elif isinstance(operand, Function):
                     op_repr = "F"
                 elif isinstance(operand, Param):
@@ -92,6 +94,7 @@ class Quad:
         )
 
     def __str__(self):
+        """Return a string representation of this quad."""
         op = self.op.value
         left = ""
         if self.left:
@@ -101,7 +104,8 @@ class Quad:
             right = f"{self.right.name}({self.right.address})"
         res = ""
         if self.res:
-            if isinstance(self.res, Variable) or isinstance(self.res, Temporal):
+            if isinstance(self.res, Variable) or isinstance(self.res,
+                                                            Temporal):
                 res = f"{self.res.value}({self.res.address})"
             else:
                 res = f"{self.res.value}"
@@ -112,10 +116,12 @@ class Quad:
         )
 
     def __repr__(self):
+        """Provide a human-friendly repr of this quad."""
         return self.__str__()
 
 
 def print_quads(quads, viz_variant="name"):
+    """Print a human friendly representation of a list of quadruples."""
     print(f"\n{'='*20} Quadruples {'='*20}")
     for idx, quad in enumerate(quads):
         if viz_variant == "name":

@@ -67,7 +67,7 @@ class VecFilters(Enum):
 
 
 class SemanticCube(object):
-
+    """Hold the semantic considerations table for Doflir."""
     def __init__(self):
         self._setup_op_categories()
         self._setup_cube()
@@ -75,6 +75,7 @@ class SemanticCube(object):
         self._setup_filter_reduce()
 
     def _setup_filter_reduce(self):
+        """Defines semantic considerations for filter's reduction to var."""
         self._filter_reduce = {
             VecFilters.F_SUM: True,
             VecFilters.F_MEAN: True,
@@ -93,6 +94,7 @@ class SemanticCube(object):
         }
 
     def _setup_op_categories(self):
+        """Defines groups of operations by their function."""
         self._NUM_OPS = [
             Ops.PLUS, Ops.MINUS, Ops.MULT, Ops.DIV, Ops.INT_DIV, Ops.POW,
             Ops.MAT_MULT, Ops.DOT,
@@ -108,6 +110,7 @@ class SemanticCube(object):
         ]
 
     def _setup_enums_map(self):
+        """Provides conversion mechanisms between operation codes and names."""
         self._ops_map = {}
         for op in Ops:
             self._ops_map[op.value] = op
@@ -121,6 +124,7 @@ class SemanticCube(object):
             self._vec_filters_map[vec_filter.value] = vec_filter
 
     def _setup_cube(self):
+        """Provides expected output type for a pair of operands and op."""
         semantic_cube = {}
         # Setup numeric operations results.
         for op in self._NUM_OPS:
@@ -180,9 +184,11 @@ class SemanticCube(object):
         self._cube = semantic_cube
 
     def is_reduced(self, vec_filter):
+        """Accessor for the vec filtering semantic considerations."""
         return self._filter_reduce[vec_filter]
 
     def result_type(self, op_1_type, op_2_type, operator):
+        """Accessor for the semantic cube."""
         target = (op_1_type, op_2_type, operator)
         if target in self._cube:
             return self._cube[target]
@@ -190,6 +196,7 @@ class SemanticCube(object):
             return None
 
     def result_type_str(self, op_1_type, op_2_type, operator):
+        """Accessor for the semantic cube but takes a txt instead of enum."""
         op_1_enum = self.type_to_enum(type_str=op_1_type)
         op_2_enum = self.type_to_enum(type_str=op_2_type)
         operator_enum = self.op_to_enum(op_str=operator)
@@ -200,10 +207,13 @@ class SemanticCube(object):
         )
 
     def type_to_enum(self, type_str):
+        """Shorthand method for conversion of names to enum types."""
         return self._var_types_map[type_str]
 
     def op_to_enum(self, op_str):
+        """Shorthand method for conversion of names to enum ops."""
         return self._ops_map[op_str]
 
     def filter_to_enum(self, filter_str):
+        """Shorthand method for conversion of names to enum filters."""
         return self._vec_filters_map[filter_str]

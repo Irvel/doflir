@@ -2,7 +2,7 @@ from SemanticCube import VarTypes
 
 
 class VariablesTable(object):
-    """docstring for VariablesTable"""
+    """Keep track of variables information and their memory."""
     def __init__(self):
         self._vars = {}
         self._curr_address = 0
@@ -29,12 +29,14 @@ class VariablesTable(object):
         self._temp_num = 1
 
     def search(self, var_name):
+        """Look for a variable within the ones we know of already."""
         if var_name in self._vars:
             return self._vars[var_name]
         else:
             return None
 
     def exists(self, var_name):
+        """Return True if the var_name exists in the table."""
         if self.search(var_name):
             return True
         else:
@@ -42,13 +44,16 @@ class VariablesTable(object):
 
     @property
     def variables(self):
+        """Shorthand for accessing the list of all variables in the table."""
         return [var for var in self._vars.values()]
 
     def _add_var(self, variable):
+        """Add a variable to the table."""
         self._vars[variable.name] = variable
 
     def declare_var(self, name, var_type, is_glob=False, is_tmp=False,
                     is_const=False, is_initialized=False):
+        """Outside method for declaring a variable in this table."""
         var = Variable(
             name=name,
             data_type=var_type,
@@ -64,6 +69,7 @@ class VariablesTable(object):
 
     def declare_vector(self, name, vec_type, vec_dims, is_glob=False,
                        is_tmp=False, is_const=False):
+        """Outside method for declaring a vector in this table."""
         vec = Variable(
             name=name,
             data_type=vec_type,
@@ -79,6 +85,7 @@ class VariablesTable(object):
 
     def declare_constant(self, value, const_type, is_glob=False, is_tmp=False,
                          is_const=False):
+        """Outside method for declaring a constant in this table."""
         const = Constant(
             value=value,
             data_type=const_type,
@@ -90,6 +97,7 @@ class VariablesTable(object):
 
     def declare_or_search(self, value, const_type, is_glob=False, is_tmp=False,
                           is_const=True):
+        """Shorthand method for either retrieving or declaring a variable."""
         if not self.exists(value):
             return self.declare_constant(
                 value=value,
@@ -102,6 +110,7 @@ class VariablesTable(object):
             return self.search(value)
 
     def make_temp_name(self, data_type):
+        """Generate unique incremental names for temporary variables."""
         if data_type is not VarTypes.INT:
             name = f"t{data_type.value[0]}_{self._temp_num}"
         else:
@@ -111,6 +120,7 @@ class VariablesTable(object):
 
     def make_temp(self, temp_type, is_glob=False, is_tmp=True,
                   is_const=False, vec_dims=None):
+        """Outside method for making a temporal variable."""
         name = self.make_temp_name(temp_type)
         temp = Temporal(
             name=name,
@@ -126,6 +136,7 @@ class VariablesTable(object):
         return temp
 
     def make_const(self, value, const_type, vec_dims=None):
+        """Outside method for making a constant."""
         const = Constant(
             value=value,
             data_type=const_type,
@@ -134,6 +145,7 @@ class VariablesTable(object):
         return const
 
     def new_address(self, v_type, is_glob=False, is_tmp=False, is_const=False):
+        """Return a new address of the requested type."""
         new_address = None
         if is_glob:
             if v_type == VarTypes.INT:
@@ -203,18 +215,20 @@ class VariablesTable(object):
 
 
 class FunDir(object):
-    """docstring for FunDir"""
+    """Keep track of information required to instantiate Functions."""
     def __init__(self):
         super(FunDir, self).__init__()
         self._fun_dir = {}
 
     def search(self, fun_name):
+        """Look for a function within the ones we know of already."""
         if fun_name in self._fun_dir:
             return self._fun_dir[fun_name]
         else:
             return None
 
     def exists(self, fun_name):
+        """Return True if the fun_name exists in the directory."""
         if self.search(fun_name):
             return True
         else:
@@ -222,12 +236,15 @@ class FunDir(object):
 
     @property
     def functions(self):
+        """Return a listing of the functions in this directory."""
         return [fun for fun in self._fun_dir.values()]
 
     def _add_fun(self, function):
+        """Register a new function in this directory."""
         self._fun_dir[function.name] = function
 
     def define_fun(self, name, ret_type, params, address, quad_idx):
+        """Outside method for registering a function in this directory."""
         fun = Function(
             name=name,
             ret_type=ret_type,
@@ -239,17 +256,20 @@ class FunDir(object):
 
 
 class Function(object):
-    """docstring for Function"""
+    """Keep track of semantically important details in a function."""
     def __init__(self, name, ret_type, params, address, quad_idx):
         self.name = name
         self.ret_type = ret_type
         self.params = params
         self.address = address
         self.quad_idx = quad_idx
-        self.vec_dims = None        # This is not a vector
+        # Functions are never vectors. We keep this here because
+        # it allows us to do some duck typing.
+        self.vec_dims = None
 
     @property
     def num_params(self):
+        """Get the defined number of params from this function."""
         if self.params:
             return len(self.params)
         else:
@@ -257,10 +277,12 @@ class Function(object):
 
     @property
     def value(self):
+        """Accesor for the function name and quad where it was defined."""
         return f"{self.name}({self.quad_idx})"
 
 
 class Params(object):
+    """Keep track of semantically important details from a parameter."""
     def __init__(self, param_id, param_type, address):
         self.param_id = param_id
         self.param_type = param_type
@@ -275,26 +297,31 @@ class Params(object):
 
 
 class VecIdx(object):
+    """Keep track of semantically important details from a vector index."""
     def __init__(self, vec_id, idx, address, data_type):
         self.vec_id = vec_id
         self.idx = idx
         self.address = address
         self.data_type = data_type
-        self.is_initialized = True  # Vectors are init by default to 0
-        self.vec_dims = None        # This is not a vector
+        # Vectors are init by default to 0, so one can retrieve with
+        # index safely.
+        self.is_initialized = True
+        self.vec_dims = None      # A vector index is not a vector.
 
     @property
     def name(self):
+        """Shorthand for value to allow duck typing."""
         return self.value
 
     @property
     def value(self):
+        """Accesor for the VecIdx shape."""
         short_idx = tuple([i.value for i in self.idx])
         return f"{self.vec_id}{short_idx}"
 
 
 class Variable(object):
-    """docstring for Variable"""
+    """Keep track of semantically important details of a variable."""
     def __init__(self, name, data_type, address, vec_dims=None):
         self.name = name
         self.data_type = data_type
@@ -304,9 +331,11 @@ class Variable(object):
 
     @property
     def value(self):
+        """Accesor for the variable name."""
         return self.name
 
     def __repr__(self):
+        """Return a human friendly way of reading its contents."""
         var_repr = (
             f"{self.name:>7}, {self.data_type.value:>6}, "
             f"{self.address:>9}, "
@@ -317,7 +346,7 @@ class Variable(object):
 
 
 class Constant(Variable):
-    """docstring for Constant"""
+    """Keep track of semantically important details of a constant."""
     def __init__(self, value, data_type, address):
         super().__init__(str(value), data_type, address)
         self._value = value
@@ -325,44 +354,40 @@ class Constant(Variable):
 
     @property
     def value(self):
+        """Accesor for the value this constant holds."""
         return self._value
 
     def __repr__(self):
+        """Human friendly version of its contents."""
         return str(self._value)
 
 
 class Temporal(Variable):
-    """docstring for Temporal"""
+    """Keep track of semantically important details of a temporal."""
     def __init__(self, name, data_type, address, vec_dims=None):
         super().__init__(name, data_type, address, vec_dims)
         self.is_initialized = True
 
 
 class QuadJump(object):
+    """Keep track of semantically important details of a quad jump."""
     def __init__(self, quad_idx):
         self.quad_idx = quad_idx
         self.vec_dims = None
 
     @property
     def value(self):
+        """Accesor for the quad index that it points to."""
         return self.quad_idx
 
 
 class Param(object):
+    """Keep track of semantically important details of a argument passing."""
     def __init__(self, param_num):
         self.param_num = param_num
         self.vec_dims = None
 
     @property
     def value(self):
+        """Accesor for the param num."""
         return self.param_num
-
-
-class Pointer(object):
-    def __init__(self, address, pointed_address):
-        self.address = address
-        self.pointed_address = pointed_address
-
-    @property
-    def value(self):
-        return self.address
