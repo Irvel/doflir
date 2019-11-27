@@ -132,13 +132,18 @@ class DoflirVirtualMachine(object):
         op_method(quad)
 
     def neg(self, quad):
-        """Unary negation operation. -(1) turns into -1."""
+        """Unary numeric negation operation. -(1) turns into -1."""
         res_val = -(self.get_val(quad.left))
         self.set_value(value=res_val, dst=quad.res)
 
     def pos(self, quad):
-        """Unary positive operation. +(1) turns into +1."""
+        """Unary numeric positive operation. +(1) turns into +1."""
         res_val = +(self.get_val(quad.left))
+        self.set_value(value=res_val, dst=quad.res)
+
+    def not_(self, quad):
+        """Boolean unary negation operation. true turns into false."""
+        res_val = not (self.get_val(quad.left))
         self.set_value(value=res_val, dst=quad.res)
 
     def run_bin_op(self, bin_op, quad):
@@ -163,6 +168,9 @@ class DoflirVirtualMachine(object):
 
     def mat_mult(self, quad):
         self.run_bin_op(bin_op=np.matmul, quad=quad)
+
+    def dot(self, quad):
+        self.run_bin_op(bin_op=np.dot, quad=quad)
 
     def mult(self, quad):
         self.run_bin_op(bin_op=operator.mul, quad=quad)

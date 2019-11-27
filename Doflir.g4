@@ -57,7 +57,7 @@ expr
 	| <assoc=right> expr '^' expr  #powExpr      // Exponentiation.
 	| '-' expr                     #negExpr      // Negative unary symbol.
 	| '+' expr                     #posExpr      // Positive unary simbol.
-    | 'not' expr                   #unExpr       // Negation.
+    | 'not' expr                   #notExpr      // Negation.
 	| expr  '@'  expr              #matMultExpr  // Matrix multiplication.
 	| expr '..'  expr              #dotExpr      // Dot product.
 	| expr  '*'  expr              #multExpr     // Multiplication.

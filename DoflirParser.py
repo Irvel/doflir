@@ -2078,6 +2078,23 @@ class DoflirParser ( Parser ):
                 return visitor.visitChildren(self)
 
 
+    class NotExprContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a DoflirParser.ExprContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def expr(self):
+            return self.getTypedRuleContext(DoflirParser.ExprContext,0)
+
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitNotExpr" ):
+                return visitor.visitNotExpr(self)
+            else:
+                return visitor.visitChildren(self)
+
+
     class IntDivExprContext(ExprContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a DoflirParser.ExprContext
@@ -2160,9 +2177,6 @@ class DoflirParser ( Parser ):
 
         def fun_call(self):
             return self.getTypedRuleContext(DoflirParser.Fun_callContext,0)
-
-        def expr(self):
-            return self.getTypedRuleContext(DoflirParser.ExprContext,0)
 
 
         def accept(self, visitor:ParseTreeVisitor):
@@ -2336,7 +2350,7 @@ class DoflirParser ( Parser ):
                 pass
 
             elif la_ == 9:
-                localctx = DoflirParser.UnExprContext(self, localctx)
+                localctx = DoflirParser.NotExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
                 self.state = 255

@@ -214,6 +214,11 @@ class DoflirVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by DoflirParser#notExpr.
+    def visitNotExpr(self, ctx:DoflirParser.NotExprContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by DoflirParser#intDivExpr.
     def visitIntDivExpr(self, ctx:DoflirParser.IntDivExprContext):
         return self.visitChildren(ctx)

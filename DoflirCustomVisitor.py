@@ -571,6 +571,9 @@ class DoflirCustomVisitor(DoflirVisitor):
     def visitPosExpr(self, ctx: DoflirParser.PosExprContext):
         self.visitUnOpExpr(ctx=ctx, operator=Ops.POS)
 
+    def visitNotExpr(self, ctx: DoflirParser.NotExprContext):
+        self.visitUnOpExpr(ctx=ctx, operator=Ops.NOT_)
+
     def visitBinOpExpr(self, ctx, operator):
         self.visit(ctx.expr(0))
         self.try_op(op=operator, ctx=ctx)
@@ -580,6 +583,9 @@ class DoflirCustomVisitor(DoflirVisitor):
 
     def visitMatMultExpr(self, ctx: DoflirParser.MatMultExprContext):
         self.visitBinOpExpr(ctx=ctx, operator=Ops.MAT_MULT)
+
+    def visitDotExpr(self, ctx: DoflirParser.DotExprContext):
+        self.visitBinOpExpr(ctx=ctx, operator=Ops.DOT)
 
     def visitMultExpr(self, ctx: DoflirParser.MultExprContext):
         self.visitBinOpExpr(ctx=ctx, operator=Ops.MULT)
