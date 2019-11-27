@@ -132,9 +132,7 @@ TYPE_NAME
 	| 'void'
 	;
 
-// Lexer
 STRING_LITERAL:  '"' (~["\\\r\n])* '"';
-//VECTOR_LITERAL:  '[' (ID | INTEGER | FLOAT)? (',' (ID | INTEGER | FLOAT | VECTOR_LITERAL))* ']';
 fragment DIGIT : [0-9] ;
 INTEGER        : DIGIT+ ;
 FLOAT          : (DIGIT+ '.' DIGIT* | '.' DIGIT+) ;
