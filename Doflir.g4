@@ -48,35 +48,35 @@ vec_indexing: ID '[' expr_list ']' ;
 vec_filtering: ID '{' filter_list '}' ;
 
 expr
-	: '('expr')'                   #parenExpr
-	| vec_indexing                 #vecIdxExpr
-	| vec_filtering                #vecFiltExpr
-	| vec_init_list                #vecInitExpr
-	| mat_init_list                #matInitExpr
-	| fun_call                     #unExpr
-	| <assoc=right> expr '^' expr  #powExpr     // Exponentiation.
-	| '-' expr                     #negExpr     // Negative unary symbol.
-	| '+' expr                     #posExpr     // Positive unary simbol.
-    | 'not' expr                   #unExpr      // Negation.
-	| expr  '@'  expr              #matMultExpr // Matrix multiplication.
-	| expr '..'  expr              #dotExpr     // Dot product.
-	| expr  '*'  expr              #multExpr    // Multiplication.
-	| expr  '/'  expr              #divExpr     // Float division.
-	| expr '//'  expr              #intDivExpr  // Integer division.
-    | expr  '+'  expr              #addExpr     // Addition.
-    | expr  '-'  expr              #subExpr     // Subtraction.
-    | expr  '>'  expr              #gtExpr      // Logical greater than.
-    | expr '>='  expr              #gtEqExpr    // Logical or equal greater than.
-    | expr  '<'  expr              #ltExpr      // Logical less than.
-    | expr '<='  expr              #ltEqExpr    // Logical less or equal than.
-    | expr '=='  expr              #eqExpr      // Logical equal.
-    | expr '!='  expr              #notEqExpr   // Logical not equal.
-    | expr 'and' expr              #andExpr     // Logical and.
-    | expr  'or' expr              #orExpr      // Logical or.
-	| token                        #tokExpr
-	| read_table	     	       #readTExpr
-	| read_array                   #readAExpr
-	| read_console                 #readCExpr
+	: '('expr')'                   #parenExpr    // Precedence handling of parens.
+	| vec_indexing                 #vecIdxExpr   // Indexing of a n-dim array.
+	| vec_filtering                #vecFiltExpr  // Vector filtering expression.
+	| vec_init_list                #vecInitExpr  // 1D Array initialization list.
+	| mat_init_list                #matInitExpr  // 2D Matrix initialization list.
+	| fun_call                     #unExpr       // A fun_call as an expression.
+	| <assoc=right> expr '^' expr  #powExpr      // Exponentiation.
+	| '-' expr                     #negExpr      // Negative unary symbol.
+	| '+' expr                     #posExpr      // Positive unary simbol.
+    | 'not' expr                   #unExpr       // Negation.
+	| expr  '@'  expr              #matMultExpr  // Matrix multiplication.
+	| expr '..'  expr              #dotExpr      // Dot product.
+	| expr  '*'  expr              #multExpr     // Multiplication.
+	| expr  '/'  expr              #divExpr      // Float division.
+	| expr '//'  expr              #intDivExpr   // Integer division.
+    | expr  '+'  expr              #addExpr      // Addition.
+    | expr  '-'  expr              #subExpr      // Subtraction.
+    | expr  '>'  expr              #gtExpr       // Logical greater than.
+    | expr '>='  expr              #gtEqExpr     // Logical or equal greater than.
+    | expr  '<'  expr              #ltExpr       // Logical less than.
+    | expr '<='  expr              #ltEqExpr     // Logical less or equal than.
+    | expr '=='  expr              #eqExpr       // Logical equal.
+    | expr '!='  expr              #notEqExpr    // Logical not equal.
+    | expr 'and' expr              #andExpr      // Logical and.
+    | expr  'or' expr              #orExpr       // Logical or.
+	| token                        #tokExpr      // Just a single token.
+	| read_table	     	       #readTExpr    // A read_table expression.
+	| read_array                   #readAExpr    // A read_array expression.
+	| read_console                 #readCExpr    // A read_console expression.
 	;
 
 token
