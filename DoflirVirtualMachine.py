@@ -163,11 +163,11 @@ class DoflirVirtualMachine(object):
         self.run_bin_op(bin_op=operator.sub, quad=quad)
 
     def mat_mult(self, quad):
-        """Matrix multiplication between two matrixes."""
+        """Matrix multiplication between two matrices."""
         self.run_bin_op(bin_op=np.matmul, quad=quad)
 
     def dot(self, quad):
-        """Dot product between two matrixes."""
+        """Dot product between two matrices."""
         self.run_bin_op(bin_op=np.dot, quad=quad)
 
     def mult(self, quad):

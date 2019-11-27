@@ -21,43 +21,60 @@ import logging
 
 
 class DoflirCustomVisitor(DoflirVisitor):
-
+    """A Doflir compiler based on the visitor architecture of antlr4."""
     def __init__(self, in_filename, in_code, debug):
+        # The name of the input file that is being compiled.
         self.in_filename = self.clean_filename(in_filename)
+        # The raw input text from the Doflir program being compiled.
         self.in_code = in_code.split("\n")
+        # Flag that enables or disables the output of compiler debug messages.
         self.debug = debug
+        # The table of semantic considerations for resulting data types.
         self.cube = SemanticCube()
+        # The global variables table.
         self.global_table = VariablesTable()
+        # The function directory.
         self.fun_dir = FunDir()
+        # Keep track of the scope in memory with a stack.
         self.scope_stack = deque()
+        # The global table is the current scope.
         self.scope_stack.append(self.global_table)
+        # Keep track of intertwined operands with an operand stack.
         self.operands_stack = deque()
+        # Keep track of intertwined operators with an operator stack.
         self.operators_stack = deque()
+        # Keep track of where is it necesary to go back and put a jump.
         self.pending_jumps_stack = deque()
+        # Keep track of the pending return value from a function.
         self.return_type_stack = deque()
+        # The list of generated quadruples, the IR of Doflir.
         self.quads = []
         self._temp_num = 0
 
     @property
     def curr_scope(self):
+        """Return the topmost scope that the program is aware of."""
         return self.scope_stack[-1]
 
     @property
     def current_quad_idx(self):
+        """Return the idx of the quad that is currently being generated."""
         return len(self.quads) - 1
 
     def clean_filename(self, filename):
+        """Remove directories from a path to just have the file file name."""
         return filename.split("/")[-1]
 
-    def new_temp(self, data_type):
-        self._temp_num += 1
-        return f"t{data_type.value[0]}_{self._temp_num}"
-
     def visitProgram(self, ctx: DoflirParser.ProgramContext):
+        """Start point for the compilation and end point for the output obj."""
+        # Check if there are any statements that are floating without being
+        # inside main or a function.
         if ctx.statement:
             for stmt in ctx.statement():
                 self.visit(stmt)
-
+        # The goto that points towards main but given that we currently
+        # don't know where main is, we leave it pending in the
+        # pending_jumps_stack.
         goto_quad = Quad(
             op=Ops.GOTO,
             left=None,
@@ -66,10 +83,19 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
         self.quads.append(goto_quad)
         self.pending_jumps_stack.append(self.current_quad_idx)
+
+        # Check for all function definitions before checking main, this
+        # makes it so that we can define functions below the block
+        # of main code.
         if ctx.fun_def:
             for dfn in ctx.fun_def():
                 self.visit(dfn)
+
+        # Parse the main procedure block of code.
         self.visit(ctx.main_def())
+
+        # Output a visual representation of the generated quadruples
+        # only if debug is enabled.
         if self.debug:
             self.print_stats()
             print_quads(quads=self.quads, viz_variant="name")
@@ -78,6 +104,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         return self.generate_obj_code()
 
     def generate_obj_code(self):
+        """Convert the current in-memory IR state into IR bytecode."""
         const_table = {}
         for var in self.global_table.variables:
             if isinstance(var, Constant):
@@ -91,6 +118,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
 
     def print_stats(self):
+        """Print the compiler state in a human-friendly way."""
         print(f"\n{'='*10} Global variables {'='*10}\n")
         for var in self.global_table.variables:
             print("→", var)
@@ -107,12 +135,12 @@ class DoflirCustomVisitor(DoflirVisitor):
                       f"{'[]':>16}, {fun.address:>9}")
         print("\n")
 
-    def visitStatement(self, ctx: DoflirParser.StatementContext):
-        return self.visitChildren(ctx)
-
     def visitVec_indexing(self, ctx: DoflirParser.Vec_indexingContext):
+        """Retrieve a value from a specified location inside a vector."""
         vec_id = ctx.ID().getText()
-        vec = self.curr_scope.search(vec_id) or self.global_table.search(vec_id)
+        vec = (
+            self.curr_scope.search(vec_id) or self.global_table.search(vec_id)
+        )
         if not vec:
             raise E.UndeclaredVec(ctx, self.in_filename, self.in_code,
                                   vec_id)
@@ -130,6 +158,8 @@ class DoflirCustomVisitor(DoflirVisitor):
                     ctx, self.in_filename, self.in_code, idx_res.data_type
                 )
             vec_idx.append(idx_res)
+            # Indexes are expr so we cannot know their value at compile time.
+            # We have to settle for a bounds check at runtime with VER.
             ver_quad = Quad(
                 op=Ops.VER,
                 left=idx_res,
@@ -137,17 +167,25 @@ class DoflirCustomVisitor(DoflirVisitor):
                 res=vec.vec_dims[idx_num]
             )
             self.quads.append(ver_quad)
+        # Put the resolved expr into the operands stack as it hasn't
+        # been consumed yet.
         self.operands_stack.append(
             VecIdx(vec_id=vec_id, idx=vec_idx, address=vec.address,
                    data_type=vec.data_type)
         )
 
     def visitVec_filtering(self, ctx: DoflirParser.Vec_filteringContext):
+        """Parse the expression of applying a filter into a vector."""
         vec_id = ctx.ID().getText()
-        vec = self.curr_scope.search(vec_id) or self.global_table.search(vec_id)
+        vec = (
+            self.curr_scope.search(vec_id) or self.global_table.search(vec_id)
+        )
         if not vec:
             raise E.UndeclaredVec(ctx, self.in_filename, self.in_code,
                                   vec_id)
+        # Some filters collapse the vector into a single value. We know which
+        # ones do this at compile time, so we can ensure that a collapsed
+        # single value won't be assigned onto a vector variable.
         is_reduced = False
         vec_filters = []
         for idx, vec_filter_ctx in enumerate(ctx.filter_list().FILTER()):
@@ -160,6 +198,7 @@ class DoflirCustomVisitor(DoflirVisitor):
                     )
             vec_filters.append(vec_filter)
 
+        # The filtering operates on a temporal copy of the vector.
         tmp_vec = self.allocate_temp_vec(
             data_type=vec.data_type,
             vec_dims=vec.vec_dims
@@ -172,6 +211,9 @@ class DoflirCustomVisitor(DoflirVisitor):
                 res=tmp_vec
             )
         )
+        # Don't apply the last filter because it might reduce the vector into
+        # a single value. If it does so, we need to set the result into a
+        # temporal value instead of a temporal vector.
         for vec_filter in vec_filters[:-1]:
             self.quads.append(
                 Quad(
@@ -198,6 +240,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         return self.visitChildren(ctx)
 
     def allocate_temp_vec(self, data_type, vec_dims):
+        """Indicate to the VM that we want a vector of size vec_dims."""
         tmp_vec = self.curr_scope.make_temp(
             temp_type=data_type,
             vec_dims=vec_dims,
@@ -212,9 +255,8 @@ class DoflirCustomVisitor(DoflirVisitor):
         return tmp_vec
 
     def visitVecInitExpr(self, ctx: DoflirParser.VecInitExprContext):
-        # Determine shape of the given vector with the depth level
-        # Are there further nested levels?
-        # print(ctx.depth(), ctx.getRuleIndex(), ctx.getSourceInterval())
+        """Parse a vector constant into an allocated vector in memory."""
+        # Determine size of the given vector.
         vec_init_list = []
         for tok in ctx.vec_init_list().tok_list().token():
             self.visit(tok)
@@ -223,16 +265,19 @@ class DoflirCustomVisitor(DoflirVisitor):
             value=len(vec_init_list),
             const_type=VarTypes.INT,
         )
+        # Allocate a temporal vector with the size of the init vector.
         tmp_vec = self.allocate_temp_vec(
             data_type=vec_init_list[0].data_type,
             vec_dims=[dim_size]
         )
-
+        # Assign the read init values into our temp_vector one by one.
         for vec_idx, init_val in enumerate(vec_init_list):
             vec_idx_const = self.curr_scope.make_const(
                 value=vec_idx,
                 const_type=VarTypes.INT,
             )
+            # We need to index the temporal vector and so we need a
+            # VecIdx for doing so.
             dst_idx = VecIdx(vec_id=tmp_vec.name, idx=[vec_idx_const],
                              address=tmp_vec.address,
                              data_type=tmp_vec.data_type)
@@ -249,13 +294,12 @@ class DoflirCustomVisitor(DoflirVisitor):
             self.quads.append(assign_quad)
 
         self.operands_stack.append(tmp_vec)
-        # Parse expression values
-        # Allocate a temp vector that will hold the parsed values
-        # Put the allocated vector as a pending operand
 
     def visitMatInitExpr(self, ctx: DoflirParser.MatInitExprContext):
+        """Parse a matrix constant into an allocated matrix in memory."""
         col_size_num = None
         mat_init_list = []
+        # Figure out the dimensions of the matrix.
         for vec_list in ctx.mat_init_list().vec_init_list():
             vec_init_list = []
             for tok in vec_list.tok_list().token():
@@ -263,12 +307,13 @@ class DoflirCustomVisitor(DoflirVisitor):
                 vec_init_list.append(self.operands_stack.pop())
             if col_size_num is None:
                 col_size_num = len(vec_init_list)
+            # Doflir does not support having different sizes of columns
+            # within the same matrix. Throw error.
             elif col_size_num != len(vec_init_list):
                 raise E.MatrixColSizeMismatch(
                     ctx, self.in_filename, self.in_code
                 )
             mat_init_list.append(vec_init_list)
-
         row_size = self.curr_scope.make_const(
             value=len(mat_init_list),
             const_type=VarTypes.INT,
@@ -277,11 +322,13 @@ class DoflirCustomVisitor(DoflirVisitor):
             value=col_size_num,
             const_type=VarTypes.INT,
         )
-        tmp_vec = self.allocate_temp_vec(
+        # Allocate a temporal matrix with the size of the init matrix.
+        tmp_mat = self.allocate_temp_vec(
             data_type=mat_init_list[0][0].data_type,
             vec_dims=[row_size, col_size]
         )
 
+        # Assign the read init values into our temp_matrix one by one.
         for row_idx, row in enumerate(mat_init_list):
             row_idx_const = self.curr_scope.make_const(
                 value=row_idx,
@@ -293,10 +340,10 @@ class DoflirCustomVisitor(DoflirVisitor):
                     const_type=VarTypes.INT,
                 )
                 dst_idx = VecIdx(
-                    vec_id=tmp_vec.name,
+                    vec_id=tmp_mat.name,
                     idx=[row_idx_const, col_idx_const],
-                    address=tmp_vec.address,
-                    data_type=tmp_vec.data_type
+                    address=tmp_mat.address,
+                    data_type=tmp_mat.data_type
                 )
                 if init_val.data_type != dst_idx.data_type:
                     raise E.MatrixNotHomogeneous(
@@ -309,20 +356,21 @@ class DoflirCustomVisitor(DoflirVisitor):
                     res=dst_idx
                 )
                 self.quads.append(assign_quad)
-        self.operands_stack.append(tmp_vec)
-
-    def visitParameters(self, ctx: DoflirParser.ParametersContext):
-        return self.visitChildren(ctx)
+        self.operands_stack.append(tmp_mat)
 
     def visitTokIdExpr(self, ctx: DoflirParser.TokIdExprContext):
+        """Parse the expression that a single token ID represents."""
         var_id = ctx.ID().getText()
-        var = self.curr_scope.search(var_id) or self.global_table.search(var_id)
+        var = (
+            self.curr_scope.search(var_id) or self.global_table.search(var_id)
+        )
         if not var:
             raise E.UndeclaredVar(ctx, self.in_filename, self.in_code,
                                   var_id)
         self.operands_stack.append(var)
 
     def visitTokIntExpr(self, ctx: DoflirParser.TokIntExprContext):
+        """Parse an int literal expression into the operands stack."""
         self.operands_stack.append(
             self.global_table.declare_or_search(
                 value=int(ctx.getText()),
@@ -332,6 +380,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
 
     def visitTokFloatExpr(self, ctx: DoflirParser.TokFloatExprContext):
+        """Parse a float literal expression into the operands stack."""
         self.operands_stack.append(
             self.global_table.declare_or_search(
                 value=float(ctx.getText()),
@@ -341,6 +390,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
 
     def visitTokStrExpr(self, ctx: DoflirParser.TokStrExprContext):
+        """Parse a string literal expression into the operands stack."""
         self.operands_stack.append(
             self.global_table.declare_or_search(
                 value=str(ctx.getText()),
@@ -350,6 +400,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
 
     def visitTokBoolExpr(self, ctx: DoflirParser.TokBoolExprContext):
+        """Parse a bool literal expression into the operands stack."""
         self.operands_stack.append(
             self.global_table.declare_or_search(
                 value=bool(ctx.getText().capitalize()),
@@ -359,10 +410,14 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
 
     def visitDeclaration_stmt(self, ctx: DoflirParser.DeclarationContext):
+        """Declare a variable into the symbols table."""
         var_id = ctx.declaration().ID().getText()
         var_type = ctx.declaration().TYPE_NAME().getText().upper()
         if self.debug:
             logging.debug(f"Declaring variable ({var_id}, {var_type})")
+        # We allow local variables to override global variables. If
+        # two variables have the same name, one local and one global;
+        # the local variable will take precedence.
         if self.curr_scope.exists(var_id):
             raise E.AlreadyUsedID(ctx, self.in_filename, self.in_code, var_id)
         is_glob = False
@@ -373,7 +428,9 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
         return self.visitChildren(ctx)
 
-    def visitVec_declaration_stmt(self, ctx: DoflirParser.Vec_declaration_stmtContext):
+    def visitVec_declaration_stmt(
+            self, ctx: DoflirParser.Vec_declaration_stmtContext):
+        """Declare a vector into the symbols table."""
         vec_id = ctx.vec_declaration().declaration().ID().getText()
         vec_type = ctx.vec_declaration().declaration().TYPE_NAME().getText().upper()
         if self.curr_scope.exists(vec_id):
@@ -390,6 +447,7 @@ class DoflirCustomVisitor(DoflirVisitor):
                 raise E.WrongDimType(
                     ctx, self.in_filename, self.in_code, dim_expr.data_type
                 )
+            # The dimensions provided could be an uninitialized variable.
             if not dim_expr.is_initialized:
                 raise E.UninitializedVar(
                     ctx, self.in_filename, self.in_code, dim_expr.value
@@ -410,6 +468,9 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.quads.append(allocate_quad)
 
     def visitAssignment(self, ctx: DoflirParser.AssignmentContext):
+        """Parse an assignment operation between two operands statement."""
+        # We need to figure out if we're assigning to a variable or to
+        # a point of a vector indicated by a vector index.
         if ctx.ID():
             # We need to do this again cause ID here is not an expr
             identifier = ctx.ID().getText()
@@ -441,6 +502,8 @@ class DoflirCustomVisitor(DoflirVisitor):
             if op_1.data_type != op_2.data_type:
                 raise E.TypeMismatchVar(ctx, self.in_filename, self.in_code,
                                         op_1, op_2)
+            # If one vector is being assigned to another vector, make sure they
+            # have the same number of dimensions.
             if op_1.vec_dims or op_2.vec_dims:
                 if not self.check_size_dims(op_1.vec_dims, op_2.vec_dims):
                     raise E.NumDimsMismatch(ctx, self.in_filename,
@@ -455,6 +518,7 @@ class DoflirCustomVisitor(DoflirVisitor):
             self.quads.append(assign_quad)
 
     def check_mat_mult_dims(self, dims_1, dims_2):
+        """Return if dims_1 and dims_2 can take part in a matrix mult."""
         # Two matrices can be multiplied only when the number of columns in
         # the first equals the number of rows in the second
         col_1 = dims_1[1].value
@@ -462,12 +526,14 @@ class DoflirCustomVisitor(DoflirVisitor):
         return col_1 == row_2
 
     def check_size_dims(self, dims_1, dims_2):
+        """Return whether dims_1 and dims_2 are of the same length."""
         if dims_1 and dims_2:
             return len(dims_1) == len(dims_2)
         else:
             return False
 
     def check_dims_match(self, dims_1, dims_2):
+        """Return whether dims_1 and dims_2 are of the same internal size."""
         if self.check_size_dims(dims_1, dims_2):
             for dim_1, dim_2 in zip(dims_1, dims_2):
                 if dim_1.value != dim_2.value:
@@ -477,6 +543,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         return True
 
     def generate_bin_quad(self, ctx):
+        """Generic method for generating binary op quadruples."""
         operator = self.operators_stack.pop()
         op_2 = self.operands_stack.pop()
         op_1 = self.operands_stack.pop()
@@ -500,6 +567,9 @@ class DoflirCustomVisitor(DoflirVisitor):
         both_are_vec = op_1.vec_dims and op_2.vec_dims
         if both_are_vec or not both_are_vec:
             if both_are_vec:
+                # Matrix multiplications need special treatment because they
+                # can result in a matrix with different dimensions that the
+                # original matrices.
                 if operator == Ops.MAT_MULT:
                     if len(op_1.vec_dims) != 2 or len(op_2.vec_dims) != 2:
                         raise E.MatMultNonMatrix(
@@ -539,15 +609,18 @@ class DoflirCustomVisitor(DoflirVisitor):
             self.quads.append(new_quad)
             self.operands_stack.append(result_tmp)
         else:
+            # Do not allow using a matrix with a variable and viceversa.
             raise E.VecNonVecMismatch(
                 ctx, self.in_filename, self.in_code, op_1, op_2
             )
 
     def try_op(self, op, ctx):
+        """Check that this op is at the top of the stack to consume it."""
         if self.operators_stack and self.operators_stack[-1] == op:
             self.generate_bin_quad(ctx)
 
     def visitUnOpExpr(self, ctx, operator):
+        """Generic method for parsing unary op expressions."""
         self.visit(ctx.expr())
         operand = self.operands_stack.pop()
         if not operand.is_initialized:
@@ -566,15 +639,19 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.operands_stack.append(result_tmp)
 
     def visitNegExpr(self, ctx: DoflirParser.NegExprContext):
+        """Unary numeric negation operation. -(1) turns into -1."""
         self.visitUnOpExpr(ctx=ctx, operator=Ops.NEG)
 
     def visitPosExpr(self, ctx: DoflirParser.PosExprContext):
+        """Unary numeric positive operation. +(1) turns into +1."""
         self.visitUnOpExpr(ctx=ctx, operator=Ops.POS)
 
     def visitNotExpr(self, ctx: DoflirParser.NotExprContext):
+        """Boolean unary negation operation. true turns into false."""
         self.visitUnOpExpr(ctx=ctx, operator=Ops.NOT_)
 
     def visitBinOpExpr(self, ctx, operator):
+        """Parse a binary operation into the stack."""
         self.visit(ctx.expr(0))
         self.try_op(op=operator, ctx=ctx)
         self.operators_stack.append(operator)
@@ -582,21 +659,27 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.try_op(op=operator, ctx=ctx)
 
     def visitMatMultExpr(self, ctx: DoflirParser.MatMultExprContext):
+        """Parse a matrix multiplication between two matrices expression."""
         self.visitBinOpExpr(ctx=ctx, operator=Ops.MAT_MULT)
 
     def visitDotExpr(self, ctx: DoflirParser.DotExprContext):
+        """Parse a dot product between two matrices expression."""
         self.visitBinOpExpr(ctx=ctx, operator=Ops.DOT)
 
     def visitMultExpr(self, ctx: DoflirParser.MultExprContext):
+        """Parse a multiplication operation between two operands expression."""
         self.visitBinOpExpr(ctx=ctx, operator=Ops.MULT)
 
     def visitDivExpr(self, ctx: DoflirParser.DivExprContext):
+        """Float division operation between two operands."""
         self.visitBinOpExpr(ctx=ctx, operator=Ops.DIV)
 
     def visitIntDivExpr(self, ctx: DoflirParser.IntDivExprContext):
+        """Integer division operation between two operands."""
         self.visitBinOpExpr(ctx=ctx, operator=Ops.INT_DIV)
 
     def visitPowExpr(self, ctx: DoflirParser.PowExprContext):
+        """Power operation between two operands."""
         self.visitBinOpExpr(ctx=ctx, operator=Ops.POW)
 
     def visitAddExpr(self, ctx: DoflirParser.AddExprContext):
@@ -606,32 +689,42 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.visitBinOpExpr(ctx=ctx, operator=Ops.MINUS)
 
     def visitGtExpr(self, ctx: DoflirParser.GtExprContext):
+        """Parse a logical greater than relop between two operands."""
         self.visitBinOpExpr(ctx=ctx, operator=Ops.GT)
 
     def visitGtEqExpr(self, ctx: DoflirParser.GtEqExprContext):
+        """Parse a logical greater than or equal relop between two operands."""
         self.visitBinOpExpr(ctx=ctx, operator=Ops.GT_EQ)
 
     def visitLtExpr(self, ctx: DoflirParser.LtExprContext):
+        """Parse a logical less than relop between two operands."""
         self.visitBinOpExpr(ctx=ctx, operator=Ops.LT)
 
     def visitLtEqExpr(self, ctx: DoflirParser.LtEqExprContext):
+        """Parse a logical less than or equal relop between two operands."""
         self.visitBinOpExpr(ctx=ctx, operator=Ops.LT_EQ)
 
     def visitEqExpr(self, ctx: DoflirParser.EqExprContext):
+        """Parse a logical equal relop between two operands."""
         self.visitBinOpExpr(ctx=ctx, operator=Ops.EQ)
 
     def visitNotEqExpr(self, ctx: DoflirParser.NotEqExprContext):
+        """Parse a logical not equal relop between two operands."""
         self.visitBinOpExpr(ctx=ctx, operator=Ops.NOT_EQ)
 
     def visitAndExpr(self, ctx: DoflirParser.AndExprContext):
+        """Parse a logical and relop between two operands."""
         self.visitBinOpExpr(ctx=ctx, operator=Ops.AND_)
 
     def visitOrExpr(self, ctx: DoflirParser.OrExprContext):
+        """Parse a logical or relop between two operands."""
         self.visitBinOpExpr(ctx=ctx, operator=Ops.OR_)
 
-    def visitIfCondition(self, ctx):
+    def visitCondition(self, ctx):
+        """Parse the condition portion of a conditional statement."""
         self.visit(ctx.expr())
         expr_res = self.operands_stack.pop()
+        # We need a boolean for our GOTOF.
         if expr_res.data_type is not VarTypes.BOOL:
             raise E.TypeMismatch(
                 ctx, self.in_filename, self.in_code, expr_res, VarTypes.BOOL
@@ -646,18 +739,19 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.pending_jumps_stack.append(self.current_quad_idx)
 
     def visitIfStmt(self, ctx: DoflirParser.IfStmtContext):
-        self.visitIfCondition(ctx)
+        """Parse a simple if conditional statement."""
+        self.visitCondition(ctx)  # Parse condition and generate GOTOF.
         self.visit(ctx.proc_body())
         pending_gotof = self.pending_jumps_stack.pop()
         self.quads[pending_gotof].res = QuadJump(self.current_quad_idx + 1)
-        # TODO: Maybe don't do anything if the current_quad is the last?
 
     def visitIfElseStmt(self, ctx: DoflirParser.IfElseStmtContext):
-        self.visitIfCondition(ctx)
+        """Parse an if-else conditional statement."""
+        self.visitCondition(ctx)  # Parse condition and generate GOTOF.
         self.visit(ctx.proc_body(0))
         pending_goto = self.pending_jumps_stack.pop()
         self.quads[pending_goto].res = QuadJump(self.current_quad_idx + 2)
-        # Jump the Else statement
+        # Avoid going into the else statement given that condition was true.
         goto_quad = Quad(
             op=Ops.GOTO,
             left=None,
@@ -671,8 +765,9 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.quads[pending_goto].res = QuadJump(self.current_quad_idx + 1)
 
     def visitWhileStmt(self, ctx: DoflirParser.WhileStmtContext):
+        """Parse a while loop statement."""
         cond_quad_idx = self.current_quad_idx + 1
-        self.visitIfCondition(ctx)
+        self.visitCondition(ctx)  # Parse condition and generate GOTOF.
         self.visit(ctx.proc_body())
         pending_gotof = self.pending_jumps_stack.pop()
         self.quads[pending_gotof].res = QuadJump(self.current_quad_idx + 2)
@@ -685,20 +780,24 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.quads.append(goto_quad)
 
     def visitFun_def(self, ctx: DoflirParser.Fun_defContext):
+        """Parse a function definition statement."""
         fun_id = ctx.ID().getText()
         return_type = self.cube.type_to_enum(
             type_str=ctx.TYPE_NAME().getText()
         )
-
+        # Check that the function does not collide with the name of a
+        # variable or another function.
         if (self.global_table.exists(var_name=fun_id) or
                 self.fun_dir.exists(fun_name=fun_id)):
             raise E.AlreadyUsedID(
                 ctx, self.in_filename, self.in_code, fun_id
             )
+        # Create a new scope for the statements inside the function body.
         self.scope_stack.append(VariablesTable())
         params = None
         if ctx.parameters():
             params = []
+            # Parse all of the variable parameters from the function.
             for param in ctx.parameters().declaration():
                 param_id = param.ID().getText()
                 param_type_str = param.TYPE_NAME().getText()
@@ -729,6 +828,7 @@ class DoflirCustomVisitor(DoflirVisitor):
                         address=param_address
                     )
                 )
+            # Parse all of the vector parameters from the function.
             for param in ctx.parameters().vec_declaration():
                 param_id = param.declaration().ID().getText()
                 param_type_str = param.declaration().TYPE_NAME().getText()
@@ -796,8 +896,10 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.scope_stack.pop()
 
     def visitFlow_call(self, ctx: DoflirParser.Flow_callContext):
+        """Parse a return statement."""
         ret_val = VarTypes.VOID
         return_type = self.return_type_stack[-1]
+        # If the return tok was used on its own, then there's no return value.
         if ctx.expr():
             self.visit(ctx.expr())
             ret_val = self.operands_stack.pop()
@@ -813,6 +915,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.quads.append(ret_quad)
 
     def visitFun_call(self, ctx: DoflirParser.Fun_callContext):
+        """Parse a function call statement."""
         fun_id = ctx.ID().getText()
         target_fun = self.fun_dir.search(fun_name=fun_id)
         if not target_fun:
@@ -826,9 +929,11 @@ class DoflirCustomVisitor(DoflirVisitor):
             res=None
         )
         self.quads.append(era_quad)
-
+        # Check if the function is being called with arguments.
         if ctx.expr_list():
             num_args = len(ctx.expr_list().expr())
+            # Verify that the number of given arguments is the same as the
+            # number of parameters specified in the function definition.
             if not target_fun.num_params == num_args:
                 raise E.ParamArgNumMismatch(
                     ctx=ctx,
@@ -838,22 +943,24 @@ class DoflirCustomVisitor(DoflirVisitor):
                     num_params=target_fun.num_params,
                     num_args=num_args
                 )
-            if not num_args == 0:
-                par_num = 1
-                for expr, param in zip(ctx.expr_list().expr(), target_fun.params):
-                    self.visit(expr)
-                    expr_res = self.operands_stack.pop()
-
-                    assert expr_res.data_type == param.param_type
-                    param_quad = Quad(
-                        op=Ops.PARAM,
-                        left=expr_res,
-                        right=None,
-                        res=Param(par_num),
+            par_num = 1
+            for expr, param in zip(ctx.expr_list().expr(), target_fun.params):
+                self.visit(expr)
+                expr_res = self.operands_stack.pop()
+                if not expr_res.data_type == param.param_type:
+                    raise E.TypeMismatch(
+                        ctx, self.in_filename, self.in_code,
+                        expr_res.data_type, param.param_type
                     )
-                    self.quads.append(param_quad)
-                    par_num += 1
-
+                param_quad = Quad(
+                    op=Ops.PARAM,
+                    left=expr_res,
+                    right=None,
+                    res=Param(par_num),
+                )
+                self.quads.append(param_quad)
+                par_num += 1
+        # Tell the VM to switch the IP to the actual function.
         gosub_quad = Quad(
             op=Ops.GOSUB,
             left=target_fun,
@@ -863,6 +970,8 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.quads.append(gosub_quad)
 
         if target_fun.ret_type != VarTypes.VOID:
+            # Make a copy of the return value of the function into a temporal
+            # to not loose it in subsequent function calls.
             ret_tmp = self.curr_scope.make_temp(temp_type=target_fun.ret_type)
             assign_ret_quad = Quad(
                 op=Ops.ASSIGN,
@@ -874,11 +983,14 @@ class DoflirCustomVisitor(DoflirVisitor):
             self.operands_stack.append(ret_tmp)
 
     def visitMain_def(self, ctx: DoflirParser.Main_defContext):
+        """Parse the main procedure body."""
         pending_goto = self.pending_jumps_stack.pop()
+        # Set the first line of the quadruples to jump to this point.
         self.quads[pending_goto].res = QuadJump(self.current_quad_idx + 1)
         self.visitChildren(ctx)
 
     def visitPrint_stmt(self, ctx: DoflirParser.Print_stmtContext):
+        """Parse a print to console statement."""
         for expr in ctx.expr_list().expr():
             self.visit(expr)
             print_expr = self.operands_stack.pop()
@@ -895,6 +1007,7 @@ class DoflirCustomVisitor(DoflirVisitor):
             self.quads.append(print_quad)
 
     def visitPrintln_stmt(self, ctx: DoflirParser.Println_stmtContext):
+        """Parse a println to console statement."""
         for expr in ctx.expr_list().expr():
             self.visit(expr)
             print_expr = self.operands_stack.pop()
@@ -911,6 +1024,7 @@ class DoflirCustomVisitor(DoflirVisitor):
             self.quads.append(print_quad)
 
     def visitPlot_stmt(self, ctx: DoflirParser.Plot_stmtContext):
+        """Parse a plot to UI statement."""
         self.visit(ctx.expr())
         plot_expr = self.operands_stack.pop()
         if not plot_expr.is_initialized:
@@ -927,13 +1041,16 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
 
     def visitWrite_file_stmt(self, ctx: DoflirParser.Write_file_stmtContext):
+        """Parse a write to file statement."""
         self.visit(ctx.expr(0))
+        # Make sure there's actually something to write there.
         write_expr = self.operands_stack.pop()
         if not write_expr.is_initialized:
             raise E.UninitializedVar(
                 ctx, self.in_filename, self.in_code, write_expr.value
             )
         self.visit(ctx.expr(1))
+        # Check thet the filename points to actually something.
         filename_expr = self.operands_stack.pop()
         if not filename_expr.is_initialized:
             raise E.UninitializedVar(
@@ -953,6 +1070,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
 
     def visitRead_table(self, ctx: DoflirParser.Read_tableContext):
+        """Parse a read table from file statement."""
         self.visit(ctx.expr())
         filename_expr = self.operands_stack.pop()
         self.visit(ctx.token(0))
@@ -986,6 +1104,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.operands_stack.append(tmp_vec)
 
     def visitRead_array(self, ctx: DoflirParser.Read_arrayContext):
+        """Parse a read array from file statement."""
         self.visit(ctx.expr())
         filename_expr = self.operands_stack.pop()
         self.visit(ctx.token())
@@ -1009,6 +1128,7 @@ class DoflirCustomVisitor(DoflirVisitor):
         self.operands_stack.append(tmp_vec)
 
     def visitRead_console(self, ctx: DoflirParser.Read_consoleContext):
+        """Parse a read input from console statement."""
         input_type = VarTypes[ctx.TYPE_NAME().getText().upper()]
         input_tmp = self.curr_scope.make_temp(temp_type=input_type)
         read_console_quad = Quad(
@@ -1019,5 +1139,3 @@ class DoflirCustomVisitor(DoflirVisitor):
         )
         self.quads.append(read_console_quad)
         self.operands_stack.append(input_tmp)
-
-        return self.visitChildren(ctx)
